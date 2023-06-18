@@ -10,6 +10,7 @@ docker run \
   --name dozzle \
   -p "${APOLLON_DOZZLE_PORT}:8080" \
   -d \
+  --log-opt max-size=10m \
   amir20/dozzle:latest \
   --remote-host "tcp://${HERMES_IP}:${HERMES_SOCKET_PROXY_PORT}|Hermes" \
   --remote-host "tcp://${APOLLON_IP}:${APOLLON_SOCKET_PROXY_PORT}|Apollon" \
