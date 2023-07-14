@@ -15,11 +15,9 @@ x-placement_hermes: &placement_hermes
     constraints:
       - node.hostname == Hermes
 
-
-
 x-dns: &dns
   dns:
-    - 192.168.0.97
+    - ${HERMES_IP}
 
 services:
   # debug:
@@ -93,13 +91,12 @@ services:
         - traefik.http.routers.{.Hostname}_glances.entrypoints=http
         - traefik.http.services.{.Hostname}_glances.loadbalancer.server.port=61208
 
-
   dozzle:
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - traefik_net 
+      - traefik_net
     deploy:
       mode: global
       labels:
@@ -199,16 +196,18 @@ services:
       # - --experimental.localPlugins.test-plugin.modulename=github.com/mgarnier11/plugin_test
       # - --experimental.plugins.routing-plugin.modulename=github.com/kumina/traefik-routing-plugin
       # - --experimental.plugins.routing-plugin.version=v0.0.2
-  
+
   # apollon_gotify:
-  #   image: gotify/server
+  #   image: gotify/server-arm7
   #   volumes:
   #     - gotify_data:/app/data
   #     - gotify_config:/etc/gotify
+  #   environment:
+  #     - GOTIFY_DATABASE_CONNECTION=file:data/gotify.db?_journal=WAL
   #   networks:
   #     - traefik_net
   #   deploy:
-  #     <<: *placement_athena
+  #     <<: *placement_apollon
   #     labels:
   #       - traefik.enable=true
   #       - traefik.http.routers.apollon_gotify.rule=Host(`gotify.${HOME}`)
@@ -290,19 +289,15 @@ services:
                 kind: "NVIDIA-GPU"
                 value: 0
 
-
-
 networks:
   traefik_net:
     driver: overlay
   nextcloud_net:
 
-
-
 x-freebox_opts: &freebox_opts
   type: cifs
   # device: //192.168.0.254/SSD1/docker-data
-  o: "rw,username=${FREEBOX_SMB_USER},password=${FREEBOX_SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
 
 volumes:
   portainer_data:
@@ -349,5 +344,3 @@ volumes:
     driver_opts:
       <<: *freebox_opts
       device: ${DOCKER_DATA}/nextcloud/config
-  
-
