@@ -1,0 +1,27 @@
+version: "3.8"
+
+x-placement_apollon: &placement_apollon
+  placement:
+    constraints:
+      - node.hostname == Apollon
+
+services:
+  autosaver:
+    image: mgarnier11/autosaver
+    volumes:
+      - docker_data:/usr/app/backups/docker-data
+    environment:
+      - MAIL_LOGIN=${MAIL_LOGIN}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
+      - CRON_SCHEDULE=0 4 * * *
+    deploy:
+      <<: *placement_apollon
+
+volumes:
+  docker_data:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: ${DOCKER_DATA}
+      o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
