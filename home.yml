@@ -15,10 +15,6 @@ x-placement_hermes: &placement_hermes
     constraints:
       - node.hostname == Hermes
 
-x-dns: &dns
-  dns:
-    - ${HERMES_IP}
-
 services:
   # debug:
   #   image: praqma/network-multitool
@@ -67,136 +63,6 @@ services:
   #       - traefik.http.routers.apollon_portainer.entrypoints=http
   #       - traefik.http.services.apollon_portainer.loadbalancer.server.port=9000
 
-  glances:
-    image: mgarnier11/my-glances
-    # ports:
-    #   - 61208:61208
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # - /dev/sda1:/dev/sda1:ro
-      # - /dev/sdb1:/dev/sdb1:ro
-      # - /dev/sdc1:/dev/sdc1:ro
-      # - /dev/sdd1:/dev/sdd1:ro
-      # - /dev/nvme0n1:/dev/nvme0n1:ro
-    environment:
-      - GLANCES_OPT=-d -t 1 -w
-      - NVIDIA_VISIBLE_DEVICES=all
-    networks:
-      - traefik_net
-    deploy:
-      mode: global
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.{.Hostname}_glances.rule=Host(`glances.${HOME}`)
-        - traefik.http.routers.{.Hostname}_glances.entrypoints=http
-        - traefik.http.services.{.Hostname}_glances.loadbalancer.server.port=61208
-
-  dozzle:
-    image: amir20/dozzle:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - traefik_net
-    deploy:
-      mode: global
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.{.Hostname}_dozzle.rule=Host(`dozzle.${HOME}`)
-        - traefik.http.routers.{.Hostname}_dozzle.entrypoints=http
-        - traefik.http.services.{.Hostname}_dozzle.loadbalancer.server.port=8080
-
-  apollon_dashy:
-    image: mgarnier11/my-dashy
-    environment:
-      - NODE_ENV=production
-      - UID=1000
-      - GID=1000
-    volumes:
-      - dashy_config:/app/public
-    networks:
-      - traefik_net
-    <<: *dns
-    deploy:
-      <<: *placement_apollon
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.apollon_dashy.rule=Host(`dashy.${HOME}`)
-        - traefik.http.routers.apollon_dashy.entrypoints=http
-        - traefik.http.services.apollon_dashy.loadbalancer.server.port=80
-
-  hermes_adguard:
-    image: adguard/adguardhome
-    volumes:
-      - adguard_conf:/opt/adguardhome/conf
-      - adguard_data:/opt/adguardhome/work
-    ports:
-      - target: 53
-        published: 53
-        mode: host
-        protocol: tcp
-      - target: 53
-        published: 53
-        mode: host
-        protocol: udp
-    networks:
-      traefik_net:
-    deploy:
-      <<: *placement_hermes
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.hermes_adguard.rule=Host(`adguard.${HOME}`)
-        - traefik.http.routers.hermes_adguard.entrypoints=http
-        - traefik.http.services.hermes_adguard.loadbalancer.server.port=3000
-
-  apollon_traefik:
-    image: mgarnier11/my-traefik
-    ports:
-      - target: 80
-        published: 80
-        mode: host
-        protocol: tcp
-      - target: 8080
-        published: 8080
-        mode: host
-        protocol: tcp
-    networks:
-      - traefik_net
-    deploy:
-      <<: *placement_apollon
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.apollon_traefik.rule=Host(`traefik.${HOME}`)
-        - traefik.http.routers.apollon_traefik.entrypoints=http
-        # - traefik.http.routers.apollon_traefik.middlewares=test-plugin
-        - traefik.http.services.apollon_traefik.loadbalancer.server.port=8080
-        # - traefik.http.middlewares.routing-plugin.plugin.routing-plugin
-      update_config:
-        order: stop-first
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik_data:/data
-      # - ~/traefik/plugin_test:/plugins-local/src/github.com/mgarnier11/plugin_test
-    command:
-      # Enable Docker in Traefik, so that it reads labels from Docker services
-      - --providers.docker
-      - --providers.docker.swarmmode
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.watch=true
-      - --providers.file
-      - --providers.file.filename=/data/dynamic.yml
-      - --providers.file.watch=true
-      - --entrypoints.http.address=:80
-      - --entrypoints.http.forwardedHeaders.insecure=true
-      # Enable the access log, with HTTP requests
-      - --accesslog.bufferingsize=100
-      - --accesslog.filepath=/data/logs/traefik-access.log
-      - --log.level=DEBUG
-      - --api.dashboard=true
-      - --api.insecure=true
-      # - --experimental.localPlugins.test-plugin.modulename=github.com/mgarnier11/plugin_test
-      # - --experimental.plugins.routing-plugin.modulename=github.com/kumina/traefik-routing-plugin
-      # - --experimental.plugins.routing-plugin.version=v0.0.2
-
   # apollon_gotify:
   #   image: gotify/server-arm7
   #   volumes:
@@ -233,7 +99,7 @@ services:
   athena_nextcloud:
     image: nextcloud:latest
     volumes:
-      - /hdd-1/nextcloud:/var/www/html/data
+      - /hdd-1/nextcloud/data:/data
       - nextcloud_config:/var/www/html/config
     networks:
       - nextcloud_net
@@ -241,6 +107,7 @@ services:
       - 9801:80
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
+    user: 1000:1000
     deploy:
       <<: *placement_athena
     environment:
@@ -248,6 +115,7 @@ services:
       - MYSQL_DATABASE=${NEXTCLOUD_DB_NAME}
       - MYSQL_USER=${NEXTCLOUD_DB_USER}
       - MYSQL_HOST=athena_nextcloud_db:3306
+      - NEXTCLOUD_DATA_DIR=/data
       - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_URL}
       - TRUSTED_PROXIES=51.77.195.239
       - OVERWRITEPROTOCOL=https
@@ -290,8 +158,6 @@ services:
                 value: 0
 
 networks:
-  traefik_net:
-    driver: overlay
   nextcloud_net:
 
 x-freebox_opts: &freebox_opts
@@ -300,31 +166,6 @@ x-freebox_opts: &freebox_opts
   o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
 
 volumes:
-  portainer_data:
-    driver: local
-    driver_opts:
-      <<: *freebox_opts
-      device: ${DOCKER_DATA}/portainer
-  dashy_config:
-    driver: local
-    driver_opts:
-      <<: *freebox_opts
-      device: ${DOCKER_DATA}/dashy
-  adguard_data:
-    driver: local
-    driver_opts:
-      <<: *freebox_opts
-      device: ${DOCKER_DATA}/adguard/work
-  adguard_conf:
-    driver: local
-    driver_opts:
-      <<: *freebox_opts
-      device: ${DOCKER_DATA}/adguard/conf
-  traefik_data:
-    driver: local
-    driver_opts:
-      <<: *freebox_opts
-      device: ${DOCKER_DATA}/traefik
   gotify_data:
     driver: local
     driver_opts:

@@ -12,4 +12,10 @@ docker stack deploy -c samba.yml samba
 # docker stack config -c backup.yml
 docker stack deploy -c backup.yml backup
 
+# docker stack config -c network.yml
+docker stack deploy -c network.yml network
+
+# docker stack config -c network.yml
+docker stack deploy -c monitoring.yml monitoring
+
 set +o allexport

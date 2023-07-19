@@ -10,13 +10,20 @@ services:
     image: mgarnier11/autosaver
     volumes:
       - docker_data:/usr/app/backups/docker-data
+      - athena_plex_config:/usr/app/backups/plex-config
+      - athena_satisfactory_backups:/usr/app/backups/satisfactory/backups
+      - athena_satisfactory_saved:/usr/app/backups/satisfactory/saved
+      - athena_nextcloud:/usr/app/backups/nextcloud-datas
     environment:
       - MAIL_LOGIN=${MAIL_LOGIN}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
-      - CRON_SCHEDULE=0 4 * * *
+      - CRON_SCHEDULE=15 4 * * *
     deploy:
       <<: *placement_apollon
+
+x-o: &o
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
 
 volumes:
   docker_data:
@@ -24,4 +31,28 @@ volumes:
     driver_opts:
       type: cifs
       device: ${DOCKER_DATA}
-      o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+      <<: *o
+  athena_plex_config:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/plex
+      <<: *o
+  athena_satisfactory_backups:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/satisfactory/backups
+      <<: *o
+  athena_satisfactory_saved:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/satisfactory/saved
+      <<: *o
+  athena_nextcloud:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/hdd-1/nextcloud
+      <<: *o
