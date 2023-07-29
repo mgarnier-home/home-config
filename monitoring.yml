@@ -74,6 +74,13 @@ services:
         - traefik.http.routers.apollon_dashy.entrypoints=http
         - traefik.http.services.apollon_dashy.loadbalancer.server.port=80
 
+  # shepherd:
+  #   image: mazzolino/shepherd
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   deploy:
+  #     <<: *placement_apollon
+
 networks:
   traefik-net:
     external: true
