@@ -19,8 +19,19 @@ services:
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
       - CRON_SCHEDULE=15 4 * * *
+    networks:
+      - traefik-net
     deploy:
       <<: *placement_apollon
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.{.Hostname}_autosaver.rule=Host(`autosaver.${HOME}`)
+        - traefik.http.routers.{.Hostname}_autosaver.entrypoints=http
+        - traefik.http.services.{.Hostname}_autosaver.loadbalancer.server.port=3000
+
+networks:
+  traefik-net:
+    external: true
 
 x-o: &o
   o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
