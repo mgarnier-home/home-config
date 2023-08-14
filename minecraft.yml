@@ -1,0 +1,74 @@
+version: "3.8"
+
+x-placement_athena: &placement_athena
+  placement:
+    constraints:
+      - node.hostname == Athena
+
+x-placement_apollon: &placement_apollon
+  placement:
+    constraints:
+      - node.hostname == Apollon
+
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    ports:
+      - 9804:25565
+    volumes:
+      - /ssd-1/minecraft-modded-1.19.2:/data
+    environment:
+      - EULA=TRUE
+      - VERSION=1.19.2
+      - MEMORY=12G
+      - MOTD=MG MC Server
+      - OVERRIDE_SERVER_PROPERTIES=TRUE
+      - TYPE=FORGE
+      - FORGE_VERSION=43.2.21
+      - RCON_PASSWORD=${MINECRAFT_RCON_PASSWORD}
+    deploy:
+      <<: *placement_athena
+
+  minecraft_rwa:
+    image: itzg/rcon
+    dns:
+      - ${HERMES_IP}
+    volumes:
+      - minecraft_rwa_config:/src
+    networks:
+      - traefik-net
+    environment:
+      - RWA_ADMIN=TRUE
+      - RWA_USERNAME=${RCON_USERNAME}
+      - RWA_PASSWORD=${RCON_PASSWORD}
+      - RWA_RCON_HOST=minecraft
+      - RWA_RCON_PASSWORD=${MINECRAFT_RCON_PASSWORD}
+      - RWA_WEBSOCKET_URL=ws://rwa-ws.apollon.home
+    deploy:
+      <<: *placement_apollon
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.{.Hostname}_rwa.rule=Host(`rwa.apollon.home`)
+        - traefik.http.routers.{.Hostname}_rwa.entrypoints=http
+        - traefik.http.routers.{.Hostname}_rwa.service={.Hostname}_rwa_srv
+        - traefik.http.services.{.Hostname}_rwa_srv.loadbalancer.server.port=4326
+        - traefik.http.routers.{.Hostname}_rwa_ws.rule=Host(`rwa-ws.apollon.home`)
+        - traefik.http.routers.{.Hostname}_rwa_ws.entrypoints=http
+        - traefik.http.routers.{.Hostname}_rwa_ws.service={.Hostname}_rwa_ws_srv
+        - traefik.http.services.{.Hostname}_rwa_ws_srv.loadbalancer.server.port=4327
+
+networks:
+  traefik-net:
+    external: true
+
+x-freebox_opts: &freebox_opts
+  type: cifs
+  # device: //192.168.0.254/SSD1/docker-data
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+
+volumes:
+  minecraft_rwa_config:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/minecraft-rwa

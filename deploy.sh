@@ -18,4 +18,7 @@ docker stack deploy -c network.yml network
 # docker stack config -c network.yml
 docker stack deploy -c monitoring.yml monitoring
 
+# docker stack config -c minecraft.yml
+docker stack deploy -c minecraft.yml minecraft
+
 set +o allexport
