@@ -16,7 +16,7 @@ services:
     ports:
       - 9804:25565
     volumes:
-      - /ssd-1/minecraft-modded-1.19.2:/data
+      - /ssd-1/minecraft/modded-1.19.2:/data
     environment:
       - EULA=TRUE
       - VERSION=1.19.2
