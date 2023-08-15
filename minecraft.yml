@@ -15,6 +15,7 @@ services:
     image: itzg/minecraft-server
     ports:
       - 9804:25565
+      - 9805:8123 # Dynmap
     volumes:
       - /ssd-1/minecraft/modded-1.19.2:/data
     environment:
