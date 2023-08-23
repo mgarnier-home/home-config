@@ -20,6 +20,7 @@ services:
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
       - CRON_SCHEDULE=15 4 * * *
+      - FOLDERS_TO_IGNORE=files_trashbin,files_versions
     networks:
       - traefik-net
     deploy:
