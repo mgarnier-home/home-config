@@ -9,18 +9,28 @@ services:
   autosaver:
     image: mgarnier11/autosaver
     volumes:
-      - docker_data:/usr/app/backups/docker-data
-      - athena_plex_config:/usr/app/backups/plex-config
-      - athena_satisfactory_backups:/usr/app/backups/satisfactory/backups
-      - athena_satisfactory_saved:/usr/app/backups/satisfactory/saved
-      - athena_nextcloud:/usr/app/backups/nextcloud-datas
-      - athena_minecraft_1.19.2:/usr/app/backups/minecraft-maps/modded-1.19.2
+      - athena_backup_hdd:/rsync
+      - docker_data:/backups/docker-data
+      - athena_plex_config:/backups/plex-config
+      - athena_satisfactory_backups:/backups/satisfactory/backups
+      - athena_satisfactory_saved:/backups/satisfactory/saved
+      - athena_nextcloud:/backups/nextcloud-datas
+      - athena_minecraft_1.19.2:/backups/minecraft-maps/modded-1.19.2
     environment:
+      - ENABLE_RSYNC=true
+      - ENABLE_MAIL=true
+      - FOLDER_TO_BACKUP=/backups
+      - RSYNC_DEST_FOLDER=/rsync
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_SECURE=${MAIL_SECURE}
       - MAIL_LOGIN=${MAIL_LOGIN}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - INFO_MAIL_TO=${INFO_MAIL_TO}
+      - ERROR_MAIL_TO=${ERROR_MAIL_TO}
       - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
+      - ARCHIVE_TYPE=${ARCHIVE_TYPE}
       - CRON_SCHEDULE=15 4 * * *
-      - FOLDERS_TO_IGNORE=files_trashbin,files_versions
     networks:
       - traefik-net
     deploy:
@@ -30,6 +40,9 @@ services:
         - traefik.http.routers.{.Hostname}_autosaver.rule=Host(`autosaver.${HOME}`)
         - traefik.http.routers.{.Hostname}_autosaver.entrypoints=http
         - traefik.http.services.{.Hostname}_autosaver.loadbalancer.server.port=3000
+      resources:
+        limits:
+          memory: 4G
 
 networks:
   traefik-net:
@@ -39,6 +52,12 @@ x-o: &o
   o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
 
 volumes:
+  athena_backup_hdd:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/hdd-3/rsync
+      <<: *o
   docker_data:
     driver: local
     driver_opts:

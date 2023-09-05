@@ -3,22 +3,47 @@
 set -o allexport
 source ./.env
 
-# docker stack config -c home.yml
-docker stack deploy -c home.yml home
+deploy_stack() {
+    local stack=$1
+    local file=$2
+    echo "Deploying $stack stack..."
+    docker stack deploy -c $file $stack
+}
 
-# docker stack config -c samba.yml
-docker stack deploy -c samba.yml samba
+STACK=${1:-all}
 
-# docker stack config -c backup.yml
-docker stack deploy -c backup.yml backup
-
-# docker stack config -c network.yml
-docker stack deploy -c network.yml network
-
-# docker stack config -c network.yml
-docker stack deploy -c monitoring.yml monitoring
-
-# docker stack config -c minecraft.yml
-docker stack deploy -c minecraft.yml minecraft
+case $STACK in
+    home)
+        deploy_stack home home.yml
+        ;;
+    samba)
+        deploy_stack samba samba.yml
+        ;;
+    backup)
+        deploy_stack backup backup.yml
+        ;;
+    network)
+        deploy_stack network network.yml
+        ;;
+    monitoring)
+        deploy_stack monitoring monitoring.yml
+        ;;
+    minecraft)
+        deploy_stack minecraft minecraft.yml
+        ;;
+    all)
+        deploy_stack home home.yml
+        deploy_stack samba samba.yml
+        deploy_stack backup backup.yml
+        deploy_stack network network.yml
+        deploy_stack monitoring monitoring.yml
+        deploy_stack minecraft minecraft.yml
+        ;;
+    *)
+        echo "Unknown stack: $STACK"
+        echo "Usage: $0 [home|samba|backup|network|monitoring|minecraft|all]"
+        exit 1
+        ;;
+esac
 
 set +o allexport
