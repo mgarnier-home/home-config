@@ -14,7 +14,7 @@ services:
       - athena_plex_config:/backups/plex-config
       - athena_satisfactory_backups:/backups/satisfactory/backups
       - athena_satisfactory_saved:/backups/satisfactory/saved
-      - athena_nextcloud:/backups/nextcloud-datas
+      # - athena_nextcloud:/backups/nextcloud-datas
       - athena_minecraft_1.19.2:/backups/minecraft-maps/modded-1.19.2
     environment:
       - ENABLE_RSYNC=true
@@ -29,7 +29,7 @@ services:
       - INFO_MAIL_TO=${INFO_MAIL_TO}
       - ERROR_MAIL_TO=${ERROR_MAIL_TO}
       - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
-      - ARCHIVE_TYPE=${ARCHIVE_TYPE}
+      - ARCHIVE_TYPE=tar
       - CRON_SCHEDULE=15 4 * * *
     networks:
       - traefik-net
