@@ -31,6 +31,9 @@ case $STACK in
     minecraft)
         deploy_stack minecraft minecraft.yml
         ;;
+    scrutiny)
+        deploy_stack scrutiny scrutiny.yml
+        ;;
     all)
         deploy_stack home home.yml
         deploy_stack samba samba.yml
@@ -38,10 +41,11 @@ case $STACK in
         deploy_stack network network.yml
         deploy_stack monitoring monitoring.yml
         deploy_stack minecraft minecraft.yml
+        deploy_stack scrutiny scrutiny.yml
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [home|samba|backup|network|monitoring|minecraft|all]"
+        echo "Usage: $0 [home|samba|backup|network|monitoring|minecraft|scrutiny|all]"
         exit 1
         ;;
 esac

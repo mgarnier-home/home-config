@@ -76,7 +76,7 @@ services:
       - --providers.docker.watch=true
       - --providers.docker.network=traefik-net
       - --providers.file
-      - --providers.file.filename=/data/dynamic.yml
+      - --providers.file.directory=/data
       - --providers.file.watch=true
       - --entrypoints.http.address=:80
       - --entrypoints.http.forwardedHeaders.insecure=true

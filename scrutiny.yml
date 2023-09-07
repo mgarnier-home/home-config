@@ -1,0 +1,81 @@
+version: "3.8"
+
+x-placement_apollon: &placement_apollon
+  placement:
+    constraints:
+      - node.hostname == Apollon
+
+x-placement_athena: &placement_athena
+  placement:
+    constraints:
+      - node.hostname == Athena
+
+x-placement_hermes: &placement_hermes
+  placement:
+    constraints:
+      - node.hostname == Hermes
+
+services:
+  apollon_influx_db:
+    image: influxdb:2.2
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks:
+      - scrutiny-net
+    deploy:
+      <<: *placement_apollon
+      # labels:
+      #   - traefik.enable=true
+      #   - traefik.http.routers.apollon_dashy.rule=Host(`dashy.${HOME}`)
+      #   - traefik.http.routers.apollon_dashy.entrypoints=http
+      #   - traefik.http.services.apollon_dashy.loadbalancer.server.port=80
+
+  apollon_scrutiny_web:
+    image: ghcr.io/analogj/scrutiny:master-web
+    volumes:
+      - scrutiny_config:/opt/scrutiny/config
+    environment:
+      - SCRUTINY_WEB_INFLUXDB_HOST=apollon_influx_db
+    networks:
+      - scrutiny-net
+    deploy:
+      <<: *placement_apollon
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.apollon_dashy.rule=Host(`scrutiny.${HOME}`)
+        - traefik.http.routers.apollon_dashy.entrypoints=http
+        - traefik.http.services.apollon_dashy.loadbalancer.server.port=8080
+
+  apollon_scrutiny_collector:
+    image: ghcr.io/analogj/scrutiny:master-collector
+    volumes:
+      - /run/udev:/run/udev:ro
+    environment:
+      - COLLECTOR_API_ENDPOINT=http://apollon_scrutiny_web:8080
+    networks:
+      - scrutiny-net
+    devices:
+      - "/dev/sda"
+      # - "/dev/sdb"
+    deploy:
+      <<: *placement_apollon
+      # labels:
+      #   - traefik.enable=true
+      #   - traefik.http.routers.apollon_dashy.rule=Host(`dashy.${HOME}`)
+      #   - traefik.http.routers.apollon_dashy.entrypoints=http
+      #   - traefik.http.services.apollon_dashy.loadbalancer.server.port=80
+
+networks:
+  scrutiny-net:
+
+x-freebox_opts: &freebox_opts
+  type: cifs
+  # device: //192.168.0.254/SSD1/docker-data
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+
+volumes:
+  influxdb_data:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/influxdb
