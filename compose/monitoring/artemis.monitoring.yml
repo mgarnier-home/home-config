@@ -5,22 +5,17 @@ services:
     extends:
       file: monitoring.yml
       service: glances
-    # runtime: nvidia
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    ports:
+      - 4200:61208
 
   docker-socket-proxy:
     extends:
       file: monitoring.yml
       service: docker-socket-proxy
-      
+    ports:
+      - 4201:2375
+
   watchtower:
     extends:
       file: monitoring.yml
       service: watchtower
-      

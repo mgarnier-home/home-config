@@ -15,6 +15,7 @@ services:
       - APOLLON_IP=${APOLLON_IP}
       - HERMES_IP=${HERMES_IP}
       - ATHENA_IP=${ATHENA_IP}
+      - ARTEMIS_IP=${ARTEMIS_IP}
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       # - --providers.docker

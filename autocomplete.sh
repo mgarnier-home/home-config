@@ -8,10 +8,13 @@ _my_script_completion() {
     
     case ${COMP_CWORD} in
         1)
-            opts="deploy undeploy ps"
+            opts="deploy undeploy redeploy"
             ;;
         2)
             opts="all samba network monitoring home minecraft backup"
+            ;;
+        3)
+            opts="all athena apollon hermes artemis"
             ;;
         *)
             opts=""

@@ -4,7 +4,8 @@ services:
   glances:
     container_name: glances
     restart: unless-stopped
-    image: mgarnier11/my-glances
+    image: nicolargo/glances:ubuntu-latest-full
+    pid: host
     ports:
       - 10000:61208
     volumes:
@@ -13,14 +14,17 @@ services:
       - GLANCES_OPT=-d -t 1 -w
       - NVIDIA_VISIBLE_DEVICES=all
 
-  dozzle:
-    container_name: dozzle
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy
+    container_name: docker-socket-proxy
     restart: unless-stopped
-    image: amir20/dozzle:latest
+    environment:
+      CONTAINERS: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - 10001:8080
+      - 10001:2375
+
 
   watchtower:
     image: containrrr/watchtower:latest
@@ -36,8 +40,21 @@ services:
       - WATCHTOWER_NOTIFICATION_EMAIL_TO=${INFO_MAIL_TO}
       - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=${MAIL_LOGIN}
       - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=${MAIL_PASSWORD}
-      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.free.fr
-      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=465
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=${MAIL_HOST}
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=${MAIL_PORT}
       - WATCHTOWER_NOTIFICATION_EMAIL_DELAY=2
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  
+  # scrutiny_collector:
+  #   image: ghcr.io/analogj/scrutiny:master-collector
+  #   container_name: scrutiny_collector
+  #   restart: unless-stopped
+  #   cap_add:
+  #     - SYS_RAWIO
+  #     - SYS_ADMIN
+  #   volumes:
+  #     - /run/udev:/run/udev:ro
+  #   environment:
+  #     COLLECTOR_API_ENDPOINT: 'http://scrutiny.apollon.home'
+

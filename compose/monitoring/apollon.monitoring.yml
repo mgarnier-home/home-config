@@ -6,10 +6,19 @@ services:
       file: monitoring.yml
       service: glances
 
-  dozzle:
+  docker-socket-proxy:
     extends:
       file: monitoring.yml
-      service: dozzle
+      service: docker-socket-proxy
+
+  dozzle:
+    container_name: dozzle
+    restart: unless-stopped
+    image: amir20/dozzle:latest
+    environment:
+      - DOZZLE_REMOTE_HOST=tcp://${HERMES_IP}:10001|Hermes,tcp://${APOLLON_IP}:10001|Apollon,tcp://${ATHENA_IP}:10001|Athena,tcp://${ARTEMIS_IP}:4201|Artemis
+    ports:
+      - 10002:8080
 
   watchtower:
     extends:
@@ -27,29 +36,5 @@ services:
     volumes:
       - dashy_config:/app/public
     ports:
-      - 10002:80
+      - 10003:80
 
-  scrutiny_db:
-    container_name: scrutiny_db
-    restart: unless-stopped
-    image: influxdb:latest
-    # ports:
-    #   - 8086:8086
-    volumes:
-      - scrutiny_db:/var/lib/influxdb2
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 20
-
-  scrutiny_web:
-    container_name: scrutiny_web
-    restart: unless-stopped
-    image: ghcr.io/analogj/scrutiny:master-web
-    ports:
-      - 10003:8080
-    environment:
-      - SCRUTINY_WEB_INFLUXDB_HOST=scrutiny_db
-    depends_on:
-      - scrutiny_db

@@ -6,10 +6,10 @@ services:
       file: monitoring.yml
       service: glances
 
-  dozzle:
+  docker-socket-proxy:
     extends:
       file: monitoring.yml
-      service: dozzle
+      service: docker-socket-proxy
 
   watchtower:
     extends:

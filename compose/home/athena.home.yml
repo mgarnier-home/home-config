@@ -47,15 +47,6 @@ services:
       - OVERWRITECONDADDR=^
       - OVERWRITECLIURL=https://${NEXTCLOUD_URL}
 
-  file_server:
-    container_name: file_server
-    restart: unless-stopped
-    image: halverneus/static-file-server
-    volumes:
-      - /big-hdd/shared-files:/web
-    ports:
-      - 9803:8080
-
   plex:
     container_name: plex
     restart: unless-stopped
@@ -73,6 +64,16 @@ services:
     volumes:
       - /ssd-1/plex/config:/config
       - /big-hdd/plex:/data
+
+  file_server:
+    container_name: file_server
+    restart: unless-stopped
+    image: halverneus/static-file-server
+    volumes:
+      - /big-hdd/shared-files:/web
+    ports:
+      - 9803:8080
+
 
 networks:
   nextcloud-net:
