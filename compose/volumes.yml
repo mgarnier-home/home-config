@@ -37,6 +37,16 @@ volumes:
     driver_opts:
       <<: *freebox_opts
       device: ${DOCKER_DATA}/nextcloud/config
+  scrutiny_db:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/scrutiny/db
+  scrutiny_config:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/scrutiny/config
 
   bc_athena_hdd:
     driver: local
