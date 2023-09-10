@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  glances:
+    container_name: glances
+    restart: unless-stopped
+    image: mgarnier11/my-glances
+    ports:
+      - 10000:61208
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - GLANCES_OPT=-d -t 1 -w
+      - NVIDIA_VISIBLE_DEVICES=all
+
+  dozzle:
+    container_name: dozzle
+    restart: unless-stopped
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 10001:8080
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Paris
+      - WATCHTOWER_POLL_INTERVAL=900
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_DEBUG=true
+      - WATCHTOWER_NOTIFICATIONS=email
+      - WATCHTOWER_NOTIFICATION_EMAIL_FROM=${MAIL_LOGIN}
+      - WATCHTOWER_NOTIFICATION_EMAIL_TO=${INFO_MAIL_TO}
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=${MAIL_LOGIN}
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=${MAIL_PASSWORD}
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.free.fr
+      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=465
+      - WATCHTOWER_NOTIFICATION_EMAIL_DELAY=2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

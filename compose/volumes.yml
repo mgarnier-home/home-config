@@ -1,0 +1,82 @@
+x-freebox_opts: &freebox_opts
+  type: cifs
+  # device: //192.168.0.254/SSD1/docker-data
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+
+x-o: &o
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+
+volumes:
+  adguard_data:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/adguard/work
+  adguard_conf:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/adguard/conf
+  traefik_data:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/traefik
+  dashy_config:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/dashy
+  nextcloud_db:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/nextcloud/db
+  nextcloud_config:
+    driver: local
+    driver_opts:
+      <<: *freebox_opts
+      device: ${DOCKER_DATA}/nextcloud/config
+
+  bc_athena_hdd:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/hdd-3/rsync
+      <<: *o
+  bc_docker_data:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: ${DOCKER_DATA}
+      <<: *o
+  bc_athena_plex_config:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/plex
+      <<: *o
+  bc_athena_satisfactory_backups:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/satisfactory/backups
+      <<: *o
+  bc_athena_satisfactory_saved:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/satisfactory/saved
+      <<: *o
+  bc_athena_nextcloud:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/hdd-1/nextcloud
+      <<: *o
+  bc_athena_minecraft_1.19.2:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //${ATHENA_IP}/share/ssd-1/minecraft/modded-1.19.2/server-world
+      <<: *o

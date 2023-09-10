@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  glances:
+    extends:
+      file: monitoring.yml
+      service: glances
+
+  dozzle:
+    extends:
+      file: monitoring.yml
+      service: dozzle
+
+  watchtower:
+    extends:
+      file: monitoring.yml
+      service: watchtower

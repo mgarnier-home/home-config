@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  traefik:
+    container_name: traefik
+    restart: unless-stopped
+    image: mgarnier11/my-traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_data:/data
+    ports:
+      - 80:80/tcp
+      - 11000:8080/tcp
+    environment:
+      - APOLLON_IP=${APOLLON_IP}
+      - HERMES_IP=${HERMES_IP}
+      - ATHENA_IP=${ATHENA_IP}
+    command:
+      # Enable Docker in Traefik, so that it reads labels from Docker services
+      # - --providers.docker
+      # - --providers.docker.swarmmode
+      # - --providers.docker.exposedbydefault=false
+      # - --providers.docker.watch=true
+      # - --providers.docker.network=traefik-net
+      - --providers.file
+      - --providers.file.directory=/data
+      - --providers.file.watch=true
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.forwardedHeaders.insecure=true
+      # Enable the access log, with HTTP requests
+      - --accesslog.bufferingsize=100
+      - --accesslog.filepath=/data/logs/traefik-access.log
+      - --log.level=DEBUG
+      - --api.dashboard=true
+      - --api.insecure=true

@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  glances:
+    extends:
+      file: monitoring.yml
+      service: glances
+
+  dozzle:
+    extends:
+      file: monitoring.yml
+      service: dozzle
+
+  watchtower:
+    extends:
+      file: monitoring.yml
+      service: watchtower
+
+  dashy:
+    container_name: dashy
+    restart: unless-stopped
+    image: mgarnier11/my-dashy
+    environment:
+      - NODE_ENV=production
+      - UID=1000
+      - GID=1000
+    volumes:
+      - dashy_config:/app/public
+    ports:
+      - 10002:80

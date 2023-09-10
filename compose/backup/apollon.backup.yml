@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  autosaver:
+    container_name: autosaver
+    restart: unless-stopped
+    image: mgarnier11/autosaver
+    volumes:
+      - bc_athena_hdd:/rsync
+      - bc_docker_data:/backups/docker-data
+      - bc_athena_plex_config:/backups/plex-config
+      - bc_athena_satisfactory_backups:/backups/satisfactory/backups
+      - bc_athena_satisfactory_saved:/backups/satisfactory/saved
+      # - bc_athena_nextcloud:/backups/nextcloud-datas
+      - bc_athena_minecraft_1.19.2:/backups/minecraft-maps/modded-1.19.2
+    environment:
+      - ENABLE_RSYNC=true
+      - ENABLE_MAIL=true
+      - FOLDER_TO_BACKUP=/backups
+      - RSYNC_DEST_FOLDER=/rsync
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_SECURE=${MAIL_SECURE}
+      - MAIL_LOGIN=${MAIL_LOGIN}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - INFO_MAIL_TO=${INFO_MAIL_TO}
+      - ERROR_MAIL_TO=${ERROR_MAIL_TO}
+      - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
+      - ARCHIVE_TYPE=tar
+      - CRON_SCHEDULE=15 4 * * *

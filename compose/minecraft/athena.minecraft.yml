@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  minecraft:
+    container_name: minecraft
+    restart: unless-stopped
+    image: itzg/minecraft-server
+    ports:
+      - 9804:25565
+      - 9805:8123 # Dynmap
+    volumes:
+      - /ssd-1/minecraft/modded-1.19.2:/data
+    environment:
+      - EULA=TRUE
+      - VERSION=1.19.2
+      - MEMORY=12G
+      - MOTD=MG MC Server
+      - OVERRIDE_SERVER_PROPERTIES=TRUE
+      - TYPE=FORGE
+      - FORGE_VERSION=43.2.21
+      - RCON_PASSWORD=${MINECRAFT_RCON_PASSWORD}
