@@ -27,7 +27,8 @@ manage_stack() {
             ;;
         redeploy)
             echo "Redeploying $stack stack on $host..."
-            $compose_cmd down 
+            $compose_cmd down
+            $compose_cmd pull
             $compose_cmd up -d
             ;;
     esac
@@ -104,6 +105,9 @@ case $STACK in
     backup)
         manage_stacks backup $ACTION $HOSTNAME
         ;;
+    proxy)
+        manage_stacks proxy $ACTION $HOSTNAME
+        ;;
     all)
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
@@ -111,6 +115,7 @@ case $STACK in
         manage_stacks home $ACTION $HOSTNAME
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
+        manage_stacks proxy $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"

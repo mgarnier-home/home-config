@@ -11,14 +11,14 @@ services:
       file: monitoring.yml
       service: docker-socket-proxy
 
-  dozzle:
-    container_name: dozzle
-    restart: unless-stopped
-    image: amir20/dozzle:latest
-    environment:
-      - DOZZLE_REMOTE_HOST=tcp://${HERMES_IP}:10001|Hermes,tcp://${APOLLON_IP}:10001|Apollon,tcp://${ATHENA_IP}:10001|Athena,tcp://${ARTEMIS_IP}:4201|Artemis
-    ports:
-      - 10002:8080
+  # dozzle:
+  #   container_name: dozzle
+  #   restart: unless-stopped
+  #   image: amir20/dozzle:latest
+  #   environment:
+  #     - DOZZLE_REMOTE_HOST=tcp://${HERMES_IP}:10001|Hermes,tcp://${APOLLON_IP}:10001|Apollon,tcp://${ATHENA_IP}:10001|Athena,tcp://${ARTEMIS_IP}:4201|Artemis
+  #   ports:
+  #     - 10002:8080
 
   watchtower:
     extends:

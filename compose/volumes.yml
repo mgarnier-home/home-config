@@ -37,16 +37,11 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/nextcloud/config
-  scrutiny_db:
+  node_proxy_config:
     driver: local
     driver_opts:
       <<: *default_opts
-      device: ${DOCKER_DATA}/scrutiny/db
-  scrutiny_config:
-    driver: local
-    driver_opts:
-      <<: *default_opts
-      device: ${DOCKER_DATA}/scrutiny/config
+      device: ${DOCKER_DATA}/node-proxy
 
   bc_athena_hdd:
     driver: local

@@ -11,7 +11,7 @@ _my_script_completion() {
             opts="deploy undeploy redeploy"
             ;;
         2)
-            opts="all samba network monitoring home minecraft backup"
+            opts="all samba network monitoring home minecraft backup proxy"
             ;;
         3)
             opts="all athena apollon hermes artemis"
