@@ -9,5 +9,6 @@ services:
     environment:
       - AUTO_RELOAD_CONFIG=true
       - CONFIG_FILE=/config/config.json
+      - API_PORT=${ARTEMIS_NODE_PROXY_PORT}
     volumes:
       - node_proxy_config:/config

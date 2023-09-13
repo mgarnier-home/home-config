@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     image: nicolargo/glances:ubuntu-latest-full
     pid: host
-    ports:
-      - 10000:61208
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
@@ -37,11 +35,8 @@ services:
       - SYSTEM=1
       - TASKS=1
       - VOLUMES=1
-
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 10001:2375
 
 
   watchtower:

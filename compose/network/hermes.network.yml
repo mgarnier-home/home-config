@@ -11,4 +11,4 @@ services:
     ports:
       - 53:53/tcp
       - 53:53/udp
-      - 11000:3000/tcp
+      - ${HERMES_ADGUARD_PORT}:3000/tcp

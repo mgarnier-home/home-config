@@ -3,9 +3,6 @@ x-default_opts: &default_opts
   # device: //192.168.0.254/SSD1/docker-data
   o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
 
-x-o: &o
-  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
-
 volumes:
   adguard_data:
     driver: local
@@ -42,12 +39,23 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/node-proxy
+  paperless_db:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/paperless/db
+  paperless_data:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/paperless/data
+
 
   bc_athena_hdd:
     driver: local
     driver_opts:
       <<: *default_opts
-      device: //${ATHENA_IP}/share/hdd-3/rsync
+      device: //${ATHENA_IP}/share/hdd-2/rsync
   bc_docker_data:
     driver: local
     driver_opts:
@@ -78,3 +86,8 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: //${ATHENA_IP}/share/ssd-1/minecraft/modded-1.19.2/server-world
+  bc_athena_paperless:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: //${ATHENA_IP}/share/hdd-1/paperless

@@ -13,11 +13,15 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+    ports:
+      - ${ATHENA_GLANCES_PORT}:61208
 
   docker-socket-proxy:
     extends:
       file: monitoring.yml
       service: docker-socket-proxy
+    ports:
+      - ${ATHENA_SOCKET_PROXY_PORT}:2375
       
   watchtower:
     extends:

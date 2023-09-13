@@ -5,11 +5,15 @@ services:
     extends:
       file: monitoring.yml
       service: glances
+    ports:
+      - ${HERMES_GLANCES_PORT}:61208
 
   docker-socket-proxy:
     extends:
       file: monitoring.yml
       service: docker-socket-proxy
+    ports:
+      - ${HERMES_SOCKET_PROXY_PORT}:2375
 
   watchtower:
     extends:

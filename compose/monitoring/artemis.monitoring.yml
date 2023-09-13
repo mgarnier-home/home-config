@@ -6,14 +6,14 @@ services:
       file: monitoring.yml
       service: glances
     ports:
-      - 4200:61208
+      - ${ARTEMIS_GLANCES_PORT}:61208
 
   docker-socket-proxy:
     extends:
       file: monitoring.yml
       service: docker-socket-proxy
     ports:
-      - 4201:2375
+      - ${ARTEMIS_SOCKET_PROXY_PORT}:2375
 
   watchtower:
     extends:

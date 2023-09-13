@@ -2,6 +2,7 @@
 
 set -o allexport
 source ./.env
+source ./ports.env
 
 additional_compose_files="-f ../volumes.yml"
 
@@ -96,8 +97,17 @@ case $STACK in
     monitoring)
         manage_stacks monitoring $ACTION $HOSTNAME
         ;;
-    home)
-        manage_stacks home $ACTION $HOSTNAME
+    file_server)
+        manage_stacks file_server $ACTION $HOSTNAME
+        ;;
+    plex)
+        manage_stacks plex $ACTION $HOSTNAME
+        ;;
+    nextcloud)
+        manage_stacks nextcloud $ACTION $HOSTNAME
+        ;;
+    paperless)
+        manage_stacks paperless $ACTION $HOSTNAME
         ;;
     minecraft)
         manage_stacks minecraft $ACTION $HOSTNAME
@@ -112,14 +122,17 @@ case $STACK in
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
         manage_stacks monitoring $ACTION $HOSTNAME
-        manage_stacks home $ACTION $HOSTNAME
+        manage_stacks file_server $ACTION $HOSTNAME
+        manage_stacks plex $ACTION $HOSTNAME
+        manage_stacks nextcloud $ACTION $HOSTNAME
+        # manage_stacks paperless $ACTION $HOSTNAME
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks proxy $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [samba|network|monitoring|minecraft|all]"
+        echo "Usage: $0 [samba|network|monitoring|file_server|plex|nextcloud|paperless|minecraft|backup|proxy|all]"
         exit 1
         ;;
 esac

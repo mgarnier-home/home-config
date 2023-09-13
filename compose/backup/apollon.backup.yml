@@ -13,8 +13,9 @@ services:
       - bc_athena_satisfactory_saved:/backups/satisfactory/saved
       - bc_athena_nextcloud:/backups/nextcloud-datas
       - bc_athena_minecraft_1.19.2:/backups/minecraft-maps/modded-1.19.2
+      - bc_athena_paperless:/backups/paperless
     ports:
-      - 12000:3000
+      - ${APOLLON_AUTOSAVER_PORT}:3000
     environment:
       - ENABLE_RSYNC=true
       - ENABLE_MAIL=true

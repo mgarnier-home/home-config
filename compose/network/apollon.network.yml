@@ -10,12 +10,14 @@ services:
       - traefik_data:/data
     ports:
       - 80:80/tcp
-      - 11000:8080/tcp
+      - ${APOLLON_TRAEFIK_PORT}:8080/tcp
     environment:
       - APOLLON_IP=${APOLLON_IP}
       - HERMES_IP=${HERMES_IP}
       - ATHENA_IP=${ATHENA_IP}
       - ARTEMIS_IP=${ARTEMIS_IP}
+    env_file:
+      - ../../ports.env
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       # - --providers.docker
