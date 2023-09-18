@@ -6,6 +6,8 @@ services:
     container_name: node-proxy
     restart: unless-stopped
     network_mode: host
+    env_file:
+      - ../../ports.env
     environment:
       - AUTO_RELOAD_CONFIG=true
       - CONFIG_FILE=/config/config.json
