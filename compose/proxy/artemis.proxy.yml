@@ -14,3 +14,5 @@ services:
       - API_PORT=${ARTEMIS_NODE_PROXY_PORT}
     volumes:
       - node_proxy_config:/config
+    annotations:
+      traefik-ports: ARTEMIS_NODE_PROXY_PORT

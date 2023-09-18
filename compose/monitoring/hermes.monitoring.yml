@@ -7,6 +7,8 @@ services:
       service: glances
     ports:
       - ${HERMES_GLANCES_PORT}:61208
+    annotations:
+      traefik-ports: HERMES_GLANCES_PORT
 
   docker-socket-proxy:
     extends:

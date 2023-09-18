@@ -15,6 +15,8 @@ services:
               capabilities: [gpu]
     ports:
       - ${ATHENA_GLANCES_PORT}:61208
+    annotations:
+      traefik-ports: ATHENA_GLANCES_PORT
 
   docker-socket-proxy:
     extends:

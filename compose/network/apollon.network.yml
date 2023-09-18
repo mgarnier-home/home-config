@@ -5,12 +5,16 @@ services:
     container_name: traefik
     restart: unless-stopped
     image: mgarnier11/my-traefik
+    networks:
+      - traefik-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_data:/data
     ports:
       - 80:80/tcp
       - ${APOLLON_TRAEFIK_PORT}:8080/tcp
+    annotations:
+      traefik-ports: APOLLON_TRAEFIK_PORT
     environment:
       - APOLLON_IP=${APOLLON_IP}
       - HERMES_IP=${HERMES_IP}
@@ -20,14 +24,14 @@ services:
       - ../../ports.env
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
-      # - --providers.docker
-      # - --providers.docker.swarmmode
+      # - --providers.docker.swarmmode=true
       # - --providers.docker.exposedbydefault=false
       # - --providers.docker.watch=true
       # - --providers.docker.network=traefik-net
-      - --providers.file
-      - --providers.file.directory=/data
+      - --providers.file.filename=/data/dynamic.yml
       - --providers.file.watch=true
+      - --providers.http.endpoint=http://traefik_conf:3000/compose-config
+      - --providers.http.pollInterval=5s
       - --entrypoints.http.address=:80
       - --entrypoints.http.forwardedHeaders.insecure=true
       # Enable the access log, with HTTP requests
@@ -36,3 +40,23 @@ services:
       - --log.level=DEBUG
       - --api.dashboard=true
       - --api.insecure=true
+
+  traefik_conf:
+    container_name: traefik_conf
+    restart: unless-stopped
+    image: mgarnier11/traefik-conf
+    volumes:
+      - traefik_data:/traefik-data
+      - ../:/compose
+    environment:
+      - TRAEFIK_CONF_DIR=/traefik-data/dynamic
+      - COMPOSE_DIR=/compose
+      - SERVER_PORT=3000
+      - HOSTS=apollon,hermes,athena,artemis
+    ports:
+      - 3000:3000/tcp
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:

@@ -16,6 +16,8 @@ services:
       - bc_athena_paperless:/backups/paperless
     ports:
       - ${APOLLON_AUTOSAVER_PORT}:3000
+    annotations:
+      traefik-ports: APOLLON_AUTOSAVER_PORT
     environment:
       - ENABLE_RSYNC=true
       - ENABLE_MAIL=true
