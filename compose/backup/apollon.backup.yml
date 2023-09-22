@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     image: mgarnier11/autosaver
     volumes:
+      - bc_hetzner:/upload
       - bc_athena_hdd:/rsync
       - bc_docker_data:/backups/docker-data
       - bc_athena_plex_config:/backups/plex-config
@@ -19,10 +20,16 @@ services:
     annotations:
       traefik-ports: APOLLON_AUTOSAVER_PORT
     environment:
+      - UPLOAD_STRATEGY=CP
+      - ARCHIVE_STRATEGY=TAR
+      
       - ENABLE_RSYNC=true
       - ENABLE_MAIL=true
+
       - FOLDER_TO_BACKUP=/backups
       - RSYNC_DEST_FOLDER=/rsync
+      - UPLOAD_DEST_FOLDER=/upload/backups
+
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT}
       - MAIL_SECURE=${MAIL_SECURE}
@@ -30,6 +37,7 @@ services:
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - INFO_MAIL_TO=${INFO_MAIL_TO}
       - ERROR_MAIL_TO=${ERROR_MAIL_TO}
+
       - UPTOBOX_TOKEN=${UPTOBOX_TOKEN}
-      - ARCHIVE_TYPE=tar
+
       - CRON_SCHEDULE=15 4 * * *

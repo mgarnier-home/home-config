@@ -50,11 +50,20 @@ services:
       - ../:/compose
     environment:
       - TRAEFIK_CONF_DIR=/traefik-data/dynamic
+      - SAVE_DATA_FILE=/traefik-data/config.json
       - COMPOSE_DIR=/compose
       - SERVER_PORT=3000
-      - HOSTS=apollon,hermes,athena,artemis
+      - REDIRECTION_NAME=ovh
+      - FBX_APP_TOKEN=${FBX_APP_TOKEN}
+      - FBX_APP_ID=${FBX_APP_ID}
+      - FBX_API_DOMAIN=${FBX_API_DOMAIN}
+      - FBX_HTTPS_PORT=${FBX_HTTPS_PORT}
+      - FBX_API_BASE_URL=${FBX_API_BASE_URL}
+      - FBX_API_VERSION=${FBX_API_VERSION}
     ports:
-      - 3000:3000/tcp
+      - ${APOLLON_TRAEFIK_CONFIG_PORT}:3000/tcp
+    annotations:
+      traefik-ports: APOLLON_TRAEFIK_CONFIG_PORT
     networks:
       - traefik-net
 
