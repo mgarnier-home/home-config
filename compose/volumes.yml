@@ -24,6 +24,11 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/dashy
+  dashboard_config:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/dashboard
   nextcloud_db:
     driver: local
     driver_opts:

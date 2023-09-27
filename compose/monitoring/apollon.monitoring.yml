@@ -46,3 +46,16 @@ services:
     annotations:
       traefik-ports: APOLLON_DASHY_PORT
 
+  dashboard:
+    container_name: dashboard
+    restart: unless-stopped
+    image: mgarnier11/dashboard:latest
+    environment:
+      APP_CONF_PATH: /config/conf.yml
+    volumes:
+      - dashboard_config:/config
+    ports:
+      - ${APOLLON_DASHBOARD_PORT}:3000
+    annotations:
+      traefik-ports: APOLLON_DASHBOARD_PORT
+
