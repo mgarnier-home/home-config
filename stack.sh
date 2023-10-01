@@ -115,9 +115,6 @@ case $STACK in
     backup)
         manage_stacks backup $ACTION $HOSTNAME
         ;;
-    proxy)
-        manage_stacks proxy $ACTION $HOSTNAME
-        ;;
     all)
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
@@ -125,14 +122,13 @@ case $STACK in
         manage_stacks file_server $ACTION $HOSTNAME
         manage_stacks plex $ACTION $HOSTNAME
         manage_stacks nextcloud $ACTION $HOSTNAME
-        # manage_stacks paperless $ACTION $HOSTNAME
+        manage_stacks paperless $ACTION $HOSTNAME
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
-        manage_stacks proxy $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [samba|network|monitoring|file_server|plex|nextcloud|paperless|minecraft|backup|proxy|all]"
+        echo "Usage: $0 [samba|network|monitoring|file_server|plex|nextcloud|paperless|minecraft|backup|all]"
         exit 1
         ;;
 esac

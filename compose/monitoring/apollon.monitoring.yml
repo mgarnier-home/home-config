@@ -52,10 +52,10 @@ services:
     image: mgarnier11/dashboard:latest
     environment:
       APP_CONF_PATH: /config/conf.yml
+      ICONS_PATH: /config/icons
     volumes:
       - dashboard_config:/config
     ports:
       - ${APOLLON_DASHBOARD_PORT}:3000
     annotations:
       traefik-ports: APOLLON_DASHBOARD_PORT
-

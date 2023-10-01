@@ -19,6 +19,9 @@ services:
       - ${APOLLON_AUTOSAVER_PORT}:3000
     annotations:
       traefik-ports: APOLLON_AUTOSAVER_PORT
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
     environment:
       UPLOAD_STRATEGY: CP
       ARCHIVE_STRATEGY: TAR

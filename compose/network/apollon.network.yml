@@ -34,6 +34,7 @@ services:
       - --providers.http.pollInterval=5s
       - --entrypoints.http.address=:80
       - --entrypoints.http.forwardedHeaders.insecure=true
+      # - --entrypoints.samba.address=:445
       # Enable the access log, with HTTP requests
       - --accesslog.bufferingsize=100
       - --accesslog.filepath=/data/logs/traefik-access.log
