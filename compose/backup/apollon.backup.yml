@@ -8,7 +8,8 @@ services:
     volumes:
       - bc_hetzner:/upload
       # - bc_athena_hdd:/rsync
-      - bc_docker_data:/backups/docker-data
+      - bc_docker_data:/backups/docker-data-fbx
+      - /docker-data:/backups/docker-data-apollon
       # - bc_athena_plex_config:/backups/plex-config
       # - bc_athena_satisfactory_backups:/backups/satisfactory/backups
       # - bc_athena_satisfactory_saved:/backups/satisfactory/saved
@@ -25,7 +26,7 @@ services:
     environment:
       UPLOAD_STRATEGY: CP
       ARCHIVE_STRATEGY: TAR
-      
+
       ENABLE_RSYNC: true
       ENABLE_MAIL: true
 
@@ -92,8 +93,7 @@ x-default_opts: &default_opts
   # device: //192.168.0.254/SSD1/docker-data
   o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
 
-
-volumes: 
+volumes:
   # bc_athena_hdd:
   #   driver: local
   #   driver_opts:
@@ -140,4 +140,3 @@ volumes:
       type: cifs
       device: ${HETZNER_DATA}
       o: "addr=${HETZNER_ADDR},username=${HETZNER_SMB_USER},password=${HETZNER_SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
-  
