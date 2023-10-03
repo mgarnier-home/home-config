@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  influxdb:
+    container_name: influxdb
+    image: influxdb:2.2
+    ports:
+      - ${APOLLON_INFLUXDB_PORT}:8086
+    volumes:
+      - /docker-data/db/influxdb:/var/lib/influxdb2
+    annotations:
+      traefik-ports: APOLLON_INFLUXDB_PORT
+
+  influxdb-test:
+    container_name: influxdb-test
+    image: influxdb:2.2
+    ports:
+      - ${APOLLON_INLUXDB_TEST_PORT}:8086
+    volumes:
+      - /docker-data/db/influxdb-test:/var/lib/influxdb2
+    annotations:
+      traefik-ports: APOLLON_INLUXDB_TEST_PORT

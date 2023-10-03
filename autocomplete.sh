@@ -11,7 +11,7 @@ _my_script_completion() {
             opts="deploy undeploy redeploy"
             ;;
         2)
-            opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba"
+            opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba db"
             ;;
         3)
             opts="all athena apollon hermes artemis"

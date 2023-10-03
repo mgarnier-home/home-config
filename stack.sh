@@ -115,6 +115,9 @@ case $STACK in
     backup)
         manage_stacks backup $ACTION $HOSTNAME
         ;;
+    db)
+        manage_stacks db $ACTION $HOSTNAME
+        ;;
     all)
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
@@ -125,10 +128,11 @@ case $STACK in
         manage_stacks paperless $ACTION $HOSTNAME
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
+        manage_stacks db $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [samba|network|monitoring|file_server|plex|nextcloud|paperless|minecraft|backup|all]"
+        echo "Usage: $0 [samba|network|monitoring|file_server|plex|nextcloud|paperless|minecraft|backup|db|all]"
         exit 1
         ;;
 esac
