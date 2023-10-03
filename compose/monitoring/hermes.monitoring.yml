@@ -10,12 +10,14 @@ services:
     annotations:
       traefik-ports: HERMES_GLANCES_PORT
 
-  docker-socket-proxy:
+  dozzle:
     extends:
       file: monitoring.yml
-      service: docker-socket-proxy
+      service: dozzle
     ports:
-      - ${HERMES_SOCKET_PROXY_PORT}:2375
+      - ${HERMES_DOZZLE_PORT}:8080
+    annotations:
+      traefik-ports: HERMES_DOZZLE_PORT
 
   watchtower:
     extends:

@@ -18,15 +18,16 @@ services:
     annotations:
       traefik-ports: ATHENA_GLANCES_PORT
 
-  docker-socket-proxy:
+  dozzle:
     extends:
       file: monitoring.yml
-      service: docker-socket-proxy
+      service: dozzle
     ports:
-      - ${ATHENA_SOCKET_PROXY_PORT}:2375
-      
+      - ${ATHENA_DOZZLE_PORT}:8080
+    annotations:
+      traefik-ports: ATHENA_DOZZLE_PORT
+
   watchtower:
     extends:
       file: monitoring.yml
       service: watchtower
-      

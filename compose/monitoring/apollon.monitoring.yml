@@ -10,21 +10,14 @@ services:
     annotations:
       traefik-ports: APOLLON_GLANCES_PORT
 
-  docker-socket-proxy:
+  dozzle:
     extends:
       file: monitoring.yml
-      service: docker-socket-proxy
+      service: dozzle
     ports:
-      - ${APOLLON_SOCKET_PROXY_PORT}:2375
-
-  # dozzle:
-  #   container_name: dozzle
-  #   restart: unless-stopped
-  #   image: amir20/dozzle:latest
-  #   environment:
-  #     - DOZZLE_REMOTE_HOST=tcp://${HERMES_IP}:10001|Hermes,tcp://${APOLLON_IP}:10001|Apollon,tcp://${ATHENA_IP}:10001|Athena,tcp://${ARTEMIS_IP}:4201|Artemis
-  #   ports:
-  #     - 10002:8080
+      - ${APOLLON_DOZZLE_PORT}:8080
+    annotations:
+      traefik-ports: APOLLON_DOZZLE_PORT
 
   watchtower:
     extends:

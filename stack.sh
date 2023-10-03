@@ -19,7 +19,6 @@ manage_stack() {
     case $action in 
         deploy)
             echo "Deploying $stack stack on $host..."
-            $compose_cmd pull
             $compose_cmd up -d
             ;;
         undeploy)
@@ -28,6 +27,11 @@ manage_stack() {
             ;;
         redeploy)
             echo "Redeploying $stack stack on $host..."
+            $compose_cmd down
+            $compose_cmd up -d
+            ;;
+        pull)
+            echo "Pulling $stack stack on $host..."
             $compose_cmd down
             $compose_cmd pull
             $compose_cmd up -d
@@ -64,11 +68,11 @@ ACTION=${1}
 HOSTNAME=${3:-all}
 
 case $ACTION in
-    deploy|undeploy|redeploy)
+    deploy|undeploy|redeploy|pull)
         ;;
     *)
         echo "Unknown action: $ACTION"
-        echo "Usage: $0 [deploy|undeploy|redeploy]"
+        echo "Usage: $0 [deploy|undeploy|redeploy|pull]"
         exit 1
         ;;
 esac

@@ -12,32 +12,11 @@ services:
       - GLANCES_OPT=-d -t 1 -w
       - NVIDIA_VISIBLE_DEVICES=all
 
-  docker-socket-proxy:
-    image: tecnativa/docker-socket-proxy
-    container_name: docker-socket-proxy
-    restart: unless-stopped
-    environment:
-      - BUILD=1
-      - COMMIT=1
-      - CONFIG=1
-      - CONTAINERS=1
-      - DISTRIBUTION=1
-      - EXEC=1
-      - GRPC=1
-      - IMAGES=1
-      - INFO=1
-      - NETWORKS=1
-      - NODES=1
-      - PLUGINS=1
-      - SERVICES=1
-      - SESSION=1
-      - SWARM=1
-      - SYSTEM=1
-      - TASKS=1
-      - VOLUMES=1
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   watchtower:
     image: containrrr/watchtower:latest
@@ -58,7 +37,7 @@ services:
       - WATCHTOWER_NOTIFICATION_EMAIL_DELAY=2
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  
+
   # scrutiny_collector:
   #   image: ghcr.io/analogj/scrutiny:master-collector
   #   container_name: scrutiny_collector
@@ -70,4 +49,3 @@ services:
   #     - /run/udev:/run/udev:ro
   #   environment:
   #     COLLECTOR_API_ENDPOINT: 'http://scrutiny.apollon.home'
-

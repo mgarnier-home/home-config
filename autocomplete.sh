@@ -8,7 +8,7 @@ _my_script_completion() {
     
     case ${COMP_CWORD} in
         1)
-            opts="deploy undeploy redeploy"
+            opts="deploy undeploy redeploy pull"
             ;;
         2)
             opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba db"
