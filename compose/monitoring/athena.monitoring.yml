@@ -1,23 +1,6 @@
 version: "3.8"
 
 services:
-  glances:
-    extends:
-      file: monitoring.yml
-      service: glances
-    # runtime: nvidia
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    ports:
-      - ${ATHENA_GLANCES_PORT}:61208
-    annotations:
-      traefik-ports: ATHENA_GLANCES_PORT
-
   dozzle:
     extends:
       file: monitoring.yml
@@ -26,6 +9,22 @@ services:
       - ${ATHENA_DOZZLE_PORT}:8080
     annotations:
       traefik-ports: ATHENA_DOZZLE_PORT
+
+  nodesight:
+    extends:
+      file: monitoring.yml
+      service: nodesight
+    ports:
+      - ${ATHENA_NODESIGHT_PORT}:3000
+    annotations:
+      traefik-ports: ATHENA_NODESIGHT_PORT
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   watchtower:
     extends:

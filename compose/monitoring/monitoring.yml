@@ -38,6 +38,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  nodesight:
+    image: mgarnier11/nodesight:latest
+    container_name: nodesight
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /:/mnt/host:ro
+
   # scrutiny_collector:
   #   image: ghcr.io/analogj/scrutiny:master-collector
   #   container_name: scrutiny_collector

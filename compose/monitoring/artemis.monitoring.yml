@@ -1,14 +1,14 @@
 version: "3.8"
 
 services:
-  glances:
+  nodesight:
     extends:
       file: monitoring.yml
-      service: glances
+      service: nodesight
     ports:
-      - ${ARTEMIS_GLANCES_PORT}:61208
+      - ${ARTEMIS_NODESIGHT_PORT}:3000
     annotations:
-      traefik-ports: ARTEMIS_GLANCES_PORT
+      traefik-ports: ARTEMIS_NODESIGHT_PORT
 
   dozzle:
     extends:

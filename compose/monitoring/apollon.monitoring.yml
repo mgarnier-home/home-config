@@ -1,14 +1,14 @@
 version: "3.8"
 
 services:
-  glances:
+  nodesight:
     extends:
       file: monitoring.yml
-      service: glances
+      service: nodesight
     ports:
-      - ${APOLLON_GLANCES_PORT}:61208
+      - ${APOLLON_NODESIGHT_PORT}:3000
     annotations:
-      traefik-ports: APOLLON_GLANCES_PORT
+      traefik-ports: APOLLON_NODESIGHT_PORT
 
   dozzle:
     extends:
