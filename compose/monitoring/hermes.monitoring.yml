@@ -5,6 +5,10 @@ services:
     extends:
       file: monitoring.yml
       service: nodesight
+    environment:
+      HOSTNAME: ${HERMES_HOSTNAME}
+      ENABLE_STATS_API: true
+      STATS_API_URL: ${STATS_API_URL}
     ports:
       - ${HERMES_NODESIGHT_PORT}:3000
     annotations:

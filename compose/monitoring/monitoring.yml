@@ -45,15 +45,3 @@ services:
     privileged: true
     volumes:
       - /:/mnt/host:ro
-
-  # scrutiny_collector:
-  #   image: ghcr.io/analogj/scrutiny:master-collector
-  #   container_name: scrutiny_collector
-  #   restart: unless-stopped
-  #   cap_add:
-  #     - SYS_RAWIO
-  #     - SYS_ADMIN
-  #   volumes:
-  #     - /run/udev:/run/udev:ro
-  #   environment:
-  #     COLLECTOR_API_ENDPOINT: 'http://scrutiny.apollon.home'
