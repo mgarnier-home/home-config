@@ -58,7 +58,8 @@ manage_stacks() {
         return
     fi
 
-    for file in $(ls *.$stack.yml); do
+    for filePath in $(ls compose/$stack/*.$stack.yml); do
+        local file=$(basename $filePath)
         local host_name=$(echo $file | cut -d'.' -f1)
 
         manage_stack $stack $action $host_name
