@@ -7,45 +7,50 @@ source ./ports.env
 additional_compose_files="-f ../volumes.yml"
 
 manage_stack() {
+    cd compose/$stack
+
     local stack=$1
     local action=$2
     local host=$3
     local file="$host.$stack.yml"
 
-    local compose_cmd="docker compose -f $file $additional_compose_files"
-    
-    export DOCKER_CONTEXT=$host
+    if [ ! -f "$file" ]; then
+        echo "File $file does not exist"
+    else
+        local compose_cmd="docker compose -f $file $additional_compose_files"
+        
+        export DOCKER_CONTEXT=$host
 
-    case $action in 
-        deploy)
-            echo "Deploying $stack stack on $host..."
-            $compose_cmd up -d
-            ;;
-        undeploy)
-            echo "Undeploying $stack stack on $host..."
-            $compose_cmd down
-            ;;
-        redeploy)
-            echo "Redeploying $stack stack on $host..."
-            $compose_cmd down
-            $compose_cmd up -d
-            ;;
-        pull)
-            echo "Pulling $stack stack on $host..."
-            $compose_cmd down
-            $compose_cmd pull
-            $compose_cmd up -d
-            ;;
-    esac
+        case $action in 
+            deploy)
+                echo "Deploying $stack stack on $host..."
+                $compose_cmd up -d
+                ;;
+            undeploy)
+                echo "Undeploying $stack stack on $host..."
+                $compose_cmd down
+                ;;
+            redeploy)
+                echo "Redeploying $stack stack on $host..."
+                $compose_cmd down
+                $compose_cmd up -d
+                ;;
+            pull)
+                echo "Pulling $stack stack on $host..."
+                $compose_cmd down
+                $compose_cmd pull
+                $compose_cmd up -d
+                ;;
+        esac
+    fi
 
+    cd ../..
 }
 
 manage_stacks() {
     local stack=$1
     local action=$2
     local host=$3
-
-    cd compose/$stack
 
 
     if [ "$host" != "all" ]; then
@@ -58,8 +63,6 @@ manage_stacks() {
 
         manage_stack $stack $action $host_name
     done
-
-    cd ../..
 }
 
 
