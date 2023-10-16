@@ -10,6 +10,7 @@ services:
       # - bc_athena_hdd:/rsync
       - bc_docker_data:/backups/docker-data-fbx
       - /docker-data:/backups/docker-data-apollon
+      - ../../.env:/backups/docker-data-apollon/.env
       # - bc_athena_plex_config:/backups/plex-config
       # - bc_athena_satisfactory_backups:/backups/satisfactory/backups
       # - bc_athena_satisfactory_saved:/backups/satisfactory/saved
