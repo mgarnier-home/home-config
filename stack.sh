@@ -126,6 +126,9 @@ case $STACK in
     db)
         manage_stacks db $ACTION $HOSTNAME
         ;;
+    jellyfin)
+        manage_stacks jellyfin $ACTION $HOSTNAME
+        ;;
     all)
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
@@ -137,6 +140,7 @@ case $STACK in
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks db $ACTION $HOSTNAME
+        manage_stacks jellyfin $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"

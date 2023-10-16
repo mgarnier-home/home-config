@@ -4,7 +4,7 @@ services:
   plex:
     container_name: plex
     restart: unless-stopped
-    image: linuxserver/plex:latest
+    image: lscr.io/linuxserver/plex:latest
     runtime: nvidia
     ports:
       - ${ATHENA_PLEX_PORT}:32400

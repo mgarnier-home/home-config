@@ -9,8 +9,8 @@ services:
       - adguard_conf:/opt/adguardhome/conf
       - adguard_data:/opt/adguardhome/work
     ports:
-      - 53:53/tcp
-      - 53:53/udp
+      - ${HERMES_IP}:53:53/tcp
+      - ${HERMES_IP}:53:53/udp
       - ${HERMES_ADGUARD_PORT}:3000/tcp
     annotations:
       traefik-ports: HERMES_ADGUARD_PORT
