@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+
 set -o allexport
 source ./.env
 source ./ports.env

@@ -9,8 +9,9 @@ services:
       HOSTNAME: ${HERMES_HOSTNAME}
       ENABLE_STATS_API: true
       STATS_API_URL: ${STATS_API_URL}
-    ports:
-      - ${HERMES_NODESIGHT_PORT}:3000
+      SERVER_PORT: ${HERMES_NODESIGHT_PORT}
+    # ports:
+    #   - ${HERMES_NODESIGHT_PORT}:3000
     annotations:
       traefik-ports: HERMES_NODESIGHT_PORT
 
