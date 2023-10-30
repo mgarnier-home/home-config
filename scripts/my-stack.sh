@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ..
+cd ~/docker-configs
 
 set -o allexport
 source ./.env
@@ -84,11 +84,11 @@ case $ACTION in
 esac
 
 case $HOSTNAME in
-    all|athena|apollon|artemis|hermes)
+    all|athena|apollon|artemis|euros|hermes)
         ;;
     *)
         echo "Unknown host: $HOSTNAME"
-        echo "Usage: $0 [athena|apollon|hermes|artemis|all]"
+        echo "Usage: $0 [athena|apollon|hermes|artemis|euros|all]"
         exit 1
         ;;
 esac

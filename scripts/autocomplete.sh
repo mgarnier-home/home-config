@@ -14,7 +14,7 @@ _my_script_completion() {
             opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba db jellyfin"
             ;;
         3)
-            opts="all athena apollon hermes artemis"
+            opts="all athena apollon hermes artemis euros"
             ;;
         *)
             opts=""
@@ -24,4 +24,4 @@ _my_script_completion() {
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     return 0
 }
-complete -F _my_script_completion ./stack.sh
+complete -F _my_script_completion my-stack.sh

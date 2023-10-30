@@ -1,4 +1,4 @@
-cd ..
+cd ~/docker-configs
 
 set -o allexport
 source ./.env
