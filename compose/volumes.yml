@@ -54,3 +54,8 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/paperless/data
+  home_assistant_config:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/home-assistant/config
