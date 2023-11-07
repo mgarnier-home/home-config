@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  node-proxy:
+    image: mgarnier11/node-proxy
+    container_name: node-proxy
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - ../../ports.env
+    environment:
+      - AUTO_RELOAD_CONFIG=true
+      - CONFIG_FILE=/config/config.json
+      - API_PORT=${EUROS_NODE_PROXY_PORT}
+    volumes:
+      - node_proxy_config:/config
+    annotations:
+      traefik-ports: EUROS_NODE_PROXY_PORT
+
+  adguard:
+    container_name: adguard
+    restart: unless-stopped
+    image: adguard/adguardhome
+    volumes:
+      - adguard_conf:/opt/adguardhome/conf
+      - adguard_data:/opt/adguardhome/work
+    ports:
+      - ${EUROS_IP}:53:53/tcp
+      - ${EUROS_IP}:53:53/udp
+      - ${EUROS_ADGUARD_PORT}:3000/tcp
+    annotations:
+      traefik-ports: EUROS_ADGUARD_PORT
