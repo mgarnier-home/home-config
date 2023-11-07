@@ -1,0 +1,143 @@
+version: "3.8"
+
+services:
+  autosaver:
+    container_name: autosaver
+    restart: unless-stopped
+    image: mgarnier11/autosaver
+    volumes:
+      - bc_hetzner:/upload
+      # - bc_athena_hdd:/rsync
+      - bc_docker_data:/backups/docker-data-fbx
+      - /docker-data:/backups/docker-data-boree
+      - ../../.env:/backups/docker-data-boree/.env
+      # - bc_athena_plex_config:/backups/plex-config
+      # - bc_athena_satisfactory_backups:/backups/satisfactory/backups
+      # - bc_athena_satisfactory_saved:/backups/satisfactory/saved
+      # - bc_athena_nextcloud:/backups/nextcloud-datas
+      # - bc_athena_minecraft_1.19.2:/backups/minecraft-maps/modded-1.19.2
+      # - bc_athena_paperless:/backups/paperless
+    ports:
+      - ${BOREE_AUTOSAVER_PORT}:3000
+    annotations:
+      traefik-ports: BOREE_AUTOSAVER_PORT
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+    environment:
+      UPLOAD_STRATEGY: CP
+      ARCHIVE_STRATEGY: TAR
+
+      ENABLE_RSYNC: true
+      ENABLE_MAIL: true
+
+      FOLDER_TO_BACKUP: /backups
+      RSYNC_DEST_FOLDER: /rsync
+      UPLOAD_DEST_FOLDER: /upload/backups
+
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_SECURE: ${MAIL_SECURE}
+      MAIL_LOGIN: ${MAIL_LOGIN}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      INFO_MAIL_TO: ${INFO_MAIL_TO}
+      ERROR_MAIL_TO: ${ERROR_MAIL_TO}
+
+      UPTOBOX_TOKEN: ${UPTOBOX_TOKEN}
+
+      CRON_SCHEDULE: 15 4 * * *
+
+      SMB_CONFIG: >
+        {
+          "hosts": [
+            {
+              "ip": "${ATHENA_PROXY_IP}",
+              "user": "${SMB_USER}",
+              "password": "${SMB_PWD}",
+              "mountRoot": "/share",
+              "mounts": [
+                {
+                  "dest": "/rsync",
+                  "src": "/hdd-2/rsync"
+                },
+                {
+                  "dest": "/backups/plex-config",
+                  "src": "/ssd-1/plex"
+                },
+                {
+                  "dest": "/backups/satisfactory/backups",
+                  "src": "/ssd-1/satisfactory/backups"
+                },
+                {
+                  "dest": "/backups/satisfactory/saved",
+                  "src": "/ssd-1/satisfactory/saved"
+                },
+                {
+                  "dest": "/backups/nextcloud-datas",
+                  "src": "/hdd-1/nextcloud"
+                },
+                {
+                  "dest": "/backups/minecraft-maps/modded-1.19.2",
+                  "src": "/ssd-1/minecraft/modded-1.19.2/server-world"
+                },
+                {
+                  "dest": "/backups/paperless",
+                  "src": "/hdd-1/paperless"
+                }
+              ]
+            }
+          ]
+        }
+
+x-default_opts: &default_opts
+  type: cifs
+  # device: //192.168.0.254/SSD1/docker-data
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+
+volumes:
+  # bc_athena_hdd:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/hdd-2/rsync
+  bc_docker_data:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}
+  # bc_athena_plex_config:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/ssd-1/plex
+  # bc_athena_satisfactory_backups:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/ssd-1/satisfactory/backups
+  # bc_athena_satisfactory_saved:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/ssd-1/satisfactory/saved
+  # bc_athena_nextcloud:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/hdd-1/nextcloud
+  # bc_athena_minecraft_1.19.2:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/ssd-1/minecraft/modded-1.19.2/server-world
+  # bc_athena_paperless:
+  #   driver: local
+  #   driver_opts:
+  #     <<: *default_opts
+  #     device: //${ATHENA_PROXY_IP}/share/hdd-1/paperless
+  bc_hetzner:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: ${HETZNER_DATA}
+      o: "addr=${HETZNER_ADDR},username=${HETZNER_SMB_USER},password=${HETZNER_SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"

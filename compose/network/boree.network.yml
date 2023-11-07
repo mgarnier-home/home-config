@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  traefik:
+    container_name: traefik
+    restart: unless-stopped
+    image: mgarnier11/my-traefik
+    networks:
+      - traefik-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_data:/data
+    ports:
+      - 80:80/tcp
+      - ${BOREE_TRAEFIK_PORT}:8080/tcp
+    annotations:
+      traefik-ports: BOREE_TRAEFIK_PORT
+    environment:
+      - BOREE_IP=${BOREE_IP}
+      - HERMES_IP=${HERMES_IP}
+      - ATHENA_IP=${ATHENA_IP}
+      - ARTEMIS_IP=${ARTEMIS_IP}
+    env_file:
+      - ../../ports.env
+    command:
+      # Enable Docker in Traefik, so that it reads labels from Docker services
+      # - --providers.docker.swarmmode=true
+      # - --providers.docker.exposedbydefault=false
+      # - --providers.docker.watch=true
+      # - --providers.docker.network=traefik-net
+      - --providers.file.filename=/data/dynamic.yml
+      - --providers.file.watch=true
+      - --providers.http.endpoint=http://traefik_conf:3000/compose-config
+      - --providers.http.pollInterval=5s
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.forwardedHeaders.insecure=true
+      # - --entrypoints.samba.address=:445
+      # Enable the access log, with HTTP requests
+      - --accesslog.bufferingsize=100
+      - --accesslog.filepath=/data/logs/traefik-access.log
+      - --log.level=DEBUG
+      - --api.dashboard=true
+      - --api.insecure=true
+
+  traefik_conf:
+    container_name: traefik_conf
+    restart: unless-stopped
+    image: mgarnier11/traefik-conf
+    volumes:
+      - traefik_data:/traefik-data
+      - ../:/compose
+    environment:
+      - TRAEFIK_CONF_DIR=/traefik-data/dynamic
+      - SAVE_DATA_FILE=/traefik-data/config.json
+      - COMPOSE_DIR=/compose
+      - SERVER_PORT=3000
+      - REDIRECTION_NAME=ovh
+      - FBX_APP_TOKEN=${FBX_APP_TOKEN}
+      - FBX_APP_ID=${FBX_APP_ID}
+      - FBX_API_DOMAIN=${FBX_API_DOMAIN}
+      - FBX_HTTPS_PORT=${FBX_HTTPS_PORT}
+      - FBX_API_BASE_URL=${FBX_API_BASE_URL}
+      - FBX_API_VERSION=${FBX_API_VERSION}
+    ports:
+      - ${BOREE_TRAEFIK_CONFIG_PORT}:3000/tcp
+    annotations:
+      traefik-ports: BOREE_TRAEFIK_CONFIG_PORT
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:

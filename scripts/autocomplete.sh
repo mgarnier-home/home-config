@@ -14,7 +14,7 @@ _my_script_completion() {
             opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba db jellyfin home_assistant"
             ;;
         3)
-            opts="all athena apollon hermes artemis euros"
+            opts="all athena apollon hermes artemis euros boree"
             ;;
         *)
             opts=""

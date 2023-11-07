@@ -88,7 +88,7 @@ case $HOSTNAME in
         ;;
     *)
         echo "Unknown host: $HOSTNAME"
-        echo "Usage: $0 [athena|apollon|hermes|artemis|euros|all]"
+        echo "Usage: $0 [athena|apollon|hermes|artemis|euros|boree|all]"
         exit 1
         ;;
 esac
@@ -132,17 +132,17 @@ case $STACK in
         manage_stacks jellyfin $ACTION $HOSTNAME
         ;;
     all)
-        manage_stacks samba $ACTION $HOSTNAME
-        manage_stacks network $ACTION $HOSTNAME
-        manage_stacks monitoring $ACTION $HOSTNAME
-        manage_stacks file_server $ACTION $HOSTNAME
-        manage_stacks plex $ACTION $HOSTNAME
-        manage_stacks nextcloud $ACTION $HOSTNAME
-        manage_stacks paperless $ACTION $HOSTNAME
-        manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks db $ACTION $HOSTNAME
+        manage_stacks file_server $ACTION $HOSTNAME
         manage_stacks jellyfin $ACTION $HOSTNAME
+        manage_stacks minecraft $ACTION $HOSTNAME
+        manage_stacks monitoring $ACTION $HOSTNAME
+        manage_stacks network $ACTION $HOSTNAME
+        manage_stacks nextcloud $ACTION $HOSTNAME
+        manage_stacks samba $ACTION $HOSTNAME
+        manage_stacks paperless $ACTION $HOSTNAME
+        manage_stacks plex $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"
