@@ -1,8 +1,12 @@
 // i want a function that take in a file path (.env) and removes all the env variables from it
-// then save the file to a new file called .env.example
+// then save the file to a new file called example.env
 
+const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+
+const envFilePath = path.join(__dirname, "../.env");
+const exampleEnvFilePath = path.join(__dirname, "../example.env");
 
 function cleanEnv(filePath) {
   const envFile = fs.readFileSync(filePath, "utf8");
@@ -13,9 +17,19 @@ function cleanEnv(filePath) {
   });
 
   const newEnvFile = envFileLines.join("\n");
-  const newEnvFilePath = path.join(__dirname, "../example.env");
 
-  fs.writeFileSync(newEnvFilePath, newEnvFile);
+  fs.writeFileSync(exampleEnvFilePath, newEnvFile);
 }
 
-cleanEnv(path.join(__dirname, "../.env"));
+const exampleEnvFile = fs.readFileSync(exampleEnvFilePath, "utf8");
+
+cleanEnv(envFilePath);
+
+const newExampleEnvFile = fs.readFileSync(exampleEnvFilePath, "utf8");
+
+if (exampleEnvFile !== newExampleEnvFile) {
+  // commit the change as updated example.env
+
+  execSync("git add example.env");
+  execSync("git commit -m 'update example.env'");
+}
