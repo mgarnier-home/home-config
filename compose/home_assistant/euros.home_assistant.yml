@@ -4,10 +4,10 @@ services:
   homeassistant:
     container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
     volumes:
       - /home_assistant_config:/config
       - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
     privileged: true
     ports:
       - ${EUROS_HOME_ASSISTANT_PORT}:8123

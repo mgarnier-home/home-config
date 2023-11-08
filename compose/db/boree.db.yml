@@ -4,6 +4,7 @@ services:
   influxdb:
     container_name: influxdb
     image: influxdb:2.2
+    restart: unless-stopped
     ports:
       - ${BOREE_INFLUXDB_PORT}:8086
     volumes:

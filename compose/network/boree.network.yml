@@ -17,9 +17,8 @@ services:
       traefik-ports: BOREE_TRAEFIK_PORT
     environment:
       - BOREE_IP=${BOREE_IP}
-      - HERMES_IP=${HERMES_IP}
+      - EUROS_IP=${EUROS_IP}
       - ATHENA_IP=${ATHENA_IP}
-      - ARTEMIS_IP=${ARTEMIS_IP}
     env_file:
       - ../../ports.env
     command:
