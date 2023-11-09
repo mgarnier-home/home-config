@@ -131,6 +131,9 @@ case $STACK in
     jellyfin)
         manage_stacks jellyfin $ACTION $HOSTNAME
         ;;
+    navidrome)
+        manage_stacks navidrome $ACTION $HOSTNAME
+        ;;
     all)
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks db $ACTION $HOSTNAME
@@ -138,6 +141,7 @@ case $STACK in
         manage_stacks jellyfin $ACTION $HOSTNAME
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks monitoring $ACTION $HOSTNAME
+        manage_stacks navidrome $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
         manage_stacks nextcloud $ACTION $HOSTNAME
         manage_stacks samba $ACTION $HOSTNAME
@@ -146,7 +150,7 @@ case $STACK in
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [samba|network|monitoring|file_server|plex|nextcloud|paperless|minecraft|backup|db|all]"
+        echo "Usage: $0 [all|backup|db|file_server|jellyfin|minecraft|monitoring|navidrome|network|nextcloud|paperless|plex|samba]"
         exit 1
         ;;
 esac

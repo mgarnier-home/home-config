@@ -16,7 +16,7 @@ services:
     volumes:
       - /ssd-1/jellyfin/config:/config
       - /ssd-1/jellyfin/cache:/cache
-      - /big-hdd/plex:/media
+      - /big-hdd/media:/media
     runtime: nvidia
     # deploy:
     #   resources:

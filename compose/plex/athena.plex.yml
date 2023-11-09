@@ -17,4 +17,4 @@ services:
       # - PLEX_CLAIM=${PLEX_CLAIM}
     volumes:
       - /ssd-1/plex/config:/config
-      - /big-hdd/plex:/data
+      - /big-hdd/media:/data
