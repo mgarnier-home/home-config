@@ -11,7 +11,7 @@ _my_script_completion() {
             opts="deploy undeploy redeploy pull"
             ;;
         2)
-            opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba db jellyfin home_assistant navidrome"
+            opts="all backup file_server minecraft monitoring network nextcloud paperless samba db home_assistant media"
             ;;
         3)
             opts="all athena euros boree"

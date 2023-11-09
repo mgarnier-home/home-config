@@ -110,8 +110,8 @@ case $STACK in
     file_server)
         manage_stacks file_server $ACTION $HOSTNAME
         ;;
-    plex)
-        manage_stacks plex $ACTION $HOSTNAME
+    media)
+        manage_stacks media $ACTION $HOSTNAME
         ;;
     nextcloud)
         manage_stacks nextcloud $ACTION $HOSTNAME
@@ -128,29 +128,21 @@ case $STACK in
     db)
         manage_stacks db $ACTION $HOSTNAME
         ;;
-    jellyfin)
-        manage_stacks jellyfin $ACTION $HOSTNAME
-        ;;
-    navidrome)
-        manage_stacks navidrome $ACTION $HOSTNAME
-        ;;
     all)
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks db $ACTION $HOSTNAME
         manage_stacks file_server $ACTION $HOSTNAME
-        manage_stacks jellyfin $ACTION $HOSTNAME
+        manage_stacks media $ACTION $HOSTNAME
         manage_stacks minecraft $ACTION $HOSTNAME
         manage_stacks monitoring $ACTION $HOSTNAME
-        manage_stacks navidrome $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
         manage_stacks nextcloud $ACTION $HOSTNAME
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks paperless $ACTION $HOSTNAME
-        manage_stacks plex $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [all|backup|db|file_server|jellyfin|minecraft|monitoring|navidrome|network|nextcloud|paperless|plex|samba]"
+        echo "Usage: $0 [all|backup|db|file_server|media|minecraft|monitoring|network|nextcloud|samba|paperless]"
         exit 1
         ;;
 esac

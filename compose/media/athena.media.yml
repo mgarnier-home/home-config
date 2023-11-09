@@ -1,0 +1,103 @@
+version: "3.8"
+
+services:
+  # plex:
+  #   container_name: plex
+  #   restart: unless-stopped
+  #   image: lscr.io/linuxserver/plex:latest
+  #   runtime: nvidia
+  #   ports:
+  #     - ${ATHENA_PLEX_PORT}:32400
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Europe/Paris
+  #     - ADVERTISE_IP="https://${PLEX_URL}:443"
+  #     - NVIDIA_VISIBLE_DEVICES=all
+  #     # - PLEX_CLAIM=${PLEX_CLAIM}
+  #   volumes:
+  #     - /ssd-1/plex/config:/config
+  #     - /big-hdd/media:/data
+
+  jellyfin:
+    container_name: jellyfin
+    restart: unless-stopped
+    image: lscr.io/linuxserver/jellyfin:latest
+    ports:
+      - ${ATHENA_MEDIA_VIDEO_PORT}:8096
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - NVIDIA_VISIBLE_DEVICES=all
+      - JELLYFIN_PublishedServerUrl=192.168.0.5
+    volumes:
+      - /ssd-1/jellyfin/config:/config
+      - /ssd-1/jellyfin/cache:/cache
+      - /big-hdd/media:/media
+    runtime: nvidia
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]
+
+  # navidrome:
+  #   image: deluan/navidrome:latest
+  #   container_name: navidrome
+  #   restart: unless-stopped
+  #   # user: 1000:1000 # should be owner of volumes
+  #   ports:
+  #     - ${ATHENA_NAVIDROME_PORT}:4533
+  #   restart: unless-stopped
+  #   environment:
+  #     # Optional: put your config options customization here. Examples:
+  #     ND_SCANSCHEDULE: 1h
+  #     ND_LOGLEVEL: info  
+  #     ND_SESSIONTIMEOUT: 24h
+  #     ND_BASEURL: ""
+  #   volumes:
+  #     - /ssd-1/navidrome/data:/data
+  #     - /big-hdd/media/musics:/music:ro
+
+  gonic_music:
+    image: sentriz/gonic:v0.16.0
+    container_name: gonic_music
+    restart: unless-stopped
+    environment:
+      - TZ
+      # optionally, see more available env vars in the readme
+    ports:
+      - ${ATHENA_MEDIA_MUSIC_PORT}:80
+    volumes:
+      - /ssd-1/gonic/music/data:/data
+      - /ssd-1/gonic/music/cache:/cache # transcode / covers / etc cache dir
+      - /ssd-1/gonic/music/podcasts:/podcasts # your podcasts
+      - /ssd-1/gonic/music/playlists:/playlists # your playlists
+      - /big-hdd/media/musics:/music:ro # your music
+
+
+  gonic_sagas:
+    image: sentriz/gonic:v0.16.0
+    container_name: gonic_sagas
+    restart: unless-stopped
+    environment:
+      - TZ
+      # optionally, see more available env vars in the readme
+    ports:
+      - ${ATHENA_MEDIA_SAGAS_PORT}:80
+    volumes:
+      - /ssd-1/gonic/sagas/data:/data
+      - /ssd-1/gonic/sagas/cache:/cache # transcode / covers / etc cache dir
+      - /ssd-1/gonic/sagas/podcasts:/podcasts # your podcasts
+      - /ssd-1/gonic/sagas/playlists:/playlists # your playlists
+      - /big-hdd/media/sagas-mp3:/music:ro # your music
+
+  airsonic:
+    image: tamland/airsonic-refix:latest
+    container_name: airsonic
+    restart: unless-stopped
+    ports:
+      - ${ATHENA_AIRSONIC_PORT}:80
+    annotations:
+      traefik-ports: ATHENA_AIRSONIC_PORT
