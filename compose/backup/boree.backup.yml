@@ -7,16 +7,9 @@ services:
     image: mgarnier11/autosaver
     volumes:
       - bc_hetzner:/upload
-      # - bc_athena_hdd:/rsync
       - bc_docker_data:/backups/docker-data-fbx
       - /docker-data:/backups/docker-data-boree
       - ../../.env:/backups/docker-data-boree/.env
-      # - bc_athena_plex_config:/backups/plex-config
-      # - bc_athena_satisfactory_backups:/backups/satisfactory/backups
-      # - bc_athena_satisfactory_saved:/backups/satisfactory/saved
-      # - bc_athena_nextcloud:/backups/nextcloud-datas
-      # - bc_athena_minecraft_1.19.2:/backups/minecraft-maps/modded-1.19.2
-      # - bc_athena_paperless:/backups/paperless
     ports:
       - ${BOREE_AUTOSAVER_PORT}:3000
     annotations:
@@ -61,12 +54,16 @@ services:
                   "src": "/hdd-2/rsync"
                 },
                 {
-                  "dest": "/backups/plex-config",
-                  "src": "/ssd-1/plex"
-                },
-                {
                   "dest": "/backups/satisfactory/backups",
                   "src": "/ssd-1/satisfactory/backups"
+                },
+                {
+                  "dest": "/backups/gonic-datas",
+                  "src": "/ssd-1/gonic"
+                },
+                {
+                  "dest": "/backups/jellyfin-config",
+                  "src": "/ssd-1/jellyfin/config"
                 },
                 {
                   "dest": "/backups/satisfactory/saved",
