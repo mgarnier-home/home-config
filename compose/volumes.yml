@@ -59,3 +59,13 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/home-assistant/config
+  ntfy_cache:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/ntfy/cache
+  ntfy_data:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/ntfy/data

@@ -28,3 +28,19 @@ services:
     extends:
       file: monitoring.yml
       service: watchtower
+
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    restart: unless-stopped
+    command:
+      - serve
+    environment:
+      - TZ=${TZ}
+    ports:
+      - ${EUROS_NTFY_PORT}:80
+    volumes:
+      - ntfy_cache:/var/cache/ntfy
+      - ntfy_data:/etc/ntfy
+    annotations:
+      traefik-ports: EUROS_NTFY_PORT

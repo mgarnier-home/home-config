@@ -12,6 +12,8 @@ services:
       - AUTO_RELOAD_CONFIG=true
       - CONFIG_FILE=/config/config.json
       - API_PORT=${EUROS_NODE_PROXY_PORT}
+      - NTFY_SERVER=http://ntfy.euros.home/
+      - NTFY_TOPIC=Home
     volumes:
       - node_proxy_config:/config
     annotations:
