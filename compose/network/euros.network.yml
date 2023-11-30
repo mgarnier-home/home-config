@@ -12,7 +12,7 @@ services:
       - AUTO_RELOAD_CONFIG=true
       - CONFIG_FILE=/config/config.json
       - API_PORT=${EUROS_NODE_PROXY_PORT}
-      - NTFY_SERVER=${NTFY_SERVER}
+      - NTFY_SERVER=http://${NTFY_SERVER}/
       - NTFY_TOPIC=${NTFY_TOPIC}
     volumes:
       - node_proxy_config:/config

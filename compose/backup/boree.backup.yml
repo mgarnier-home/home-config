@@ -38,6 +38,9 @@ services:
 
       UPTOBOX_TOKEN: ${UPTOBOX_TOKEN}
 
+      NTFY_SERVER: http://${NTFY_SERVER}/
+      NTFY_TOPIC: ${NTFY_TOPIC}
+
       CRON_SCHEDULE: 15 4 * * *
 
       SMB_CONFIG: >
