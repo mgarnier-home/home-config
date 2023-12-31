@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  # gitlab-runner:
+  #   container_name: gitlab-runner
+  #   restart: unless-stopped
+  #   image: gitlab/gitlab-runner:latest
+  #   volumes:
+  #     - boree_runner_config:/etc/gitlab-runner
+  #     - /var/run/docker.sock:/var/run/docker.sock

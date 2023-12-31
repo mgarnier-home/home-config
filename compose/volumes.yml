@@ -69,3 +69,8 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/ntfy/data
+  boree_runner_config:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/runner/config

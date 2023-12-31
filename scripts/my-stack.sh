@@ -128,6 +128,9 @@ case $STACK in
     db)
         manage_stacks db $ACTION $HOSTNAME
         ;;
+    runner)
+        manage_stacks runner $ACTION $HOSTNAME
+        ;;
     all)
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks db $ACTION $HOSTNAME
@@ -137,12 +140,13 @@ case $STACK in
         manage_stacks monitoring $ACTION $HOSTNAME
         manage_stacks network $ACTION $HOSTNAME
         manage_stacks nextcloud $ACTION $HOSTNAME
+        manage_stacks runner $ACTION $HOSTNAME
         manage_stacks samba $ACTION $HOSTNAME
         manage_stacks paperless $ACTION $HOSTNAME
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [all|backup|db|file_server|media|minecraft|monitoring|network|nextcloud|samba|paperless]"
+        echo "Usage: $0 [all|backup|db|file_server|media|minecraft|monitoring|network|nextcloud|runner|samba|paperless]"
         exit 1
         ;;
 esac
