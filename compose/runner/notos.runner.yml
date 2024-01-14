@@ -6,5 +6,5 @@ services:
     restart: unless-stopped
     image: gitlab/gitlab-runner:latest
     volumes:
-      - gitlab_runner_boree:/etc/gitlab-runner
+      - gitlab_runner_notos:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
