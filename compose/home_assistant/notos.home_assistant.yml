@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    volumes:
+      - /docker-data/home_assistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    ports:
+      - ${NOTOS_HOME_ASSISTANT_PORT}:8123
+    annotations:
+      traefik-ports: NOTOS_HOME_ASSISTANT_PORT
+
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    volumes:
+      - mosquitto_log:/mosquitto/log
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_config:/mosquitto/config
+    ports:
+      - ${NOTOS_MOSQUITTO_1_PORT}:1883
+      - ${NOTOS_MOSQUITTO_2_PORT}:9001

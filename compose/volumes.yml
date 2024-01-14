@@ -69,8 +69,39 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/ntfy/data
-  boree_runner_config:
+  mosquitto_data:
     driver: local
     driver_opts:
       <<: *default_opts
-      device: ${DOCKER_DATA}/runner/config
+      device: ${DOCKER_DATA}/mosquitto/data
+  mosquitto_log:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/mosquitto/log
+  mosquitto_config:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/mosquitto/config
+
+  gitlab_runner_boree:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/runner/boree
+  gitlab_runner_euros:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/runner/euros
+  gitlab_runner_notos:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/runner/notos
+  gitlab_runner_zephyr:
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/runner/zephyr
