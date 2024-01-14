@@ -5,6 +5,8 @@ Divisés en plusieurs `stack`, chaque `stack` peut etre déployée sur un ou plu
 
 ### Avant de commencer
 
+Installer les git hooks : `git config --local include.path ../.gitconfig`
+
 #### Host principal
 
 - Vérifier que les scripts sont executable `chmod +x scripts/*.sh`
