@@ -84,11 +84,11 @@ case $ACTION in
 esac
 
 case $HOSTNAME in
-    all|athena|euros|boree)
+    all|athena|euros|boree|notos|zephyr)
         ;;
     *)
         echo "Unknown host: $HOSTNAME"
-        echo "Usage: $0 [athena|euros|boree|all]"
+        echo "Usage: $0 [athena|euros|boree|notos|zephyr|all]"
         exit 1
         ;;
 esac

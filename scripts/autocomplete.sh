@@ -14,7 +14,7 @@ _my_script_completion() {
             opts="all backup file_server minecraft monitoring network nextcloud paperless runner samba db home_assistant media"
             ;;
         3)
-            opts="all athena euros boree"
+            opts="all athena euros boree notos zephyr"
             ;;
         *)
             opts=""
