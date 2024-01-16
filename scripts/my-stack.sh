@@ -134,7 +134,11 @@ case $STACK in
     home_assistant)
         manage_stacks home_assistant $ACTION $HOSTNAME
         ;;
+    syslog)
+        manage_stacks syslog $ACTION $HOSTNAME
+        ;;
     all)
+        manage_stacks syslog $ACTION $HOSTNAME
         manage_stacks backup $ACTION $HOSTNAME
         manage_stacks db $ACTION $HOSTNAME
         manage_stacks file_server $ACTION $HOSTNAME
@@ -150,7 +154,7 @@ case $STACK in
         ;;
     *)
         echo "Unknown stack: $STACK"
-        echo "Usage: $0 [all|backup|db|file_server|home_assistant|media|minecraft|monitoring|network|nextcloud|runner|samba|paperless]"
+        echo "Usage: $0 [all|backup|db|file_server|home_assistant|media|minecraft|monitoring|network|nextcloud|runner|samba|paperless|syslog]"
         exit 1
         ;;
 esac

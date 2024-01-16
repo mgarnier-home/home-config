@@ -9,6 +9,10 @@ services:
       - /docker-data/home_assistant:/config
       - /etc/localtime:/etc/localtime:ro
     privileged: true
+    environment:
+      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
     ports:
       - ${NOTOS_HOME_ASSISTANT_PORT}:8123
     annotations:
@@ -19,7 +23,6 @@ services:
     container_name: mosquitto
     restart: unless-stopped
     volumes:
-      - mosquitto_log:/mosquitto/log
       - mosquitto_data:/mosquitto/data
       - mosquitto_config:/mosquitto/config
     ports:

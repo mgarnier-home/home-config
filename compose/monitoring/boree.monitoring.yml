@@ -42,6 +42,11 @@ services:
       - ${BOREE_DASHBOARD_PORT}:3000
     annotations:
       traefik-ports: BOREE_DASHBOARD_PORT
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://${ZEPHYR_IP}:514"
+        tag: "DCMSG:{{.Name}}:{{.ID}}"
 
   stats-api:
     container_name: stats-api
@@ -54,9 +59,10 @@ services:
       DB_TOKEN: ${INFLUXDB_TOKEN}
     ports:
       - ${BOREE_STATS_API_PORT}:3000
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     syslog-address: "file:///path/to/your/logfile"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://${ZEPHYR_IP}:514"
+        tag: "DCMSG:{{.Name}}:{{.ID}}"
     annotations:
       traefik-ports: BOREE_STATS_API_PORT
