@@ -25,7 +25,7 @@ services:
     image: adguard/adguardhome
     volumes:
       - adguard_conf:/opt/adguardhome/conf
-      - adguard_data:/opt/adguardhome/work
+      - adguard_data:/opt/adguardhome/work/data
     ports:
       - ${EUROS_IP}:53:53/tcp
       - ${EUROS_IP}:53:53/udp

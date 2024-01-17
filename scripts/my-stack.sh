@@ -97,65 +97,27 @@ STACK=${2:-all}
 
 echo "Args are: $ACTION $STACK $HOSTNAME"
 
+
+STACKS=("backup" "db" "file_server" "home_assistant" "media" "minecraft" "monitoring" "network" "nextcloud" "paperless" "runner" "samba" "syslog")
+
 case $STACK in
-    samba)
-        manage_stacks samba $ACTION $HOSTNAME
-        ;;
-    network)
-        manage_stacks network $ACTION $HOSTNAME
-        ;;
-    monitoring)
-        manage_stacks monitoring $ACTION $HOSTNAME
-        ;;
-    file_server)
-        manage_stacks file_server $ACTION $HOSTNAME
-        ;;
-    media)
-        manage_stacks media $ACTION $HOSTNAME
-        ;;
-    nextcloud)
-        manage_stacks nextcloud $ACTION $HOSTNAME
-        ;;
-    paperless)
-        manage_stacks paperless $ACTION $HOSTNAME
-        ;;
-    minecraft)
-        manage_stacks minecraft $ACTION $HOSTNAME
-        ;;
-    backup)
-        manage_stacks backup $ACTION $HOSTNAME
-        ;;
-    db)
-        manage_stacks db $ACTION $HOSTNAME
-        ;;
-    runner)
-        manage_stacks runner $ACTION $HOSTNAME
-        ;;
-    home_assistant)
-        manage_stacks home_assistant $ACTION $HOSTNAME
-        ;;
-    syslog)
-        manage_stacks syslog $ACTION $HOSTNAME
-        ;;
     all)
-        manage_stacks syslog $ACTION $HOSTNAME
-        manage_stacks backup $ACTION $HOSTNAME
-        manage_stacks db $ACTION $HOSTNAME
-        manage_stacks file_server $ACTION $HOSTNAME
-        manage_stacks home_assistant $ACTION $HOSTNAME
-        manage_stacks media $ACTION $HOSTNAME
-        manage_stacks minecraft $ACTION $HOSTNAME
-        manage_stacks monitoring $ACTION $HOSTNAME
-        manage_stacks network $ACTION $HOSTNAME
-        manage_stacks nextcloud $ACTION $HOSTNAME
-        manage_stacks runner $ACTION $HOSTNAME
-        manage_stacks samba $ACTION $HOSTNAME
-        manage_stacks paperless $ACTION $HOSTNAME
+        # If the selected stack is 'all', loop through all stacks
+        for stack in "${STACKS[@]}"; do
+            manage_stacks "$stack" "$ACTION" "$HOSTNAME"
+        done
         ;;
     *)
-        echo "Unknown stack: $STACK"
-        echo "Usage: $0 [all|backup|db|file_server|home_assistant|media|minecraft|monitoring|network|nextcloud|runner|samba|paperless|syslog]"
-        exit 1
+        # Check if the selected stack is in the STACKS array
+        if [[ " ${STACKS[*]} " =~ " $STACK " ]]; then
+            # Call manage_stacks for the selected stack
+            manage_stacks "$STACK" "$ACTION" "$HOSTNAME"
+        else
+            # If the stack is not found, show an error message
+            echo "Unknown stack: $STACK"
+            echo "Available stacks: ${STACKS[*]}"
+            exit 1
+        fi
         ;;
 esac
 

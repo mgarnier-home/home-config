@@ -24,7 +24,12 @@ services:
           "${EUROS_IP}": "${EUROS_HOSTNAME}",
           "${ZEPHYR_IP}": "${ZEPHYR_HOSTNAME}"
         }
-      MAX_LOG_FILE_SIZE: 1073741824 # 1GB
+      MAX_LOG_FILE_SIZE: 67108864
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 x-default_opts: &default_opts
   type: cifs
