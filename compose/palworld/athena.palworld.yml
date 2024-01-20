@@ -1,0 +1,16 @@
+version: "3"
+services:
+  palworld-server:
+    container_name: palworld-server
+    image: kagurazakanyaa/palworld:latest
+    ports:
+      - 4269:8211/udp
+    volumes:
+      - /ssd-1/palworld:/opt/palworld/Pal/Saved
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - GAMEPLAYERS=4
+      - MULTITHREAD=true
+      - IS_PUBLIC=false
+    restart: unless-stopped

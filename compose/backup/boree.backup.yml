@@ -70,6 +70,10 @@ services:
                   "src": "/ssd-1/jellyfin/config"
                 },
                 {
+                  "dest": "/backups/palworld",
+                  "src": "/ssd-1/palworld"
+                },
+                {
                   "dest": "/backups/satisfactory/saved",
                   "src": "/ssd-1/satisfactory/saved"
                 },
