@@ -5,97 +5,116 @@ x-default_opts: &default_opts
 
 volumes:
   adguard_data:
+    name: adguard_data
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/adguard/work
   adguard_conf:
+    name: adguard_conf
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/adguard/conf
   traefik_data:
+    name: traefik_data
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/traefik
   dashy_config:
+    name: dashy_config
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/dashy
   dashboard_config:
+    name: dashboard_config
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/dashboard
   nextcloud_db:
+    name: nextcloud_db
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/nextcloud/db
   nextcloud_config:
+    name: nextcloud_config
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/nextcloud/config
   node_proxy_config:
+    name: node_proxy_config
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/node-proxy
   paperless_db:
+    name: paperless_db
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/paperless/db
   paperless_data:
+    name: paperless_data
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/paperless/data
   home_assistant_config:
+    name: home_assistant_config
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/home-assistant/config
   ntfy_cache:
+    name: ntfy_cache
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/ntfy/cache
   ntfy_data:
+    name: ntfy_data
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/ntfy/data
   mosquitto_data:
+    name: mosquitto_data
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/mosquitto/data
   mosquitto_config:
+    name: mosquitto_config
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/mosquitto/config
 
   gitlab_runner_boree:
+    name: gitlab_runner_boree
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/runner/boree
   gitlab_runner_euros:
+    name: gitlab_runner_euros
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/runner/euros
   gitlab_runner_notos:
+    name: gitlab_runner_notos
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/runner/notos
   gitlab_runner_zephyr:
+    name: gitlab_runner_zephyr
     driver: local
     driver_opts:
       <<: *default_opts

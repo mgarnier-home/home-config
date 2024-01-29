@@ -101,16 +101,19 @@ x-default_opts: &default_opts
 
 volumes:
   bc_docker_data_fbx:
+    name: bc_docker_data_fbx
     driver: local
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}
   bc_docker_data_notos:
+    name: bc_docker_data_notos
     driver: local
     driver_opts:
       <<: *default_opts
       device: //${NOTOS_IP}/share/docker-data
   bc_hetzner:
+    name: bc_hetzner
     driver: local
     driver_opts:
       type: cifs

@@ -8,8 +8,8 @@ services:
     volumes:
       - /ssd-1/palworld:/opt/palworld/Pal/Saved
     environment:
-      - PGID=1000
-      - PUID=1000
+      - PGID=${PGID}
+      - PUID=${PUID}
       - GAMEPLAYERS=4
       - MULTITHREAD=true
       - IS_PUBLIC=false

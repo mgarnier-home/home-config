@@ -38,6 +38,7 @@ x-default_opts: &default_opts
 
 volumes:
   logs:
+    name: logs
     driver: local
     driver_opts:
       <<: *default_opts

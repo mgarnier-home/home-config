@@ -11,8 +11,8 @@ services:
     privileged: true
     environment:
       - TZ=${TZ}
-      - PUID=1000
-      - PGID=1000
+      - PUID=${PUID}
+      - PGID=${PGID}
     ports:
       - ${NOTOS_HOME_ASSISTANT_PORT}:8123
     annotations:
