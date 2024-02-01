@@ -24,4 +24,4 @@ _my_script_completion() {
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     return 0
 }
-complete -F _my_script_completion my-stack.sh
+complete -F _my_script_completion mastack.sh
