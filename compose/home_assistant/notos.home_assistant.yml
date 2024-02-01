@@ -10,7 +10,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     privileged: true
     environment:
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
       - PUID=${PUID}
       - PGID=${PGID}
     ports:

@@ -11,7 +11,7 @@ services:
   #   environment:
   #     - PUID=${PUID}
   #     - PGID=${PGID}
-  #     - TZ=${TZ}
+  #     - TZ=${TIMEZONE}
   #     - ADVERTISE_IP="https://${PLEX_URL}:443"
   #     - NVIDIA_VISIBLE_DEVICES=all
   #     # - PLEX_CLAIM=${PLEX_CLAIM}
@@ -28,7 +28,7 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
       - NVIDIA_VISIBLE_DEVICES=all
       - JELLYFIN_PublishedServerUrl=192.168.0.5
     volumes:
@@ -65,7 +65,7 @@ services:
     container_name: gonic_music
     restart: unless-stopped
     environment:
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
       # optionally, see more available env vars in the readme
     ports:
       - ${ATHENA_MEDIA_MUSIC_PORT}:80
@@ -81,7 +81,7 @@ services:
     container_name: gonic_sagas
     restart: unless-stopped
     environment:
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
       # optionally, see more available env vars in the readme
     ports:
       - ${ATHENA_MEDIA_SAGAS_PORT}:80

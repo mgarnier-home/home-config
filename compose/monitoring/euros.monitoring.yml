@@ -36,7 +36,7 @@ services:
     command:
       - serve
     environment:
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
     ports:
       - ${EUROS_NTFY_PORT}:80
     volumes:
