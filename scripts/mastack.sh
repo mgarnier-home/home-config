@@ -100,7 +100,7 @@ STACK=${2:-all}
 echo "Args are: $ACTION $STACK $HOSTNAME"
 
 
-STACKS=("samba" "backup" "db" "file_server" "home_assistant" "media" "minecraft" "monitoring" "network" "nextcloud" "paperless" "palworld" "runner" "syslog")
+STACKS=("samba" "backup" "db" "file_server" "home_assistant" "media" "minecraft" "misc" "monitoring" "network" "nextcloud" "paperless" "palworld" "runner" "syslog")
 
 case $STACK in
     all)

@@ -1,4 +1,5 @@
-version: "3"
+version: "3.8"
+
 services:
   palworld-server:
     container_name: palworld-server
@@ -6,7 +7,8 @@ services:
     ports:
       - 4269:8211/udp
     volumes:
-      - /ssd-1/palworld:/opt/palworld/Pal/Saved
+      - /ssd-1/palworld/Saved:/opt/palworld/Pal/Saved
+      - /ssd-1/palworld/Mods:/opt/palworld/Pal/Content/Paks/MOD
     environment:
       - PGID=${PGID}
       - PUID=${PUID}
