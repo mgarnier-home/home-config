@@ -1,24 +1,6 @@
 version: "3.8"
 
 services:
-  # plex:
-  #   container_name: plex
-  #   restart: unless-stopped
-  #   image: lscr.io/linuxserver/plex:latest
-  #   runtime: nvidia
-  #   ports:
-  #     - ${ATHENA_PLEX_PORT}:32400
-  #   environment:
-  #     - PUID=${PUID}
-  #     - PGID=${PGID}
-  #     - TZ=${TIMEZONE}
-  #     - ADVERTISE_IP="https://${PLEX_URL}:443"
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #     # - PLEX_CLAIM=${PLEX_CLAIM}
-  #   volumes:
-  #     - /ssd-1/plex/config:/config
-  #     - /big-hdd/media:/data
-
   jellyfin:
     container_name: jellyfin
     restart: unless-stopped
@@ -41,24 +23,6 @@ services:
     #     reservations:
     #       devices:
     #         - capabilities: [gpu]
-
-  # navidrome:
-  #   image: deluan/navidrome:latest
-  #   container_name: navidrome
-  #   restart: unless-stopped
-  #   # user: 1000:1000 # should be owner of volumes
-  #   ports:
-  #     - ${ATHENA_NAVIDROME_PORT}:4533
-  #   restart: unless-stopped
-  #   environment:
-  #     # Optional: put your config options customization here. Examples:
-  #     ND_SCANSCHEDULE: 1h
-  #     ND_LOGLEVEL: info
-  #     ND_SESSIONTIMEOUT: 24h
-  #     ND_BASEURL: ""
-  #   volumes:
-  #     - /ssd-1/navidrome/data:/data
-  #     - /big-hdd/media/musics:/music:ro
 
   gonic_music:
     image: sentriz/gonic:v0.16.0
