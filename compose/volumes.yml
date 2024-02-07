@@ -94,6 +94,12 @@ volumes:
     driver_opts:
       <<: *default_opts
       device: ${DOCKER_DATA}/mosquitto/config
+  wireguard_config:
+    name: wireguard_config
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${DOCKER_DATA}/wireguard
 
   gitlab_runner_boree:
     name: gitlab_runner_boree

@@ -1,5 +1,18 @@
 #!/bin/bash
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Read JSON file
+STACK_JSON_FILE="$SCRIPT_DIR/stack.json"
+if [ ! -f "$STACK_JSON_FILE" ]; then
+    echo "Error: $STACK_JSON_FILE not found."
+    exit 1
+fi
+
+ACTIONS=($(jq -r '.actions[]' $STACK_JSON_FILE | tr -d '\r'))
+HOSTS=($(jq -r '.hosts[]' $STACK_JSON_FILE | tr -d '\r'))
+STACKS=($(jq -r '.stacks[]' $STACK_JSON_FILE | tr -d '\r'))
+
 _my_script_completion() {
     local cur prev opts
     COMPREPLY=()
@@ -8,13 +21,13 @@ _my_script_completion() {
     
     case ${COMP_CWORD} in
         1)
-            opts="deploy undeploy redeploy pull"
+            opts=$(echo ${ACTIONS[*]})
             ;;
         2)
-            opts="all backup code_server file_server minecraft misc monitoring network nextcloud paperless palworld runner samba db home_assistant media syslog"
+            opts=$(echo ${STACKS[*]})
             ;;
         3)
-            opts="all athena euros boree notos zephyr"
+            opts=$(echo ${HOSTS[*]})
             ;;
         *)
             opts=""

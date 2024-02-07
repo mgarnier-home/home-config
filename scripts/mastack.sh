@@ -1,14 +1,54 @@
 #!/bin/bash
 
+# DRY=true
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cd $SCRIPT_DIR/..
 
+# Read JSON file
+STACK_JSON_FILE="$SCRIPT_DIR/stack.json"
+if [ ! -f "$STACK_JSON_FILE" ]; then
+    echo "Error: $STACK_JSON_FILE not found."
+    exit 1
+fi
+
+ACTIONS=($(jq -r '.actions[]' $STACK_JSON_FILE | tr -d '\r'))
+HOSTS=($(jq -r '.hosts[]' $STACK_JSON_FILE | tr -d '\r'))
+STACKS=($(jq -r '.stacks[]' $STACK_JSON_FILE | tr -d '\r'))
+
+declare -A AFTER_SCRIPTS
+while IFS="=" read -r key value; do
+    AFTER_SCRIPTS["$key"]="$value"
+done < <(jq -r '.afterScript | to_entries[] | "\(.key)=\(.value)"' $STACK_JSON_FILE | tr -d '\r')
+
+
+# Retrieve environment variables from .env and ports.env
 set -o allexport
 source ./.env
 source ./ports.env
 
+# Set the additional compose files
 additional_compose_files="-f ../volumes.yml"
+
+print_array() {
+    local array=("$1")
+    for item in "${array[@]}"; do
+        echo "$item"
+    done
+}
+
+check_param() {
+    local paramName=$1
+    local param=$2
+    local array=("$3")
+
+    if [ $(echo ${array[*]} | grep -o $param | wc -l) -eq 0 ]; then
+        echo "Unknown $paramName: $param"
+        echo "Available $paramName: "
+        print_array "${array[*]}"
+        exit 1
+    fi
+}
 
 manage_stack() {
     cd compose/$stack
@@ -22,6 +62,11 @@ manage_stack() {
         echo "File $file does not exist"
     else
         local compose_cmd="docker compose -f $file $additional_compose_files"
+        local script_key="$action $stack $host"
+
+        if [ "$DRY" = true ]; then
+            compose_cmd="echo DRY RUN $compose_cmd"
+        fi
         
         export DOCKER_CONTEXT=$host
 
@@ -46,6 +91,14 @@ manage_stack() {
                 $compose_cmd up -d
                 ;;
         esac
+
+        if [ -n "${AFTER_SCRIPTS[$script_key]}" ]; then
+            local after_script=${AFTER_SCRIPTS[$script_key]}
+            echo "Running after script for $script_key : $after_script"
+            $after_script
+        fi
+
+        unset DOCKER_CONTEXT
     fi
 
     cd ../..
@@ -73,39 +126,20 @@ manage_stacks() {
 
 
 ACTION=${1}
+STACK=${2:-all}
 HOSTNAME=${3:-all}
 
-case $ACTION in
-    deploy|undeploy|redeploy|pull)
-        ;;
-    *)
-        echo "Unknown action: $ACTION"
-        echo "Usage: $0 [deploy|undeploy|redeploy|pull]"
-        exit 1
-        ;;
-esac
-
-case $HOSTNAME in
-    all|athena|euros|boree|notos|zephyr)
-        ;;
-    *)
-        echo "Unknown host: $HOSTNAME"
-        echo "Usage: $0 [athena|euros|boree|notos|zephyr|all]"
-        exit 1
-        ;;
-esac
-
-STACK=${2:-all}
+check_param "action" $ACTION "${ACTIONS[*]}"
+check_param "stack" $STACK "${STACKS[*]}"
+check_param "host" $HOSTNAME "${HOSTS[*]}"
 
 echo "Args are: $ACTION $STACK $HOSTNAME"
-
-
-STACKS=("samba" "backup" "db" "file_server" "home_assistant" "media" "minecraft" "misc" "monitoring" "network" "nextcloud" "paperless" "palworld" "runner" "syslog")
 
 case $STACK in
     all)
         # If the selected stack is 'all', loop through all stacks
         for stack in "${STACKS[@]}"; do
+            echo "Managing $stack stack..."
             manage_stacks "$stack" "$ACTION" "$HOSTNAME"
         done
         ;;
