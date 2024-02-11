@@ -3,7 +3,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR/..
 
 set -o allexport
-source ./.env
+source ./env/.env
 
 docker context create boree --docker "host=ssh://${SSH_USER}@${BOREE_IP}"
 docker context create athena --docker "host=ssh://${SSH_USER}@${ATHENA_IP}"

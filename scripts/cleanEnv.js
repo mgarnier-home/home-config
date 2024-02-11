@@ -5,8 +5,8 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const envFilePath = path.join(__dirname, '../.env');
-const exampleEnvFilePath = path.join(__dirname, '../example.env');
+const envFilePath = path.join(__dirname, '../env/.env');
+const exampleEnvFilePath = path.join(__dirname, '../env/example.env');
 
 function cleanEnv(filePath) {
   const envFile = fs.readFileSync(filePath, 'utf8');
@@ -31,6 +31,6 @@ const newExampleEnvFile = fs.readFileSync(exampleEnvFilePath, 'utf8');
 if (exampleEnvFile !== newExampleEnvFile) {
   // commit the change as updated example.env
 
-  execSync('git add example.env');
+  execSync('git add env/example.env');
   execSync("git commit -m 'update example.env'");
 }

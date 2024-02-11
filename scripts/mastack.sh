@@ -24,8 +24,8 @@ done < <(jq -r '.afterScript | to_entries[] | "\(.key)=\(.value)"' $STACK_JSON_F
 
 # Retrieve environment variables from .env and ports.env
 set -o allexport
-source ./.env
-source ./ports.env
+source ./env/.env
+source ./env/ports.env
 
 # Set the additional compose files
 additional_compose_files="-f ../volumes.yml"

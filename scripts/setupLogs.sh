@@ -11,6 +11,7 @@ setupLogs() {
     if [ -f /etc/docker/daemon.json ]; then
       sudo mv -f /etc/docker/daemon.json /etc/docker/daemon.json.save
     fi
+
     echo '{
       \"log-driver\": \"syslog\",
       \"log-opts\": {
@@ -25,7 +26,7 @@ setupLogs() {
 }
 
 set -o allexport
-source ./.env
+source ./env/.env
 
 setupLogs $SSH_USER $BOREE_IP
 setupLogs $SSH_USER $EUROS_IP
