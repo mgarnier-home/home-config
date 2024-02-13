@@ -16,16 +16,10 @@ ACTIONS=($(jq -r '.actions[]' $STACK_JSON_FILE | tr -d '\r'))
 HOSTS=($(jq -r '.hosts[]' $STACK_JSON_FILE | tr -d '\r'))
 STACKS=($(jq -r '.stacks[]' $STACK_JSON_FILE | tr -d '\r'))
 
-declare -A AFTER_SCRIPTS
-while IFS="=" read -r key value; do
-    AFTER_SCRIPTS["$key"]="$value"
-done < <(jq -r '.afterScript | to_entries[] | "\(.key)=\(.value)"' $STACK_JSON_FILE | tr -d '\r')
-
-
 # Retrieve environment variables from .env and ports.env
 set -o allexport
-source ./env/.env
-source ./env/ports.env
+source .env
+source ports.env
 
 # Set the additional compose files
 additional_compose_files="-f ../volumes.yml"
@@ -62,7 +56,6 @@ manage_stack() {
         echo "File $file does not exist"
     else
         local compose_cmd="docker compose -f $file $additional_compose_files"
-        local script_key="$action $stack $host"
 
         if [ "$DRY" = true ]; then
             compose_cmd="echo DRY RUN $compose_cmd"
@@ -91,12 +84,6 @@ manage_stack() {
                 $compose_cmd up -d
                 ;;
         esac
-
-        if [ -n "${AFTER_SCRIPTS[$script_key]}" ]; then
-            local after_script=${AFTER_SCRIPTS[$script_key]}
-            echo "Running after script for $script_key : $after_script"
-            $after_script
-        fi
 
         unset DOCKER_CONTEXT
     fi

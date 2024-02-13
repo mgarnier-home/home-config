@@ -19,8 +19,5 @@
     "runner",
     "syslog",
     "wireguard"
-  ],
-  "afterScript": {
-    "deploy network boree": "docker cp ../../compose traefik_conf:/compose"
-  }
+  ]
 }

@@ -47,8 +47,9 @@ services:
     image: mgarnier11/traefik-conf
     volumes:
       - traefik_data:/traefik-data
-      # ../:/compose doesnt work on windows, using an after script to copy the content of ../ to /compose as it is not needed at startup but only when a request comes to the api
-      # - ../:/compose
+      - type: bind
+        source: ../../
+        target: /compose
     environment:
       - TRAEFIK_CONF_DIR=/traefik-data/dynamic
       - SAVE_DATA_FILE=/traefik-data/config.json

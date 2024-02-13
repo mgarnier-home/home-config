@@ -26,7 +26,7 @@ setupLogs() {
 }
 
 set -o allexport
-source ./env/.env
+source .env
 
 setupLogs $SSH_USER $BOREE_IP
 setupLogs $SSH_USER $EUROS_IP
