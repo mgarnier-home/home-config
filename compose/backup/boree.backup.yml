@@ -10,7 +10,7 @@ services:
       - bc_docker_data_fbx:/backups/docker-data-fbx
       # - bc_docker_data_notos:/backups/docker-data-notos
       - /docker-data:/backups/docker-data-boree
-      - ../../env:/backups/docker-data-boree/env
+      # - ../../env:/backups/docker-data-boree/env
     ports:
       - ${BOREE_AUTOSAVER_PORT}:3000
     annotations:

@@ -21,6 +21,8 @@ services:
       - ATHENA_IP=${ATHENA_IP}
     env_file:
       - ../../ports.env
+    depends_on:
+      - traefik_conf
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       # - --providers.docker.swarmmode=true
@@ -47,9 +49,8 @@ services:
     image: mgarnier11/traefik-conf
     volumes:
       - traefik_data:/traefik-data
-      - type: bind
-        source: ../../
-        target: /compose
+      - /home/$SSH_USER/compose:/compose
+
     environment:
       - TRAEFIK_CONF_DIR=/traefik-data/dynamic
       - SAVE_DATA_FILE=/traefik-data/config.json
