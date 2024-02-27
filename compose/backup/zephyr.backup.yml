@@ -4,7 +4,7 @@ services:
   autosaver:
     container_name: autosaver
     restart: unless-stopped
-    image: mgarnier11/autosaver
+    image: mgarnier11/autosaver:1.0.11
     volumes:
       - bc_hetzner:/upload
       # - bc_docker_data_fbx:/backups/docker-data-fbx
