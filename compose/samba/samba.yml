@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     image: dperson/samba
     environment:
-      - USERID=1000
-      - GROUPID=1000
+      - USERID=0
+      - GROUPID=0
     ports:
       # - 139:139/tcp
       - 445:445/tcp
