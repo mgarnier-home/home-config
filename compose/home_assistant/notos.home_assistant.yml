@@ -17,6 +17,12 @@ services:
       - ${NOTOS_HOME_ASSISTANT_PORT}:8123
     annotations:
       traefik-ports: NOTOS_HOME_ASSISTANT_PORT
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
 
   mosquitto:
     image: eclipse-mosquitto
@@ -28,3 +34,21 @@ services:
     ports:
       - ${NOTOS_MOSQUITTO_1_PORT}:1883
       - ${NOTOS_MOSQUITTO_2_PORT}:9001
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mosquitto_sub",
+          "-t",
+          "$$SYS/#",
+          "-C",
+          "1",
+          "-i",
+          "healthcheck",
+          "-W",
+          "3",
+        ]
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s

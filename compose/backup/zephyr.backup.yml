@@ -4,7 +4,7 @@ services:
   autosaver:
     container_name: autosaver
     restart: unless-stopped
-    image: mgarnier11/autosaver:2.0.4
+    image: mgarnier11/autosaver
     volumes:
       - autosaver_config:/config
     ports:
@@ -19,3 +19,4 @@ services:
       - BACKUP_CONFIG_PATH=/config/config-zephyr.yml
       - NTFY_SERVER=${NTFY_SERVER}
       - NTFY_TOPIC=${NTFY_TOPIC}
+      - LOG_LEVEL=5
