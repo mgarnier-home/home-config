@@ -19,4 +19,5 @@ services:
       - BACKUP_CONFIG_PATH=/config/config-zephyr.yml
       - NTFY_SERVER=${NTFY_SERVER}
       - NTFY_TOPIC=${NTFY_TOPIC}
-      - LOG_LEVEL=5
+      - ARCHIVE_API_TYPE=zip
+      # - LOG_LEVEL=5
