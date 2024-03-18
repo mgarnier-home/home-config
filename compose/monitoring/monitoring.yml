@@ -1,23 +1,16 @@
-version: "3.8"
-
 services:
-  glances:
-    container_name: glances
-    restart: unless-stopped
-    image: nicolargo/glances:ubuntu-latest-full
-    pid: host
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - GLANCES_OPT=-d -t 1 -w
-      - NVIDIA_VISIBLE_DEVICES=all
-
   dozzle:
     container_name: dozzle
     restart: unless-stopped
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   watchtower:
     image: containrrr/watchtower:latest

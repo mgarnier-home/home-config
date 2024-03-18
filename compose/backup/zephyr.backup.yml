@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   autosaver:
     container_name: autosaver

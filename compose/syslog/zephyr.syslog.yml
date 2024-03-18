@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   syslog-app:
     container_name: syslog-app

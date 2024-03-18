@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   jellyfin:
     container_name: jellyfin
@@ -19,11 +17,12 @@ services:
       - /big-hdd/media:/media
     runtime: nvidia
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8096"]
-      interval: 60s
-      retries: 5
-      start_period: 20s
+      test: curl -f http://localhost:8096 || exit 1
+      interval: 30s
       timeout: 10s
+      retries: 3
+      start_period: 10s
+
     deploy:
       resources:
         reservations:
@@ -48,11 +47,11 @@ services:
       - /ssd-1/gonic/music/playlists:/playlists # your playlists
       - /big-hdd/media/musics:/music:ro # your music
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:80/ping"]
-      interval: 60s
-      retries: 5
-      start_period: 20s
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:80/ping || exit 1
+      interval: 30s
       timeout: 10s
+      retries: 3
+      start_period: 10s
 
   gonic_sagas:
     image: sentriz/gonic:v0.16.0
@@ -70,11 +69,11 @@ services:
       - /ssd-1/gonic/sagas/playlists:/playlists # your playlists
       - /big-hdd/media/sagas-mp3:/music:ro # your music
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:80/ping"]
-      interval: 60s
-      retries: 5
-      start_period: 20s
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:80/ping || exit 1
+      interval: 30s
       timeout: 10s
+      retries: 3
+      start_period: 10s
 
   airsonic:
     image: tamland/airsonic-refix:latest
@@ -85,8 +84,8 @@ services:
     annotations:
       traefik-ports: ATHENA_AIRSONIC_PORT
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 60s
-      retries: 5
-      start_period: 20s
+      test: curl -f http://localhost
+      interval: 30s
       timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   nodesight:
     extends:
@@ -10,10 +8,14 @@ services:
       ENABLE_STATS_API: true
       STATS_API_URL: ${STATS_API_URL}
       SERVER_PORT: ${ZEPHYR_NODESIGHT_PORT}
-    # ports:
-    #   - ${ZEPHYR_NODESIGHT_PORT}:3000
     annotations:
       traefik-ports: ZEPHYR_NODESIGHT_PORT
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:${ZEPHYR_NODESIGHT_PORT} || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   dozzle:
     extends:

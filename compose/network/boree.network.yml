@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   traefik:
     container_name: traefik
@@ -40,8 +38,15 @@ services:
       - --accesslog.bufferingsize=100
       - --accesslog.filepath=/data/logs/traefik-access.log
       - --log.level=DEBUG
+      - --ping=true
       - --api.dashboard=true
       - --api.insecure=true
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:8080/ping || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   traefik_conf:
     container_name: traefik_conf
@@ -50,7 +55,6 @@ services:
     volumes:
       - traefik_data:/traefik-data
       - /home/$SSH_USER/compose:/compose
-
     environment:
       - TRAEFIK_CONF_DIR=/traefik-data/dynamic
       - SAVE_DATA_FILE=/traefik-data/config.json
@@ -69,6 +73,12 @@ services:
       traefik-ports: BOREE_TRAEFIK_CONFIG_PORT
     networks:
       - traefik-net
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:3000 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
   traefik-net:

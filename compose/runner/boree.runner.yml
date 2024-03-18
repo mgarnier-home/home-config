@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
   gitlab-runner:
-    container_name: gitlab-runner
-    restart: unless-stopped
-    image: gitlab/gitlab-runner:latest
+    extends:
+      file: runner.yml
+      service: gitlab-runner
     volumes:
       - gitlab_runner_boree:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock

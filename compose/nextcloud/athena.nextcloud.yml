@@ -1,8 +1,6 @@
-version: "3.8"
-
 services:
   nextcloud_db:
-    container_name: nexcloud_db
+    container_name: nextcloud_db
     restart: unless-stopped
     image: mariadb:10.5
     volumes:
@@ -16,6 +14,12 @@ services:
       - MYSQL_USER=${NEXTCLOUD_DB_USER}
       - MYSQL_LOG_CONSOLE=true
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 1m
 
   nextcloud:
     container_name: nextcloud
@@ -46,6 +50,12 @@ services:
       - OVERWRITEWEBROOT=/
       - OVERWRITECONDADDR=^
       - OVERWRITECLIURL=https://${NEXTCLOUD_URL}
+    healthcheck:
+      test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
   nextcloud-net:

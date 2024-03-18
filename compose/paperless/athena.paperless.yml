@@ -1,5 +1,3 @@
-
-version: "3.4"
 services:
   broker:
     image: docker.io/library/redis:7
@@ -7,6 +5,12 @@ services:
     restart: unless-stopped
     networks:
       - paperless-net
+    healthcheck:
+      test: redis-cli ping
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   db:
     image: mariadb:10.5
@@ -23,8 +27,12 @@ services:
       - MYSQL_PASSWORD=${PAPERLESS_DB_PASSWD}
       - MYSQL_ROOT_PASSWORD=${PAPERLESS_DB_ROOT_PASSWD}
       - MYSQL_LOG_CONSOLE=true
-
-      
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
@@ -41,11 +49,6 @@ services:
       - ${ATHENA_PAPERLESS_PORT}:8000
     annotations:
       traefik-ports: ATHENA_PAPERLESS_PORT
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8000"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 5
     volumes:
       - paperless_data:/usr/src/paperless/data
       - /hdd-1/paperless/media:/usr/src/paperless/media
@@ -79,6 +82,12 @@ services:
       - "gotenberg"
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
+    healthcheck:
+      test: wget -q --tries=1 http://localhost:3000/health -O - | grep -q '^{"status":"up"' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   tika:
     container_name: paperless_tika
@@ -86,6 +95,12 @@ services:
     restart: unless-stopped
     networks:
       - paperless-net
+    healthcheck:
+      test: timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/9998' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
   paperless-net:
