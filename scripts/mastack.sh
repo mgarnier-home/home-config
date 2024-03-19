@@ -110,30 +110,6 @@ manage_stacks() {
     done
 }
 
-# until i found a better way to handle sharing the compose folder with the remote hosts...
-copy_compose_folder() {
-    local hostName=$1
-
-    local ip_var=$(env | grep -o -i "^$hostName.*_IP" | head -n 1)
-
-    if [ -z "$ip_var" ]; then
-        echo "No IP found for host $hostName"
-        return
-    fi
-
-    local ip=${!ip_var}
-
-    rsync -e ssh --delete-after --recursive compose mgarnier@$ip:~
-}
-
-# run copy_compose_folder in parrallel for all hosts
-for host in "${HOSTS[@]}"; do
-    copy_compose_folder $host &
-done
-wait
-echo "All compose folders synchronized with remote hosts"
-
-
 ACTION=${1}
 STACK=${2:-all}
 HOSTNAME=${3:-all}
@@ -148,8 +124,10 @@ case $STACK in
     all)
         # If the selected stack is 'all', loop through all stacks
         for stack in "${STACKS[@]}"; do
-            echo "Managing $stack stack..."
-            manage_stacks "$stack" "$ACTION" "$HOSTNAME"
+            if [ "$stack" != "all" ]; then
+                echo "Managing $stack stack..."
+                manage_stacks "$stack" "$ACTION" "$HOSTNAME"
+            fi
         done
         ;;
     *)

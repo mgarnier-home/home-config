@@ -54,11 +54,11 @@ services:
     image: mgarnier11/traefik-conf
     volumes:
       - traefik_data:/traefik-data
-      - /home/$SSH_USER/compose:/compose
+      - docker_configs_src:/docker-configs
     environment:
       - TRAEFIK_CONF_DIR=/traefik-data/dynamic
       - SAVE_DATA_FILE=/traefik-data/config.json
-      - COMPOSE_DIR=/compose
+      - COMPOSE_DIR=/docker-configs/compose
       - SERVER_PORT=3000
       - REDIRECTION_NAME=ovh
       - FBX_APP_TOKEN=${FBX_APP_TOKEN}

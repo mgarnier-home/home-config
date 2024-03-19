@@ -1,9 +1,15 @@
 x-default_opts: &default_opts
   type: cifs
   # device: //192.168.0.254/SSD1/docker-data
-  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+  o: 'rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777'
 
 volumes:
+  docker_configs_src:
+    name: docker_configs_src
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: ${FREEBOX_DEV}/docker-configs
   adguard_data:
     name: adguard_data
     driver: local
