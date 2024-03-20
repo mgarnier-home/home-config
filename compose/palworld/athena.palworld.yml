@@ -1,16 +1,16 @@
 services:
-  # palworld-server:
-  #   container_name: palworld-server
-  #   image: kagurazakanyaa/palworld:latest
-  #   ports:
-  #     - ${ATHENA_PALWORLD_PORT}:8211/udp
-  #   volumes:
-  #     - /ssd-1/palworld/Saved:/opt/palworld/Pal/Saved
-  #     - /ssd-1/palworld/Mods:/opt/palworld/Pal/Content/Paks/MOD
-  #   environment:
-  #     - PGID=${PGID}
-  #     - PUID=${PUID}
-  #     - GAMEPLAYERS=4
-  #     - MULTITHREAD=true
-  #     - IS_PUBLIC=false
-  #   restart: unless-stopped
+  palworld-server:
+    container_name: palworld-server
+    image: kagurazakanyaa/palworld:latest
+    ports:
+      - ${ATHENA_PALWORLD_PORT}:8211/udp
+    volumes:
+      - /ssd-1/palworld/Saved:/opt/palworld/Pal/Saved
+      - /ssd-1/palworld/Mods:/opt/palworld/Pal/Content/Paks/MOD
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - GAMEPLAYERS=4
+      - MULTITHREAD=true
+      - IS_PUBLIC=false
+    restart: unless-stopped

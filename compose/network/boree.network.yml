@@ -22,21 +22,12 @@ services:
     depends_on:
       - traefik_conf
     command:
-      # Enable Docker in Traefik, so that it reads labels from Docker services
-      # - --providers.docker.swarmmode=true
-      # - --providers.docker.exposedbydefault=false
-      # - --providers.docker.watch=true
-      # - --providers.docker.network=traefik-net
       - --providers.file.filename=/data/dynamic.yml
       - --providers.file.watch=true
       - --providers.http.endpoint=http://traefik_conf:3000/compose-config
       - --providers.http.pollInterval=5s
       - --entrypoints.http.address=:80
       - --entrypoints.http.forwardedHeaders.insecure=true
-      # - --entrypoints.samba.address=:445
-      # Enable the access log, with HTTP requests
-      - --accesslog.bufferingsize=100
-      - --accesslog.filepath=/data/logs/traefik-access.log
       - --log.level=DEBUG
       - --ping=true
       - --api.dashboard=true
