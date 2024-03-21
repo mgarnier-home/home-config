@@ -1,5 +1,5 @@
 {
-  "actions": ["deploy", "undeploy", "redeploy", "pull"],
+  "actions": ["deploy", "undeploy", "pull"],
   "hosts": ["all", "athena", "euros", "boree", "notos", "zephyr"],
   "stacks": [
     "all",

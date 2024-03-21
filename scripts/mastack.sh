@@ -72,11 +72,6 @@ manage_stack() {
                 echo "Undeploying $stack stack on $host..."
                 $compose_cmd down
                 ;;
-            redeploy)
-                echo "Redeploying $stack stack on $host..."
-                $compose_cmd down
-                $compose_cmd up -d
-                ;;
             pull)
                 echo "Pulling $stack stack on $host..."
                 $compose_cmd down
