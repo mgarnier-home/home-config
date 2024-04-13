@@ -1,0 +1,69 @@
+- name: My first play
+  hosts: myhosts
+
+  gather_facts: false
+  # pre_tasks:
+  #   - name: Find tasks files in the directory and store the result in a variable # noqa: run-once[task]
+  #     ansible.builtin.find:
+  #       paths: '{{ playbook_dir }}/../tasks'
+  #       patterns: '*.yml'
+  #       recurse: false
+  #     register: task_files
+  #     delegate_to: localhost
+  #     run_once: true
+  tasks:
+    - name: Copy compose folder
+      ansible.builtin.copy:
+        src: /mnt/freebox-dev/docker-configs/ansible/compose/
+        dest: '{{ compose_dest }}/'
+        mode: '0755'
+        # remote_src: true
+
+    - name: Compose up
+      changed_when: true
+      ansible.builtin.command:
+        cmd: >-
+          docker compose
+          --env-file {{compose_dest}}/env.env
+          --env-file {{compose_dest}}/ports.env
+          -f {{compose_dest}}/volumes.yml
+          -f {{compose_dest}}/monitoring/boree.monitoring.yml
+          up -d
+
+      # args:
+      #   chdir: ../
+      # register: compose_up
+
+    # - name: GPU Config
+    #   ansible.builtin.set_fact:
+    #     gpu_config:
+    #       - device_ids:
+    #           - '0'
+    #       - driver: nvidia
+    #         count: -1
+    #         capabilities:
+    #           - gpu
+    #           - utility
+    #   when: gpu | default(false) | bool
+
+    # - name: Include each task file
+    #   ansible.builtin.include_tasks: '{{ task_file_path }}'
+    #   loop: "{{ task_files.files | map(attribute='path') }}"
+    #   loop_control:
+    #     loop_var: task_file_path
+    # - name: Include all task files from a specific folder
+    #   hosts: all
+    #   gather_facts: no
+    #   tasks:
+    #     - name: Find task files in the directory
+    #       ansible.builtin.shell: ls ../tasks/*.yml
+    #       delegate_to: localhost
+    #       register: task_files
+    #       run_once: true
+    #     - name: debug
+    #       ansible.builtin.debug:
+    #         var: task_files.stdout_lines
+
+    # - name: Include each task file
+    #   ansible.builtin.include_tasks: "{{ item }}"
+    #   loop: "{{ task_files.stdout_lines }}"

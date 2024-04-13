@@ -1,0 +1,43 @@
+- name: Nodesight
+  when: nodesight is defined
+  block:
+    - name: Deploy nodesight
+      ansible.builtin.docker_container: &default_nodesight
+        name: '{{ nodesight.config.name | default("ansible-nodesight") }}'
+        recreate: true
+        image: '{{ nodesight.config.image | default("mgarnier11/nodesight:latest") }}'
+        state: started
+        network_mode: host
+        volumes:
+          - /:/mnt/host:ro
+        restart_policy: unless-stopped
+        env:
+          HOSTNAME: '{{ inventory_hostname }}'
+          # - ENABLE_STATS_API: "false"
+          # - STATS_API_URL
+          SERVER_PORT: '{{ nodesight.config.port }}'
+        healthcheck:
+          test: wget -q --spider --timeout=5 --tries=1 http://localhost:{{ nodesight.config.port }} || exit 1
+          interval: 30s
+          timeout: 10s
+          retries: 3
+          start_period: 10s
+        device_requests: '{{ gpu_config | default(omit) }}'
+        # when: nodesight.gpu | default(false) | bool
+  # when: nodesight is defined
+  # block:
+  #   - name: Without GPU
+  #     when: not nodesight.gpu | default(false) | bool
+
+  #   - name: With GPU
+  #     when: nodesight.gpu | default(false) | bool
+  #     ansible.builtin.docker_container:
+  #       <<: *default_nodesight
+  #       name: ansible-nodesight-gpu
+  #       # gpu_resources:
+  #       #   resources:
+  #       #     reservations:
+  #       #       devices:
+  #       #         - driver: nvidia
+  #       #           count: 1
+  #       #           capabilities: [gpu]
