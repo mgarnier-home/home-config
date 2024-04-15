@@ -1,3 +1,0 @@
-- name: Hello from nodesight
-  ansible.builtin.debug:
-    msg: "Hello from nodesight"

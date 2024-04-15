@@ -1,7 +1,0 @@
-stacks:
-  - name: monitoring
-    containers:
-      - name: nodesight
-        port: 12345
-      - name: dozzle
-        port: 8080

@@ -10,3 +10,6 @@ myhosts:
 
   vars:
     ansible_user: mgarnier
+    host_names:
+      - boree
+      # - zephyr
