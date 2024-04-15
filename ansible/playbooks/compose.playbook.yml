@@ -2,6 +2,11 @@
   hosts: myhosts
   gather_facts: false
   pre_tasks:
+    - name: checking limit arg
+      fail:
+        msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
     - name: Find all stacks under the compose folder # noqa: run-once[task]
       ansible.builtin.find:
         paths: '{{ playbook_dir }}/../compose'
@@ -22,12 +27,19 @@
         delete: true
 
     - name: Loop over stack names and run compose
+      when: stack is undefined
       ansible.builtin.include_tasks: tasks/cmp.yml
       vars:
         stack_name: '{{ item }}'
       loop: '{{ stack_names }}'
       loop_control:
         loop_var: stack_name
+
+    - name: Run compose for {{stack}}
+      ansible.builtin.include_tasks: tasks/cmp.yml
+      vars:
+        stack_name: '{{ stack }}'
+      when: stack is defined
 
     # - name: Loop over stack names and run down
     #   ansible.builtin.include_tasks: tasks/cmp.yml

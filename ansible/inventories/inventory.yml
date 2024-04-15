@@ -4,12 +4,9 @@ myhosts:
       ansible_host: 192.168.0.95
       compose_dest: /home/mgarnier/compose
 
-    # zephyr:
-    #   ansible_host: 192.168.0.97
-    #   compose_dest: /home/mgarnier
+    zephyr:
+      ansible_host: 192.168.0.97
+      compose_dest: /home/mgarnier
 
   vars:
     ansible_user: mgarnier
-    host_names:
-      - boree
-      # - zephyr

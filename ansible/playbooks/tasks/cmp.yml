@@ -4,7 +4,7 @@
   register: compose_file
 
 - name: Compose UP for {{stack_name}} on {{inventory_hostname}}
-  when: (compose_file.stat.exists) and (action_name == 'up')
+  when: (compose_file.stat.exists) and (command == 'up')
   changed_when: true
   ignore_errors: true
   ansible.builtin.command:
@@ -17,7 +17,7 @@
       up -d
 
 - name: Compose DOWN for {{stack_name}} on {{inventory_hostname}}
-  when: (compose_file.stat.exists) and (action_name == 'down')
+  when: (compose_file.stat.exists) and (command == 'down')
   changed_when: true
   ignore_errors: true
   ansible.builtin.command:
