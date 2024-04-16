@@ -1,12 +1,22 @@
 myhosts:
   hosts:
-    boree:
-      ansible_host: 192.168.0.95
-      compose_dest: /home/mgarnier/compose
+    # boree:
+    #   ansible_host: 192.168.0.95
+    #   compose_dest: /home/mgarnier/compose
+    #   is_rpi: true
 
     zephyr:
       ansible_host: 192.168.0.97
-      compose_dest: /home/mgarnier
+      compose_dest: /home/mgarnier/compose
+      is_rpi: true
+
+    # athena:
+    #   ansible_host: 192.168.0.100
+    #   compose_dest: /home/mgarnier/compose
+
+    # notos:
+    #   ansible_host: 192.168.0.98
+    #   compose_dest: /home/mgarnier/compose
 
   vars:
     ansible_user: mgarnier

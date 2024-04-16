@@ -22,6 +22,7 @@
   ignore_errors: true
   ansible.builtin.command:
     cmd: >-
+      cd {{compose_dest}} && 
       docker compose
       --env-file {{compose_dest}}/env.env
       --env-file {{compose_dest}}/ports.env

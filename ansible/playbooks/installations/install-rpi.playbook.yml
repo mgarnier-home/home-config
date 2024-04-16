@@ -1,0 +1,3 @@
+- name: Fresh install of a rpi
+  hosts: myhosts
+  gather_facts: false

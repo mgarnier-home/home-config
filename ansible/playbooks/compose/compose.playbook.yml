@@ -1,4 +1,4 @@
-- name: My first play
+- name: Compose playbook
   hosts: myhosts
   gather_facts: false
   pre_tasks:

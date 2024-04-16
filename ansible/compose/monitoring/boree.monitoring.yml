@@ -1,7 +1,7 @@
 services:
   nodesight:
     extends:
-      file: monitoring/monitoring.yml
+      file: monitoring.yml
       service: nodesight
     environment:
       HOSTNAME: ${BOREE_HOSTNAME}
@@ -19,7 +19,7 @@ services:
 
   dozzle:
     extends:
-      file: monitoring/monitoring.yml
+      file: monitoring.yml
       service: dozzle
     ports:
       - ${BOREE_DOZZLE_PORT}:8080
@@ -28,7 +28,7 @@ services:
 
   watchtower:
     extends:
-      file: monitoring/monitoring.yml
+      file: monitoring.yml
       service: watchtower
 
   dashboard:
