@@ -10,9 +10,9 @@ myhosts:
       compose_dest: /home/mgarnier/compose
       is_rpi: true
 
-    # athena:
-    #   ansible_host: 192.168.0.100
-    #   compose_dest: /home/mgarnier/compose
+    athena:
+      ansible_host: 192.168.0.100
+      compose_dest: /home/mgarnier/compose
 
     # notos:
     #   ansible_host: 192.168.0.98

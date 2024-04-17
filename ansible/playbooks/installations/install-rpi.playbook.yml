@@ -1,3 +1,12 @@
 - name: Fresh install of a rpi
-  hosts: myhosts
+  hosts: zephyr
   gather_facts: false
+  tasks:
+    - name: Update and upgrade packages
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: full
+
+    - name: Install docker
+      ansible.builtin.include_tasks: tasks/install-docker.yml
