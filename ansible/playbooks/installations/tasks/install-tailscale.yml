@@ -1,0 +1,52 @@
+- name: Check if tailscale is installed
+  become: true
+  ansible.builtin.command: tailscale --version
+  register: tailscale_version
+  ignore_errors: true
+  changed_when: true
+
+- name: Install tailscale
+  when: tailscale_version.rc != 0
+  block:
+    - name: Download Tailscale GPG key
+      become: true
+      ansible.builtin.get_url:
+        url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
+        dest: /usr/share/keyrings/tailscale-archive-keyring.gpg
+        mode: '0644'
+
+    - name: Download tailscale keyring
+      become: true
+      ansible.builtin.get_url:
+        url: https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list
+        dest: /etc/apt/sources.list.d/tailscale.list
+        mode: '0644'
+
+    - name: Install tailscale
+      become: true
+      ansible.builtin.apt:
+        pkg: tailscale
+        state: present
+        update_cache: true
+
+- name: Check if Tailscale is running
+  become: true
+  ansible.builtin.command: tailscale status --self
+  register: tailscale_status
+  ignore_errors: true
+  changed_when: false  # Change this to false since we're just checking status
+
+- name: Conditionally start Tailscale if stopped
+  when: '"Tailscale is stopped" in tailscale_status.stdout or tailscale_status.rc != 0'
+  block:
+    - name: Start Tailscale service
+      become: true
+      ansible.builtin.systemd:
+        name: tailscaled
+        state: started
+        enabled: true
+
+    - name: Login to Tailscale
+      become: true
+      ansible.builtin.command: tailscale up --authkey {{ tailscale_auth_key }}
+      changed_when: true  # This ensures that changes are recorded if the command is actually run

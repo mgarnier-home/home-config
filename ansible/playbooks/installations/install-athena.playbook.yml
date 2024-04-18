@@ -1,7 +1,9 @@
 - name: Fresh install of athena
   hosts: athena
   gather_facts: false
-
+  vars_prompt:
+    - name: tailscale_auth_key
+      prompt: "Enter your tailscale auth key"
   tasks:
     - name: Add contrib and non-free repositories for nvidia drivers
       become: true
@@ -30,29 +32,34 @@
     - name: Install docker
       ansible.builtin.include_tasks: tasks/install-docker.yml
 
-    - name: Install nvidia-drivers
-      become: true
-      ansible.builtin.apt:
-        pkg:
-          - nvidia-driver
-          - firmware-misc-nonfree
-        state: present
-        update_cache: true
-      notify: Reboot host
+    - name: Install tailscale
+      ansible.builtin.include_tasks: tasks/install-tailscale.yml
 
-    - name: Install NVIDIA container toolkit
-      become: true
-      ansible.builtin.apt:
-        pkg:
-          - nvidia-container-toolkit
-        state: present
-        update_cache: true
+    - name: Install nvidia
+      block:
+        - name: Install nvidia-drivers
+          become: true
+          ansible.builtin.apt:
+            pkg:
+              - nvidia-driver
+              - firmware-misc-nonfree
+            state: present
+            update_cache: true
+          notify: Reboot host
 
-    - name: Configure docker
-      become: true
-      ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
-      changed_when: true
-      notify: Restart docker
+        - name: Install NVIDIA container toolkit
+          become: true
+          ansible.builtin.apt:
+            pkg:
+              - nvidia-container-toolkit
+            state: present
+            update_cache: true
+
+        - name: Configure docker
+          become: true
+          ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
+          changed_when: true
+          notify: Restart docker
 
   handlers:
     - name: Reboot host

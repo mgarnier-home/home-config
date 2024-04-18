@@ -1,6 +1,9 @@
 - name: Fresh install of a rpi
   hosts: zephyr
   gather_facts: false
+  vars_prompt:
+    - name: tailscale_auth_key
+      prompt: "Enter your tailscale auth key"
   tasks:
     - name: Update and upgrade packages
       become: true
@@ -10,3 +13,6 @@
 
     - name: Install docker
       ansible.builtin.include_tasks: tasks/install-docker.yml
+
+    - name: Install tailscale
+      ansible.builtin.include_tasks: tasks/install-tailscale.yml
