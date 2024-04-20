@@ -11,8 +11,9 @@ myhosts:
       is_rpi: true
 
     athena:
-      ansible_host: 192.168.0.100
+      ansible_host: 100.64.98.100
       compose_dest: /home/mgarnier/compose
+      ask_become_pass: true
 
     # notos:
     #   ansible_host: 192.168.0.98
