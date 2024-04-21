@@ -1,7 +1,7 @@
 services:
   nodesight:
     extends:
-      file: monitoring.yml
+      file: monitoring/monitoring.yml
       service: nodesight
     environment:
       HOSTNAME: ${NOTOS_HOSTNAME}
@@ -19,7 +19,7 @@ services:
 
   dozzle:
     extends:
-      file: monitoring.yml
+      file: monitoring/monitoring.yml
       service: dozzle
     ports:
       - ${NOTOS_DOZZLE_PORT}:8080
@@ -28,5 +28,5 @@ services:
 
   watchtower:
     extends:
-      file: monitoring.yml
+      file: monitoring/monitoring.yml
       service: watchtower

@@ -1,9 +1,12 @@
 - name: Fresh install of athena
   hosts: athena
   gather_facts: false
-  vars_prompt:
-    - name: tailscale_auth_key
-      prompt: "Enter your tailscale auth key"
+  pre_tasks:
+    - name: Load installation variables
+      ansible.builtin.include_vars:
+        file: ../../variables/install.yml
+      delegate_to: localhost
+      run_once: true
   tasks:
     - name: Add contrib and non-free repositories for nvidia drivers
       become: true
@@ -37,35 +40,35 @@
             path: /ssd-1
             src: UUID=5cb14697-0fa5-4d9d-83cf-b3ee330952f7
             fstype: ext4
-            opts: defaults 0 0
+            opts: defaults
             state: present
         - name: Mount HDD1
           ansible.posix.mount:
             path: /hdd-1
             src: UUID=d1050c72-a2cb-472e-a1c1-52e4ad602afd
             fstype: ext4
-            opts: defaults 0 0
+            opts: defaults
             state: present
         - name: Mount HDD2
           ansible.posix.mount:
             path: /hdd-2
-            src: UUID=3036b53a5-1f19-498e-bbf9-0fa1548811b9
+            src: UUID=036b53a5-1f19-498e-bbf9-0fa1548811b9
             fstype: ext4
-            opts: defaults 0 0
+            opts: defaults
             state: present
         - name: Mount HDD3
           ansible.posix.mount:
             path: /hdd-3
             src: UUID=c7836928-0c11-4728-88da-9f04429ed815
             fstype: ext4
-            opts: defaults 0 0
+            opts: defaults
             state: present
         - name: Mount Big HDD
           ansible.posix.mount:
             path: /big-hdd
             src: UUID=99afa81c-db4e-46aa-961e-1c78f5f81e59
             fstype: ext4
-            opts: defaults 0 0
+            opts: defaults
             state: present
 
     - name: Install docker

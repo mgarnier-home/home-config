@@ -1,0 +1,13 @@
+services:
+  # lesgrandsbuffets:
+  #   container_name: lesgrandsbuffets
+  #   image: mgarnier11/lgb
+  #   environment:
+  #     - MAIL_HOST: ${MAIL_HOST}
+  #     - MAIL_PORT: ${MAIL_PORT}
+  #     - MAIL_SECURE: ${MAIL_SECURE}
+  #     - MAIL_LOGIN: ${MAIL_LOGIN}
+  #     - MAIL_PASSWORD: ${MAIL_PASSWORD}
+  #     - INFO_MAIL_TO: ${INFO_MAIL_TO}
+  #     - ENABLE_MAIL: true
+  #   restart: unless-stopped

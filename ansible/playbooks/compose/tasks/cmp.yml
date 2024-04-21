@@ -1,7 +1,12 @@
-- name: Checking if file {{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml exists
-  ansible.builtin.stat:
-    path: "{{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml"
-  register: compose_file
+- name: Checking file
+  block:
+    - name: Getting infos about {{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml exists
+      ansible.builtin.stat:
+        path: "{{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml"
+      register: compose_file
+    - name: File exists
+      ansible.builtin.debug:
+        msg: "{{inventory_hostname}}.{{stack_name}}.yml file {{ 'exists' if compose_file.stat.exists else 'does not exist' }}"
 
 - name: Compose UP for {{stack_name}} on {{inventory_hostname}}
   when: (compose_file.stat.exists) and (command == 'up')
@@ -22,7 +27,6 @@
   ignore_errors: true
   ansible.builtin.command:
     cmd: >-
-      cd {{compose_dest}} && 
       docker compose
       --env-file {{compose_dest}}/env.env
       --env-file {{compose_dest}}/ports.env

@@ -27,6 +27,21 @@
         groups: docker
         append: true
 
+- name: Add the psFormat to config.json
+  block:
+    - name: Create the .docker directory
+      ansible.builtin.file:
+        path: /home/mgarnier/.docker
+        state: directory
+
+    - name: Create the config.json file
+      ansible.builtin.copy:
+        dest: /home/mgarnier/.docker/config.json
+        content: |
+          {
+          {% raw %}"psFormat": "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t"{% endraw %}
+          }
+
 - name: Start docker
   become: true
   ansible.builtin.systemd:

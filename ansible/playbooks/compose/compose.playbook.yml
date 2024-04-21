@@ -9,7 +9,7 @@
       run_once: true
     - name: Find all stacks under the compose folder # noqa: run-once[task]
       ansible.builtin.find:
-        paths: "{{ playbook_dir }}/../compose"
+        paths: "{{ playbook_dir }}/../../compose"
         file_type: directory
         recurse: false
       register: stack_folders
@@ -20,26 +20,33 @@
         stack_names: "{{ stack_folders.files | map(attribute='path') | map('basename') | list }}"
       run_once: true
   tasks:
+    - name: Install rsync
+      become: true
+      ansible.builtin.package:
+        name: rsync
+        state: present
+    - name: Debug playbook dir
+      ansible.builtin.debug:
+        var: playbook_dir
+
     - name: Sync compose folder
       ansible.builtin.synchronize:
-        src: "{{ playbook_dir }}/../compose/"
+        src: "{{ playbook_dir }}/../../compose/"
         dest: "{{ compose_dest }}/"
         delete: true
 
-    - name: Loop over stack names and run compose
+    - name: Run compose on all stacks on all hosts
       when: stack is undefined
       ansible.builtin.include_tasks: tasks/cmp.yml
       vars:
         stack_name: "{{ item }}"
       loop: "{{ stack_names }}"
-      loop_control:
-        loop_var: stack_name
 
-    - name: Run compose for {{stack}}
+    - name: Run compose on {{stack}} on all hosts
+      when: stack is defined
       ansible.builtin.include_tasks: tasks/cmp.yml
       vars:
         stack_name: "{{ stack }}"
-      when: stack is defined
 
     # - name: Loop over stack names and run down
     #   ansible.builtin.include_tasks: tasks/cmp.yml
