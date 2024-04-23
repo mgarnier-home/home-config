@@ -2,20 +2,39 @@
   hosts: athena
   roles:
     - role: ansible-role-nvm
-  # tasks:
-  #   - name: Download nvm installation script
-  #     ansible.builtin.get_url:
-  #       url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
-  #       dest: /tmp/install-nvm.sh
-  #       mode: "0755"
+      nodejs_version: "21.7.3"
 
-  #   - name: Install nvm
-  #     ansible.builtin.command: /tmp/install-nvm.sh
-  #     args:
-  #       creates: /home/mgarnier/.nvm
+  tasks:
+    - name: Symlink nodejs
+      become: true
+      ansible.builtin.file:
+        src: /home/mgarnier/.nvm/versions/node/v21.7.3/bin/node
+        dest: /usr/local/bin/node
+        state: link
 
-  #   - name: Install nodejs
-  #     ansible.builtin.shell: |
-  #       . /home/mgarnier/.nvm/nvm.sh && nvm install 20.12.2
-  # args:
-  #   creates: /home/mgarnier/.nvm/versions/node
+    - name: Symlink npm
+      become: true
+      ansible.builtin.file:
+        src: /home/mgarnier/.nvm/versions/node/v21.7.3/bin/npm
+        dest: /usr/local/bin/npm
+        state: link
+
+    - name: Install devcontainer cli
+      community.general.npm:
+        name: "@devcontainers/cli"
+        global: yes
+        state: present
+
+    - name: Symlink devcontainer
+      become: true
+      ansible.builtin.file:
+        src: /home/mgarnier/.nvm/versions/node/v21.7.3/bin/devcontainer
+        dest: /usr/local/bin/devcontainer
+        state: link
+
+    - name: Run devcontainer
+      ansible.builtin.shell:
+        chdir: /freebox/dev/devcontainer
+        cmd: |
+          docker rm -f devcontainer
+          devcontainer up --workspace-folder .
