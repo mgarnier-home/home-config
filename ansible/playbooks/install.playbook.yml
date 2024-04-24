@@ -1,0 +1,22 @@
+- name: Fresh install
+  hosts: myhosts
+  pre_tasks:
+    - name: Load installation variables
+      ansible.builtin.include_vars:
+        file: ../variables/install.yml
+      delegate_to: localhost
+    - name: Debug compose_dest
+      ansible.builtin.debug:
+        var: tailscale_auth_key
+    - name: Update and upgrade packages
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: full
+  roles:
+    - role: install-docker
+      when: docker is defined
+    - role: install-nvidia
+      when: nvidia is defined
+    - role: install-tailscale
+      when: tailscale is defined

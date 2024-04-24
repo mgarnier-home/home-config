@@ -1,23 +1,37 @@
 myhosts:
   hosts:
-    # boree:
-    #   ansible_host: 192.168.0.95
-    #   compose_dest: /home/mgarnier/compose
-    #   is_rpi: true
+    boree:
+      ansible_host: 100.64.98.95
+      docker: true
+      tailscale: true
+
+    euros:
+      ansible_host: 100.65.98.96
+      docker: true
+      tailscale: true
 
     zephyr:
-      ansible_host: 192.168.0.97
-      compose_dest: /home/mgarnier/compose
-      is_rpi: true
+      ansible_host: 100.64.98.97
+      docker: true
+      tailscale: true
+
+    notos:
+      ansible_host: 100.64.98.98
+      docker: true
+      tailscale: true
+
+    apollon:
+      ansible_host: 100.64.98.99
+      ansible_port: 4269
+      docker: true
+      tailscale: true
 
     athena:
       ansible_host: 100.64.98.100
-      compose_dest: /home/mgarnier/compose
-      ask_become_pass: true
-
-    # notos:
-    #   ansible_host: 192.168.0.98
-    #   compose_dest: /home/mgarnier/compose
+      docker: true
+      tailscale: true
+      nvidia: true
 
   vars:
     ansible_user: mgarnier
+    compose_dest: /home/mgarnier/compose

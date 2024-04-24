@@ -33,10 +33,12 @@
       ansible.builtin.file:
         path: /home/mgarnier/.docker
         state: directory
+        mode: '0755'
 
     - name: Create the config.json file
       ansible.builtin.copy:
         dest: /home/mgarnier/.docker/config.json
+        mode: '0644'
         content: |
           {
           {% raw %}"psFormat": "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t"{% endraw %}
