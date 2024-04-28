@@ -1,7 +1,7 @@
 services:
   gitlab-runner:
     extends:
-      file: runner.yml
+      file: runner/runner.yml
       service: gitlab-runner
     volumes:
       - gitlab_runner_boree:/etc/gitlab-runner

@@ -1,0 +1,20 @@
+name: dashboard
+
+services:
+  dashboard:
+    container_name: dashboard
+    restart: unless-stopped
+    image: mgarnier11/dashboard:1.0.5
+    environment:
+      APP_CONF_PATH: /config/conf.yml
+      ICONS_PATH: /config/icons
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /config
+        volume:
+          subpath: dashboard
+    ports:
+      - ${ZEPHYR_DASHBOARD_PORT}:3000
+    annotations:
+      traefik-ports: ZEPHYR_DASHBOARD_PORT

@@ -1,33 +1,38 @@
 myhosts:
   hosts:
-    boree:
-      ansible_host: 100.64.98.95
-      docker: true
-      tailscale: true
+    # hermes: # ovh vps
+    #   ansible_host: 100.64.98.94
+    #   docker: true
+    #   tailscale: true
 
-    euros:
-      ansible_host: 100.65.98.96
-      # ansible_host: 192.168.0.96
-      docker: true
-      tailscale: true
+    # boree:
+    #   ansible_host: 100.64.98.95
+    #   docker: true
+    #   tailscale: true
 
-    zephyr:
+    # euros:
+    #   ansible_host: 100.64.98.96
+    #   # ansible_host: 192.168.0.96
+    #   docker: true
+    #   tailscale: true
+
+    zephyr: # rpi5
       ansible_host: 100.64.98.97
       docker: true
       tailscale: true
 
-    notos:
-      ansible_host: 100.64.98.98
-      docker: true
-      tailscale: true
+    # notos:
+    #   ansible_host: 100.64.98.98
+    #   docker: true
+    #   tailscale: true
 
-    apollon:
+    apollon: # contabo vps
       ansible_host: 100.64.98.99
       ansible_port: 4269
       docker: true
       tailscale: true
 
-    athena:
+    athena: # server appart
       ansible_host: 100.64.98.100
       docker: true
       tailscale: true
