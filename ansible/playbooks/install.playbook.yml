@@ -1,5 +1,5 @@
-- name: Fresh install
-  hosts: myhosts
+- name: Installation
+  hosts: tailscale_hosts
   pre_tasks:
     - name: Load installation variables
       ansible.builtin.include_vars:
@@ -18,16 +18,6 @@
       when: docker is defined
     - role: install-nvidia
       when: nvidia is defined
-    - role: install-tailscale
-      when: tailscale is defined
-    - role: gantsign.golang
-      golang_version: "1.22.2"
-      when: golang is defined
+    - role: install-firewalld
+      when: firewalld is defined
   tasks:
-    - name: Add export PATH=$PATH:/opt/go/bin to .bashrc
-      ansible.builtin.lineinfile:
-        path: /home/mgarnier/.bashrc
-        line: export PATH=$PATH:/opt/go/1.22.2/bin
-        create: yes
-        state: present
-      when: golang is defined

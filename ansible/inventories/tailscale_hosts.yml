@@ -1,0 +1,25 @@
+tailscale_hosts:
+  hosts:
+    zephyr: # rpi5
+      ansible_host: 100.64.98.97
+      docker: true
+      tailscale: true
+
+    apollon: # contabo vps
+      ansible_host: 100.64.98.99
+      ansible_port: 4269
+      docker: true
+      tailscale: true
+      firewalld: true
+
+    athena: # server appart
+      ansible_host: 100.64.98.100
+
+      docker: true
+      tailscale: true
+      nvidia: true
+      # golang: true
+
+  vars:
+    ansible_user: mgarnier
+    compose_dest: /home/mgarnier/compose

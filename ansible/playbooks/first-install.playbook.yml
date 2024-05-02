@@ -1,0 +1,157 @@
+- name: Test
+  hosts: localhost
+  tasks:
+    - name: Test 1
+      block:
+        - name: Prompt var
+          ansible.builtin.pause:
+            prompt: "Enter a value, default : ABC"
+          register: prompt_result
+        - name: Set default # if prompt_result.user_input == '' or prompt_result.user_input is not defined then set ABC else, set the user input
+          ansible.builtin.set_fact:
+            result: "{{ (prompt_result.user_input | default('')) | ternary(prompt_result.user_input, 'ABC') }}"
+        - name: Debug var
+          ansible.builtin.debug:
+            msg: "Result: {{ result }}"
+# - name: Get saved target host infos
+#   hosts: localhost
+#   tasks:
+#     - name: Load target host infos
+#       ansible.builtin.include_vars:
+#         file: ../variables/target_host.yml
+#       delegate_to: localhost
+#       ignore_errors: yes
+#     - name: Set facts
+#       ansible.builtin.set_fact:
+#         saved_target_host_name: "{{ saved_target_host_name }}"
+#         saved_target_host_ip: "{{ saved_target_host_ip }}"
+#         saved_target_host_port: "{{ saved_target_host_port }}"
+#         saved_target_host_user: "{{ saved_target_host_user }}"
+#         saved_target_host_password: "{{ saved_target_host_password }}"
+#         saved_tailscale_auth_key: "{{ saved_tailscale_auth_key }}"
+
+# - name: Debug loaded variables
+#   hosts: localhost
+#   tasks:
+#     - name: Debug loaded variables
+#       ansible.builtin.debug:
+#         msg: |
+#           Host Name: {{ saved_target_host_name }}
+#           Host IP: {{ saved_target_host_ip }}
+#           Host Port: {{ saved_target_host_port }}
+#           User: {{ saved_target_host_user }}
+#           Password: {{ saved_target_host_password }}
+#           Auth Key: {{ saved_tailscale_auth_key }}
+
+# - name: Get target host infos
+#   hosts: localhost
+#   vars_prompt:
+#     - name: target_host_name
+#       prompt: Please enter the target host name
+#       default: "{{ saved_target_host_name | default('') }}"
+#       private: false
+#     - name: target_host_ip
+#       prompt: Please enter the target host IP
+#       default: "{{ saved_target_host_ip | default('') }}"
+#       private: false
+#     - name: target_host_port
+#       prompt: Please enter the target host ssh port
+#       default: "{{ saved_target_host_port | default('') }}"
+#       private: false
+#     - name: target_host_user
+#       prompt: Please enter the target host ssh user
+#       default: "{{ saved_target_host_user | default('') }}"
+#       private: false
+#     - name: target_host_password
+#       prompt: Please enter the target host ssh password
+#       default: "{{ saved_target_host_password | default('') }}"
+#       private: false
+#     - name: tailscale_auth_key
+#       prompt: Please enter the tailscale auth key
+#       default: "{{ saved_tailscale_auth_key | default('') }}"
+#       private: false
+#   tasks:
+#     - name: Add target host to dynamically_created_hosts group
+#       ansible.builtin.add_host:
+#         hostname: "{{ target_host_name }}"
+#         ansible_ssh_host: "{{ target_host_ip }}"
+#         ansible_ssh_port: "{{ target_host_port }}"
+#         ansible_user: "{{ target_host_user }}"
+#         ansible_password: "{{ target_host_password }}"
+#         groups: dynamically_created_hosts
+#     - name: Save target host infos to target_host.yml
+#       ansible.builtin.copy:
+#         content: |
+#           saved_target_host_name: "{{ target_host_name }}"
+#           saved_target_host_ip: "{{ target_host_ip }}"
+#           saved_target_host_port: "{{ target_host_port }}"
+#           saved_target_host_user: "{{ target_host_user }}"
+#           saved_target_host_password: "{{ target_host_password }}"
+#           saved_tailscale_auth_key: "{{ tailscale_auth_key }}"
+#         dest: ../variables/target_host.yml
+
+# - name: Setup target host {{ target_host_name }} at {{ target_host_ip }}
+#   hosts: dynamically_created_hosts
+#   tasks:
+#     - name: Echo variables
+#       ansible.builtin.debug:
+#         msg: |
+#           target_host_name: {{ target_host_name }}
+#           target_host_ip: {{ target_host_ip }}
+#           target_host_port: {{ target_host_port }}
+#           target_host_user: {{ target_host_user }}
+#           target_host_password: {{ target_host_password }}
+#           tailscale_auth_key: {{ tailscale_auth_key }}
+#     - name: Debug ansible_hostname
+#       ansible.builtin.debug:
+#         msg: "inventory_hostname: {{ inventory_hostname }}"
+
+#     - name: Update and upgrade packages
+#       ansible.builtin.apt:
+#         update_cache: true
+#         upgrade: true
+
+#     - name: Install packages
+#       ansible.builtin.apt:
+#         name: "{{ item }}"
+#         state: present
+#       with_items:
+#         - sudo
+
+#     - name: Update /etc/hosts file
+#       block:
+#         - name: Update 127.0.1.1
+#           ansible.builtin.lineinfile:
+#             path: /etc/hosts
+#             regexp: '^127\.0\.1\.1\s+'
+#             line: "127.0.1.1 {{ inventory_hostname }}"
+#             state: present
+#         - name: Update {{ ansible_ssh_host }}
+#           ansible.builtin.lineinfile:
+#             path: /etc/hosts
+#             regexp: '^{{ ansible_ssh_host }}\s+'
+#             line: "{{ ansible_ssh_host }} {{ inventory_hostname }}"
+#             state: present
+
+#     - name: Set hostname
+#       ansible.builtin.hostname:
+#         name: "{{ inventory_hostname }}"
+
+#     - name: Create user mgarnier on target host
+#       ansible.builtin.user:
+#         name: mgarnier
+#         password: "$6$F0O2KfhjcrBiGw3M$L8aGwQ3CcMaZRwOnBtdVXdXdveucYpwh7srbl/omJlktGPh.PDSZnDLKEBp6WDmBbnf5ikz2VI4O19ZSb4u3g/"
+#         groups:
+#           - sudo
+#         state: present
+#         shell: /bin/bash
+#         append: true
+#         create_home: true
+
+# - name: Install tailscale
+#   hosts: dynamically_created_hosts
+#   roles:
+#     - role: artis3n.tailscale
+#       vars:
+#         tailscale_authkey: "{{ tailscale_auth_key }}"
+#         tailscale_args: "--accept-routes"
