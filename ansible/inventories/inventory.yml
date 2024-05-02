@@ -37,6 +37,7 @@ myhosts:
       docker: true
       tailscale: true
       nvidia: true
+      golang: true
 
   vars:
     ansible_user: mgarnier

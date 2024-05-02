@@ -1,0 +1,85 @@
+name: network
+
+services:
+  traefik:
+    container_name: traefik
+    restart: unless-stopped
+    image: mgarnier11/my-traefik
+    networks:
+      - traefik-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: volume
+        source: fbx_docker_data
+        target: /data
+        volume:
+          subpath: traefik
+    ports:
+      - 80:80/tcp
+      - ${APOLLON_TRAEFIK_PORT}:8080/tcp
+    annotations:
+      traefik-ports: APOLLON_TRAEFIK_PORT
+    environment:
+      - ZEPHYR_IP=${ZEPHYR_IP}
+      - APOLLON_IP=${APOLLON_IP}
+      - ATHENA_IP=${ATHENA_IP}
+    env_file:
+      - ./ports.env
+    depends_on:
+      - traefik_conf
+    command:
+      - --providers.file.filename=/data/dynamic.yml
+      - --providers.file.watch=true
+      - --providers.http.endpoint=http://traefik_conf:3000/compose-config
+      - --providers.http.pollInterval=5s
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.forwardedHeaders.insecure=true
+      - --log.level=DEBUG
+      - --ping=true
+      - --api.dashboard=true
+      - --api.insecure=true
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:8080/ping || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  traefik_conf:
+    container_name: traefik_conf
+    restart: unless-stopped
+    image: mgarnier11/traefik-conf
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /traefik-data
+        volume:
+          subpath: traefik
+      - ./:/compose
+    environment:
+      - TRAEFIK_CONF_DIR=/traefik-data/dynamic
+      - SAVE_DATA_FILE=/traefik-data/config.json
+      - COMPOSE_DIR=/compose
+      - SERVER_PORT=3000
+      - REDIRECTION_NAME=ovh
+      - FBX_APP_TOKEN=${FBX_APP_TOKEN}
+      - FBX_APP_ID=${FBX_APP_ID}
+      - FBX_API_DOMAIN=${FBX_API_DOMAIN}
+      - FBX_HTTPS_PORT=${FBX_HTTPS_PORT}
+      - FBX_API_BASE_URL=${FBX_API_BASE_URL}
+      - FBX_API_VERSION=${FBX_API_VERSION}
+    ports:
+      - ${APOLLON_TRAEFIK_CONFIG_PORT}:3000/tcp
+    annotations:
+      traefik-ports: APOLLON_TRAEFIK_CONFIG_PORT
+    networks:
+      - traefik-net
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:3000 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  traefik-net:

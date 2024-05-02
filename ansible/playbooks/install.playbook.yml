@@ -20,3 +20,14 @@
       when: nvidia is defined
     - role: install-tailscale
       when: tailscale is defined
+    - role: gantsign.golang
+      golang_version: "1.22.2"
+      when: golang is defined
+  tasks:
+    - name: Add export PATH=$PATH:/opt/go/bin to .bashrc
+      ansible.builtin.lineinfile:
+        path: /home/mgarnier/.bashrc
+        line: export PATH=$PATH:/opt/go/1.22.2/bin
+        create: yes
+        state: present
+      when: golang is defined
