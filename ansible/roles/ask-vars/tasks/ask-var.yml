@@ -1,0 +1,10 @@
+- name: Set default var value
+  ansible.builtin.set_fact:
+    "{{ item }}": "{{ vars[item] | default('') }}"
+- name: Prompt {{ item }}
+  ansible.builtin.pause:
+    prompt: "Enter a value, default : {{ lookup('vars', item) }}"
+  register: prompt_result
+- name: Set value
+  ansible.builtin.set_fact:
+    "{{ item }}": "{{ (prompt_result.user_input | default('')) | ternary(prompt_result.user_input, lookup('vars', item)) }}"

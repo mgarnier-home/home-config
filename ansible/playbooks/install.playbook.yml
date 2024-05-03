@@ -1,18 +1,15 @@
 - name: Installation
   hosts: tailscale_hosts
+  vars_prompt:
+    - name: ansible_become_pass
+      prompt: "Enter sudo password"
+      private: true
   pre_tasks:
-    - name: Load installation variables
-      ansible.builtin.include_vars:
-        file: ../variables/install.yml
-      delegate_to: localhost
-    - name: Debug compose_dest
-      ansible.builtin.debug:
-        var: tailscale_auth_key
     - name: Update and upgrade packages
       become: true
       ansible.builtin.apt:
         update_cache: true
-        upgrade: full
+        upgrade: yes
   roles:
     - role: install-docker
       when: docker is defined

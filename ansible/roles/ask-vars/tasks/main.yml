@@ -1,0 +1,20 @@
+- name: Load saved variables
+  ansible.builtin.include_vars:
+    file: "{{ save_file }}"
+  delegate_to: localhost
+  ignore_errors: true
+
+- name: Ask variables # loop over the variables to ask
+  ansible.builtin.include_tasks: ask-var.yml
+  loop: "{{ variables_to_ask }}"
+
+- name: Save variables to file
+  ansible.builtin.copy:
+    content: |
+      {% for var in variables_to_ask %}
+      {{ var }}: "{{ lookup('vars', var, default='') }}"
+      {% endfor %}
+    dest: "{{ save_file }}"
+    mode: "0600"
+  delegate_to: localhost
+  ignore_errors: true
