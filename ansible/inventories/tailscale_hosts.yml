@@ -8,7 +8,7 @@ tailscale_hosts:
       ansible_host: 100.64.98.99
       ansible_port: 4269
       docker: true
-      firewalld: true
+      ufw: true
 
     athena: # server appart
       ansible_host: 100.64.98.100

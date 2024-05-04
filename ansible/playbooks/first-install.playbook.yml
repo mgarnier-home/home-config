@@ -98,6 +98,11 @@
         group: mgarnier
         mode: 0600
 
+- name: Install firewalld
+  hosts: dynamically_created_hosts
+  roles:
+    - role: install-firewalld
+
 - name: Install tailscale
   hosts: dynamically_created_hosts
   roles:

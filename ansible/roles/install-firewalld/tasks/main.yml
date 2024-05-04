@@ -1,26 +1,24 @@
-# - name: Install firewalld
-#   become: true
-#   ansible.builtin.apt:
-#     pkg:
-#       - firewalld
-#     state: present
-#     update_cache: true
+- name: Install firewalld
+  ansible.builtin.apt:
+    pkg:
+      - firewalld
+    state: present
+    update_cache: true
 
-# - name: Allow ports 80 443 and 4269
-#   become: true
-#   ansible.posix.firewalld:
-#     port: "{{ item }}"
-#     permanent: true
-#     state: enabled
-#     immediate: true
-#   with_items:
-#     - 80/tcp
-#     - 443/tcp
-#     - 4269/tcp
+- name: Allow ports 22 80 443 and 4269
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items:
+    - 22/tcp
+    - 80/tcp
+    - 443/tcp
+    - 4269/tcp
 
-# - name: Start firewalld
-#   become: true
-#   ansible.builtin.systemd:
-#     name: firewalld
-#     state: started
-#     enabled: true
+- name: Start firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true

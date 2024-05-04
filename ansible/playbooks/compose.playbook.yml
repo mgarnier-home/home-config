@@ -1,5 +1,5 @@
 - name: Compose playbook
-  hosts: myhosts
+  hosts: tailscale_hosts
   pre_tasks:
     - name: Checking limit arg
       ansible.builtin.fail:

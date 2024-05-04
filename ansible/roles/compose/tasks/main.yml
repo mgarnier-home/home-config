@@ -1,9 +1,3 @@
-- name: Install rsync
-  become: true
-  ansible.builtin.package:
-    name: rsync
-    state: present
-
 - name: Sync compose folder
   ansible.builtin.synchronize:
     src: "{{ playbook_dir }}/../compose/"
@@ -16,7 +10,7 @@
     file_type: directory
     recurse: false
   register: stack_folders
-  
+
 - name: Set stack names
   ansible.builtin.set_fact:
     stack_names: "{{ stack_folders.files | map(attribute='path') | map('basename') | list }}"
