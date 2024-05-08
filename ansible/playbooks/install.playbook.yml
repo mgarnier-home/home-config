@@ -15,8 +15,8 @@
       when: docker is defined
     - role: install-nvidia
       when: nvidia is defined
-    # - role: install-ufw
-    #   when: ufw is defined
+    - role: install-ufw
+      when: ufw is defined
   tasks:
     - name: Install rsync
       become: true

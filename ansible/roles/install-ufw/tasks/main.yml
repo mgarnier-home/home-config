@@ -13,14 +13,6 @@
       community.general.ufw:
         rule: allow
         port: 4269
-    - name: Allow HTTP
-      community.general.ufw:
-        rule: allow
-        port: 80
-    - name: Allow HTTPS
-      community.general.ufw:
-        rule: allow
-        port: 443
 
 - name: Add docker rules
   become: true
@@ -38,15 +30,18 @@
       -A DOCKER-USER -j RETURN -s 10.0.0.0/8
       -A DOCKER-USER -j RETURN -s 172.16.0.0/12
       -A DOCKER-USER -j RETURN -s 192.168.0.0/16
+      -A DOCKER-USER -j RETURN -s 100.64.0.0/10
 
       -A DOCKER-USER -p udp -m udp --sport 53 --dport 1024:65535 -j RETURN
 
       -A DOCKER-USER -j ufw-docker-logging-deny -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 192.168.0.0/16
       -A DOCKER-USER -j ufw-docker-logging-deny -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 10.0.0.0/8
       -A DOCKER-USER -j ufw-docker-logging-deny -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 172.16.0.0/12
+      -A DOCKER-USER -j ufw-docker-logging-deny -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 100.64.0.0/10
       -A DOCKER-USER -j ufw-docker-logging-deny -p udp -m udp --dport 0:32767 -d 192.168.0.0/16
       -A DOCKER-USER -j ufw-docker-logging-deny -p udp -m udp --dport 0:32767 -d 10.0.0.0/8
       -A DOCKER-USER -j ufw-docker-logging-deny -p udp -m udp --dport 0:32767 -d 172.16.0.0/12
+      -A DOCKER-USER -j ufw-docker-logging-deny -p udp -m udp --dport 0:32767 -d 100.64.0.0/10
 
       -A DOCKER-USER -j RETURN
 
@@ -55,6 +50,26 @@
 
       COMMIT
       # END UFW AND DOCKER
+
+# ufw route allow proto tcp from any to 172.19.0.2 port 80
+- name: Add route 80 to traefik container
+  become: true
+  community.general.ufw:
+    route: true
+    rule: allow
+    proto: tcp
+    dest: 172.19.0.2
+    port: 80
+
+# ufw route allow proto tcp from any to 172.19.0.2 port 443*
+- name: Add route 443 to traefik container
+  become: true
+  community.general.ufw:
+    route: true
+    rule: allow
+    proto: tcp
+    dest: 172.19.0.2
+    port: 443
 
 - name: Enable ufw
   become: true

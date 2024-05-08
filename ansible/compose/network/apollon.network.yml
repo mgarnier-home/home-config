@@ -6,7 +6,8 @@ services:
     restart: unless-stopped
     image: mgarnier11/my-traefik
     networks:
-      - traefik-net
+      traefik-net:
+        ipv4_address: 172.19.0.2
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - type: volume
@@ -73,7 +74,36 @@ services:
     annotations:
       traefik-ports: APOLLON_TRAEFIK_CONFIG_PORT
     networks:
-      - traefik-net
+      traefik-net:
+        ipv4_address: 172.19.0.3
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:3000 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  adguard:
+    container_name: adguard
+    restart: unless-stopped
+    image: adguard/adguardhome
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /opt/adguardhome/conf
+        volume:
+          subpath: adguard/conf
+      - type: volume
+        source: fbx_docker_data
+        target: /opt/adguardhome/work/data
+        volume:
+          subpath: adguard/work
+    ports:
+      - ${APOLLON_IP}:53:53/tcp
+      - ${APOLLON_IP}:53:53/udp
+      - ${APOLLON_ADGUARD_PORT}:3000/tcp
+    annotations:
+      traefik-ports: APOLLON_ADGUARD_PORT
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:3000 || exit 1
       interval: 30s
@@ -83,3 +113,7 @@ services:
 
 networks:
   traefik-net:
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          ip_range: 172.19.0.0/24
