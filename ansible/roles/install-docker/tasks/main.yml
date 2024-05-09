@@ -33,15 +33,33 @@
       ansible.builtin.file:
         path: /home/mgarnier/.docker
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Create the config.json file
       ansible.builtin.copy:
         dest: /home/mgarnier/.docker/config.json
-        mode: '0644'
+        mode: "0644"
         content: |
           {
           {% raw %}"psFormat": "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t"{% endraw %}
+          }
+
+- name: Add dns to daemon.json
+  become: true
+  block:
+    - name: Create the .docker directory
+      ansible.builtin.file:
+        path: /etc/docker
+        state: directory
+        mode: "0755"
+
+    - name: Create the daemon.json file
+      ansible.builtin.copy:
+        dest: /etc/docker/daemon.json
+        mode: "0644"
+        content: |
+          {
+          {% raw %}"dns": ["100.100.100.100"]{% endraw %}
           }
 
 - name: Start docker

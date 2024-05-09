@@ -61,7 +61,7 @@
     dest: 172.19.0.2
     port: 80
 
-# ufw route allow proto tcp from any to 172.19.0.2 port 443*
+# ufw route allow proto tcp from any to 172.19.0.2 port 443
 - name: Add route 443 to traefik container
   become: true
   community.general.ufw:

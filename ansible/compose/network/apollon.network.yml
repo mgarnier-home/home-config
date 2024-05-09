@@ -83,34 +83,6 @@ services:
       retries: 3
       start_period: 10s
 
-  adguard:
-    container_name: adguard
-    restart: unless-stopped
-    image: adguard/adguardhome
-    volumes:
-      - type: volume
-        source: fbx_docker_data
-        target: /opt/adguardhome/conf
-        volume:
-          subpath: adguard/conf
-      - type: volume
-        source: fbx_docker_data
-        target: /opt/adguardhome/work/data
-        volume:
-          subpath: adguard/work
-    ports:
-      - ${APOLLON_IP}:53:53/tcp
-      - ${APOLLON_IP}:53:53/udp
-      - ${APOLLON_ADGUARD_PORT}:3000/tcp
-    annotations:
-      traefik-ports: APOLLON_ADGUARD_PORT
-    healthcheck:
-      test: wget -q --spider --timeout=5 --tries=1 http://localhost:3000 || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-
 networks:
   traefik-net:
     ipam:

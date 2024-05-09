@@ -1,0 +1,41 @@
+name: monitoring
+
+services:
+  dozzle:
+    extends:
+      file: monitoring/monitoring.yml
+      service: dozzle
+    ports:
+      - ${ATHENA_DOZZLE_PORT}:8080
+    annotations:
+      traefik-ports: ATHENA_DOZZLE_PORT
+
+  nodesight:
+    extends:
+      file: monitoring/monitoring.yml
+      service: nodesight
+    environment:
+      HOSTNAME: ${ATHENA_HOSTNAME}
+      ENABLE_STATS_API: true
+      STATS_API_URL: ${STATS_API_URL}
+      SERVER_PORT: ${ATHENA_NODESIGHT_PORT}
+    annotations:
+      traefik-ports: ATHENA_NODESIGHT_PORT
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: curl -f http://localhost:${ATHENA_NODESIGHT_PORT} || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  watchtower:
+    extends:
+      file: monitoring/monitoring.yml
+      service: watchtower

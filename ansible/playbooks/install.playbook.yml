@@ -23,3 +23,9 @@
       ansible.builtin.package:
         name: rsync
         state: present
+
+    - name: Create /docker-data folder
+      become: true
+      ansible.builtin.file:
+        path: /docker-data
+        state: directory
