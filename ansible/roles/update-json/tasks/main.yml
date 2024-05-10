@@ -1,0 +1,41 @@
+- name: Check if file exists
+  ansible.builtin.stat:
+    path: "{{ file_path }}"
+  register: file_stat
+
+- name: When file does not exist
+  become: true
+  when: not file_stat.stat.exists
+  block:
+    - name: Create its parent directory
+      ansible.builtin.file:
+        path: "{{ file_path | dirname }}"
+        group: "{{ file_group | default(omit) }}"
+        owner: "{{ file_owner | default(omit) }}"
+        state: directory
+        mode: "0755"
+
+    - name: Create an empty json file
+      ansible.builtin.copy:
+        dest: "{{ file_path }}"
+        group: "{{ file_group | default(omit) }}"
+        owner: "{{ file_owner | default(omit) }}"
+        content: "{}"
+        mode: "0644"
+
+- name: Get target file
+  become: true
+  ansible.builtin.slurp:
+    src: "{{ file_path }}"
+  register: file_content
+
+- name: Decode and update file content
+  ansible.builtin.set_fact:
+    file_content: "{{ file_content.content | b64decode | from_json | combine(update_content) }}"
+
+- name: Write updated content to file
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ file_path }}"
+    content: "{{ file_content | to_json }}"
+    mode: "0644"

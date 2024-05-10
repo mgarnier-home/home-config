@@ -28,3 +28,31 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+
+  node-proxy:
+    image: mgarnier11/node-proxy
+    container_name: node-proxy
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - ports.env
+    environment:
+      - AUTO_RELOAD_CONFIG=true
+      - CONFIG_FILE=/config/config.json
+      - SERVER_PORT=${ZEPHYR_NODE_PROXY_PORT}
+      - NTFY_SERVER=${NTFY_SERVER}
+      - NTFY_TOPIC=${NTFY_TOPIC}
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /config
+        volume:
+          subpath: node-proxy
+    annotations:
+      traefik-ports: ZEPHYR_NODE_PROXY_PORT
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:${ZEPHYR_NODE_PROXY_PORT}/status || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -27,40 +27,27 @@
         groups: docker
         append: true
 
-- name: Add the psFormat to config.json
-  block:
-    - name: Create the .docker directory
-      ansible.builtin.file:
-        path: /home/mgarnier/.docker
-        state: directory
-        mode: "0755"
-
-    - name: Create the config.json file
-      ansible.builtin.copy:
-        dest: /home/mgarnier/.docker/config.json
-        mode: "0644"
-        content: |
-          {
-          {% raw %}"psFormat": "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t"{% endraw %}
-          }
+- name: Add psFormat to config.json
+  ansible.builtin.include_role:
+    name: update-json
+  vars:
+    file_path: /home/mgarnier/.docker/config.json
+    file_group: mgarnier
+    file_owner: mgarnier
+    update_content:
+      psFormat: '{% raw %}table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t{% endraw %}'
 
 - name: Add dns to daemon.json
-  become: true
-  block:
-    - name: Create the .docker directory
-      ansible.builtin.file:
-        path: /etc/docker
-        state: directory
-        mode: "0755"
-
-    - name: Create the daemon.json file
-      ansible.builtin.copy:
-        dest: /etc/docker/daemon.json
-        mode: "0644"
-        content: |
-          {
-          {% raw %}"dns": ["100.100.100.100"]{% endraw %}
-          }
+  ansible.builtin.include_role:
+    name: update-json
+  vars:
+    file_path: /etc/docker/daemon.json
+    file_group: root
+    file_owner: root
+    update_content:
+      dns:
+        - 100.100.100.100
+        - 8.8.8.8
 
 - name: Start docker
   become: true

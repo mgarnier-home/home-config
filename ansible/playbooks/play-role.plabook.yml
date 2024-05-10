@@ -1,0 +1,17 @@
+- name: Test role
+  hosts: tailscale_hosts
+  vars_prompt:
+    - name: ansible_become_pass
+      prompt: "Enter sudo password"
+      private: true
+  tasks:
+    - name: Test update json role
+      ansible.builtin.include_role:
+        name: update-json
+      vars:
+        file_path: /home/mgarnier/.docker/test.json
+        file_group: mgarnier
+        file_owner: mgarnier
+        update_content:
+          test: "test"
+          patate2: "patate2"

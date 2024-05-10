@@ -1,10 +1,12 @@
+name: samba
+
 services:
   samba:
     extends:
       file: samba/samba.yml
       service: samba
     volumes:
-      - /home/mgarnier:/share/home
+      - /home/mgarnier:/share/athena-home
       - /hdd-1:/share/hdd-1
       - /hdd-2:/share/hdd-2
       - /hdd-3:/share/hdd-3

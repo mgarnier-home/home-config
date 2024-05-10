@@ -1,0 +1,43 @@
+name: syslog
+
+services:
+  syslog-app:
+    container_name: syslog-app
+    restart: unless-stopped
+    image: mgarnier11/syslog-app:latest
+    volumes:
+      - logs:/storage
+    ports:
+      - 514:514/udp
+      - ${ZEPHYR_SYSLOG_PORT}:3000
+    annotations:
+      traefik-ports: ZEPHYR_SYSLOG_PORT
+    environment:
+      STORAGE_PATH: /storage
+      SERVER_PORT: 3000
+      SYSLOG_PORT: 514
+      HOSTS_MAP: >
+        {
+          "${ATHENA_IP}": "${ATHENA_HOSTNAME}",
+          "${APOLLON_IP}": "${APOLLON_HOSTNAME}",
+          "${ZEPHYR_IP}": "${ZEPHYR_HOSTNAME}"
+        }
+      MAX_LOG_FILE_SIZE: 67108864
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+x-default_opts: &default_opts
+  type: cifs
+  # device: //192.168.0.254/SSD1/docker-data
+  o: "rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777"
+
+volumes:
+  logs:
+    name: logs
+    driver: local
+    driver_opts:
+      <<: *default_opts
+      device: //192.168.0.254/SSD1/logs
