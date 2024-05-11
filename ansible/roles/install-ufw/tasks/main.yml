@@ -71,6 +71,15 @@
     dest: 172.19.0.2
     port: 443
 
+# ufw allow from 172.16.0.0/12 proto tcp to 100.64.0.0/10
+- name: Allow docker containers to connect to tailscale
+  become: true
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    src: 172.16.0.0/12
+    dest: 100.64.0.0/10
+
 - name: Enable ufw
   become: true
   community.general.ufw:
