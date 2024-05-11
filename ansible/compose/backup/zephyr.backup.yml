@@ -4,6 +4,8 @@ services:
     restart: unless-stopped
     image: mgarnier11/autosaver
     volumes:
+      - /docker-data/home_assistant:/backups/home_assistant-config
+      - /docker-data/influxdb:/backups/influxdb-data
       - type: volume
         source: fbx_docker_data
         target: /config

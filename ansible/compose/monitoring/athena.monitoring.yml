@@ -21,13 +21,14 @@ services:
       SERVER_PORT: ${ATHENA_NODESIGHT_PORT}
     annotations:
       traefik-ports: ATHENA_NODESIGHT_PORT
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    # runtime: nvidia
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
     healthcheck:
       test: curl -f http://localhost:${ATHENA_NODESIGHT_PORT} || exit 1
       interval: 30s

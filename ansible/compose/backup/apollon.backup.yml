@@ -21,4 +21,4 @@ services:
       - NTFY_SERVER=${NTFY_SERVER}
       - NTFY_TOPIC=${NTFY_TOPIC}
       - ARCHIVE_API_TYPE=zip
-      - LOG_LEVEL=5
+      # - LOG_LEVEL=5

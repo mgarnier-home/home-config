@@ -1,0 +1,65 @@
+name: nextcloud
+
+services:
+  nextcloud_db:
+    container_name: nextcloud_db
+    restart: unless-stopped
+    image: mariadb:10.5
+    volumes:
+      - /docker-data/nextcloud/db:/var/lib/mysql
+    networks:
+      - nextcloud-net
+    environment:
+      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_DB_ROOT_PASSWD} # Requested, set the root's password of MySQL service.
+      - MYSQL_PASSWORD=${NEXTCLOUD_DB_PASSWD}
+      - MYSQL_DATABASE=${NEXTCLOUD_DB_NAME}
+      - MYSQL_USER=${NEXTCLOUD_DB_USER}
+      - MYSQL_LOG_CONSOLE=true
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 1m
+
+  nextcloud:
+    container_name: nextcloud
+    restart: unless-stopped
+    image: nextcloud:29.0.0
+    volumes:
+      - /docker-data/nextcloud/data:/data
+      - /docker-data/nextcloud/config:/var/www/html/config
+    networks:
+      - nextcloud-net
+    ports:
+      - ${APOLLON_NEXTCLOUD_PORT}:80
+    annotations:
+      traefik-ports: APOLLON_NEXTCLOUD_PORT
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    user: 1000:1000
+    depends_on:
+      - nextcloud_db
+    environment:
+      - MYSQL_PASSWORD=${NEXTCLOUD_DB_PASSWD}
+      - MYSQL_DATABASE=${NEXTCLOUD_DB_NAME}
+      - MYSQL_USER=${NEXTCLOUD_DB_USER}
+      - MYSQL_HOST=nextcloud_db:3306
+      - NEXTCLOUD_DATA_DIR=/data
+      # - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_URL}
+      # - TRUSTED_PROXIES=38.242.248.92
+      # - OVERWRITEPROTOCOL=https
+      # - OVERWRITEHOST=${NEXTCLOUD_URL}
+      # - OVERWRITEWEBROOT=/
+      # - OVERWRITECONDADDR=^
+      # - OVERWRITECLIURL=https://${NEXTCLOUD_URL}
+    healthcheck:
+      test: curl -sSf 'http://localhost/status.php' | grep '"installed":true' | grep '"maintenance":false' | grep '"needsDbUpgrade":false' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  nextcloud-net:

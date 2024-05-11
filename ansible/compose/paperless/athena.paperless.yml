@@ -1,0 +1,116 @@
+name: paperless
+
+services:
+  broker:
+    image: docker.io/library/redis:7
+    container_name: paperless_broker
+    restart: unless-stopped
+    networks:
+      - paperless-net
+    healthcheck:
+      test: redis-cli ping
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  db:
+    image: mariadb:10.5
+    container_name: paperless_db
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /var/lib/mysql
+        volume:
+          subpath: paperless/db
+    networks:
+      - paperless-net
+    environment:
+      - MARIADB_HOST=paperless
+      - MYSQL_DATABASE=${PAPERLESS_DB_NAME}
+      - MYSQL_USER=${PAPERLESS_DB_USER}
+      - MYSQL_PASSWORD=${PAPERLESS_DB_PASSWD}
+      - MYSQL_ROOT_PASSWORD=${PAPERLESS_DB_ROOT_PASSWD}
+      - MYSQL_LOG_CONSOLE=true
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless_web
+    restart: unless-stopped
+    networks:
+      - paperless-net
+    depends_on:
+      - db
+      - broker
+      - gotenberg
+      - tika
+    ports:
+      - ${ATHENA_PAPERLESS_PORT}:8000
+    annotations:
+      traefik-ports: ATHENA_PAPERLESS_PORT
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /usr/src/paperless/data
+        volume:
+          subpath: paperless/data
+      - /hdd-1/paperless/media:/usr/src/paperless/media
+      - /hdd-1/paperless/export:/usr/src/paperless/export
+      - /hdd-1/paperless/consume:/usr/src/paperless/consume
+    environment:
+      - PAPERLESS_TIME_ZONE=Europe/Paris
+      - PAPERLESS_DBENGINE=mariadb
+      - PAPERLESS_OCR_LANGUAGE=fra
+      - PAPERLESS_TASK_WORKERS=2
+      - PAPERLESS_THREADS_PER_WORKER=2
+      - PAPERLESS_DBHOST=db
+      - PAPERLESS_DBNAME=${PAPERLESS_DB_NAME}
+      - PAPERLESS_DBUSER=${PAPERLESS_DB_USER}
+      - PAPERLESS_DBPASS=${PAPERLESS_DB_PASSWD}
+      - PAPERLESS_DBPORT=3306
+      - PAPERLESS_REDIS=redis://broker:6379
+      - PAPERLESS_TIKA_ENABLED=1
+      - PAPERLESS_TIKA_GOTENBERG_ENDPOINT=http://gotenberg:3000
+      - PAPERLESS_TIKA_ENDPOINT=http://tika:9998
+
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:7.8
+    container_name: paperless_gotenberg
+    restart: unless-stopped
+    networks:
+      - paperless-net
+    # The gotenberg chromium route is used to convert .eml files. We do not
+    # want to allow external content like tracking pixels or even javascript.
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    healthcheck:
+      test: wget -q --tries=1 http://localhost:3000/health -O - | grep -q '^{"status":"up"' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  tika:
+    container_name: paperless_tika
+    image: ghcr.io/paperless-ngx/tika:latest
+    restart: unless-stopped
+    networks:
+      - paperless-net
+    healthcheck:
+      test: timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/9998' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  paperless-net:
