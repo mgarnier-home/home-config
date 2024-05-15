@@ -3,7 +3,10 @@
   roles:
     - role: ansible-role-nvm
       nodejs_version: "21.7.3"
-
+  vars_prompt:
+    - name: ansible_become_pass
+      prompt: "Enter sudo password"
+      private: true
   tasks:
     - name: Symlink nodejs
       become: true

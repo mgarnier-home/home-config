@@ -34,8 +34,8 @@ services:
       - nextcloud-net
     ports:
       - ${APOLLON_NEXTCLOUD_PORT}:80
-    annotations:
-      traefik-ports: APOLLON_NEXTCLOUD_PORT
+    labels:
+      - traefik-conf.port=APOLLON_NEXTCLOUD_PORT
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
     user: 1000:1000

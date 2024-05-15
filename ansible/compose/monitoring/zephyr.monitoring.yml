@@ -7,8 +7,8 @@ services:
       service: dozzle
     ports:
       - ${ZEPHYR_DOZZLE_PORT}:8080
-    annotations:
-      traefik-ports: ZEPHYR_DOZZLE_PORT
+    labels:
+      - traefik-conf.port=ZEPHYR_DOZZLE_PORT
 
   nodesight:
     extends:

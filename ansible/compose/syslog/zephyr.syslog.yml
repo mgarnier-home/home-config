@@ -10,8 +10,8 @@ services:
     ports:
       - 514:514/udp
       - ${ZEPHYR_SYSLOG_PORT}:3000
-    annotations:
-      traefik-ports: ZEPHYR_SYSLOG_PORT
+    labels:
+      - traefik-conf.port=EPHYR_SYSLOG_PORT
     environment:
       STORAGE_PATH: /storage
       SERVER_PORT: 3000

@@ -17,9 +17,10 @@ services:
           subpath: traefik
     ports:
       - 80:80/tcp
+      - 443:443/tcp
       - ${APOLLON_TRAEFIK_PORT}:8080/tcp
-    annotations:
-      traefik-ports: APOLLON_TRAEFIK_PORT
+    labels:
+      - traefik-conf.port=APOLLON_TRAEFIK_PORT
     environment:
       - ZEPHYR_IP=${ZEPHYR_IP}
       - APOLLON_IP=${APOLLON_IP}
@@ -29,16 +30,17 @@ services:
     depends_on:
       - traefik_conf
     command:
-      - --providers.file.filename=/data/dynamic.yml
-      - --providers.file.watch=true
-      - --providers.http.endpoint=http://traefik_conf:3000/compose-config
-      - --providers.http.pollInterval=5s
-      - --entrypoints.http.address=:80
-      - --entrypoints.http.forwardedHeaders.insecure=true
-      - --log.level=DEBUG
-      - --ping=true
-      - --api.dashboard=true
-      - --api.insecure=true
+      # - --providers.file.filename=/data/dynamic.yml
+      # - --providers.file.watch=true
+      # - --providers.http.endpoint=http://172.19.0.3:3000/dynamic-config
+      # - --providers.http.pollInterval=5s
+      # - --entrypoints.http.address=:80
+      # - --entrypoints.http.forwardedHeaders.insecure=true
+      # - --log.level=DEBUG
+      # - --ping=true
+      # - --api.dashboard=true
+      # - --api.insecure=true
+      - --configFile=/data/static.yml
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:8080/ping || exit 1
       interval: 30s
@@ -56,23 +58,13 @@ services:
         target: /traefik-data
         volume:
           subpath: traefik
-      - ./:/compose
     environment:
-      - TRAEFIK_CONF_DIR=/traefik-data/dynamic
-      - SAVE_DATA_FILE=/traefik-data/config.json
-      - COMPOSE_DIR=/compose
+      - DATA_FILE_PATH=/traefik-data/config.json
       - SERVER_PORT=3000
-      - REDIRECTION_NAME=ovh
-      - FBX_APP_TOKEN=${FBX_APP_TOKEN}
-      - FBX_APP_ID=${FBX_APP_ID}
-      - FBX_API_DOMAIN=${FBX_API_DOMAIN}
-      - FBX_HTTPS_PORT=${FBX_HTTPS_PORT}
-      - FBX_API_BASE_URL=${FBX_API_BASE_URL}
-      - FBX_API_VERSION=${FBX_API_VERSION}
     ports:
       - ${APOLLON_TRAEFIK_CONFIG_PORT}:3000/tcp
-    annotations:
-      traefik-ports: APOLLON_TRAEFIK_CONFIG_PORT
+    labels:
+      - traefik-conf.port=APOLLON_TRAEFIK_CONFIG_PORT
     networks:
       traefik-net:
         ipv4_address: 172.19.0.3

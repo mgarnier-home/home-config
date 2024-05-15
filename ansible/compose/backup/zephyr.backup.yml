@@ -1,3 +1,5 @@
+name: backup
+
 services:
   autosaver:
     container_name: autosaver
@@ -13,8 +15,8 @@ services:
           subpath: autosaver
     ports:
       - ${ZEPHYR_AUTOSAVER_PORT}:3000
-    annotations:
-      traefik-ports: ZEPHYR_AUTOSAVER_PORT
+    labels:
+      - traefik-conf.port=ZEPHYR_AUTOSAVER_PORT
     privileged: true
     environment:
       - CRON_SCHEDULE=15 4 * * *

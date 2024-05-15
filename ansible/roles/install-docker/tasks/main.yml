@@ -49,9 +49,21 @@
         - 100.100.100.100
         - 8.8.8.8
 
-- name: Start docker
+- name: Expose docker socket to tailscale
+  become: true
+  ansible.builtin.lineinfile:
+    path: /lib/systemd/system/docker.service
+    regexp: "^ExecStart="
+    line: "ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://{{ ansible_host }}:4321"
+
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Restart docker
   become: true
   ansible.builtin.systemd:
     name: docker
-    state: started
+    state: restarted
     enabled: true

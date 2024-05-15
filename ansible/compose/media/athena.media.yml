@@ -7,8 +7,8 @@ services:
     image: jellyfin/jellyfin
     ports:
       - ${ATHENA_MEDIA_VIDEO_PORT}:8096
-    annotations:
-      traefik-ports: ATHENA_MEDIA_VIDEO_PORT
+    labels:
+      - traefik-conf.port=ATHENA_MEDIA_VIDEO_PORT
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -43,8 +43,8 @@ services:
       # optionally, see more available env vars in the readme
     ports:
       - ${ATHENA_MEDIA_MUSIC_PORT}:80
-    annotations:
-      traefik-ports: ATHENA_MEDIA_MUSIC_PORT
+    labels:
+      - traefik-conf.port=ATHENA_MEDIA_MUSIC_PORT
     volumes:
       - /ssd-1/gonic/music/data:/data
       - /ssd-1/gonic/music/cache:/cache # transcode / covers / etc cache dir
@@ -67,8 +67,8 @@ services:
       # optionally, see more available env vars in the readme
     ports:
       - ${ATHENA_MEDIA_SAGAS_PORT}:80
-    annotations:
-      traefik-ports: ATHENA_MEDIA_SAGAS_PORT
+    labels:
+      - traefik-conf.port=ATHENA_MEDIA_SAGAS_PORT
     volumes:
       - /ssd-1/gonic/sagas/data:/data
       - /ssd-1/gonic/sagas/cache:/cache # transcode / covers / etc cache dir
@@ -88,8 +88,8 @@ services:
     restart: unless-stopped
     ports:
       - ${ATHENA_AIRSONIC_PORT}:80
-    annotations:
-      traefik-ports: ATHENA_AIRSONIC_PORT
+    labels:
+      - traefik-conf.port=ATHENA_AIRSONIC_PORT
     healthcheck:
       test: curl -f http://localhost
       interval: 30s

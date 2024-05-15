@@ -16,8 +16,8 @@ services:
           subpath: dashboard
     ports:
       - ${ZEPHYR_DASHBOARD_PORT}:3000
-    annotations:
-      traefik-ports: ZEPHYR_DASHBOARD_PORT
+    labels:
+      - traefik-conf.port=ZEPHYR_DASHBOARD_PORT
 
   influxdb:
     container_name: influxdb
@@ -34,8 +34,8 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
       # - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
-    annotations:
-      traefik-ports: ZEPHYR_INFLUXDB_PORT
+    labels:
+      - traefik-conf.port=ZEPHYR_INFLUXDB_PORT
     healthcheck:
       test: influx ping || exit 1
       interval: 30s
@@ -54,5 +54,5 @@ services:
       DB_TOKEN: ${INFLUXDB_TOKEN}
     ports:
       - ${ZEPHYR_STATS_API_PORT}:3000
-    annotations:
-      traefik-ports: ZEPHYR_STATS_API_PORT
+    labels:
+      - traefik-conf.port=ZEPHYR_STATS_API_PORT

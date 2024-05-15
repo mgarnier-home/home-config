@@ -53,8 +53,8 @@ services:
       - tika
     ports:
       - ${ATHENA_PAPERLESS_PORT}:8000
-    annotations:
-      traefik-ports: ATHENA_PAPERLESS_PORT
+    labels:
+      - traefik-conf.port=ATHENA_PAPERLESS_PORT
     volumes:
       - type: volume
         source: fbx_docker_data

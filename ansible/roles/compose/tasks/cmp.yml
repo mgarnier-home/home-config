@@ -32,4 +32,4 @@
       --env-file {{compose_dest}}/ports.env
       -f {{compose_dest}}/volumes.yml
       -f {{compose_file.stat.path}}
-      up -d
+      up -d --pull always

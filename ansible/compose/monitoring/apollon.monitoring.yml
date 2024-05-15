@@ -7,8 +7,8 @@ services:
       service: dozzle
     ports:
       - ${APOLLON_DOZZLE_PORT}:8080
-    annotations:
-      traefik-ports: APOLLON_DOZZLE_PORT
+    labels:
+      - traefik-conf.port=APOLLON_DOZZLE_PORT
 
   nodesight:
     extends:
@@ -19,8 +19,8 @@ services:
       ENABLE_STATS_API: true
       STATS_API_URL: ${STATS_API_URL}
       SERVER_PORT: ${APOLLON_NODESIGHT_PORT}
-    annotations:
-      traefik-ports: APOLLON_NODESIGHT_PORT
+    labels:
+      - traefik-conf.port=APOLLON_NODESIGHT_PORT
     healthcheck:
       test: curl -f http://localhost:${APOLLON_NODESIGHT_PORT} || exit 1
       interval: 30s

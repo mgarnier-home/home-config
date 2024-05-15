@@ -21,7 +21,9 @@
     - name: Install rsync
       become: true
       ansible.builtin.package:
-        name: rsync
+        name:
+          - rsync
+          - pm-utils
         state: present
 
     - name: Create /docker-data folder
