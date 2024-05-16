@@ -10,6 +10,7 @@ services:
         ipv4_address: 172.19.0.2
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /docker-data/traefik-certs:/certs
       - type: volume
         source: fbx_docker_data
         target: /data
@@ -30,16 +31,6 @@ services:
     depends_on:
       - traefik_conf
     command:
-      # - --providers.file.filename=/data/dynamic.yml
-      # - --providers.file.watch=true
-      # - --providers.http.endpoint=http://172.19.0.3:3000/dynamic-config
-      # - --providers.http.pollInterval=5s
-      # - --entrypoints.http.address=:80
-      # - --entrypoints.http.forwardedHeaders.insecure=true
-      # - --log.level=DEBUG
-      # - --ping=true
-      # - --api.dashboard=true
-      # - --api.insecure=true
       - --configFile=/data/static.yml
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:8080/ping || exit 1
@@ -59,7 +50,7 @@ services:
         volume:
           subpath: traefik
     environment:
-      - DATA_FILE_PATH=/traefik-data/config.json
+      - DATA_FILE_PATH=/traefik-data/config.yml
       - SERVER_PORT=3000
     ports:
       - ${APOLLON_TRAEFIK_CONFIG_PORT}:3000/tcp
