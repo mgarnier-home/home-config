@@ -3,7 +3,7 @@ name: paperless
 services:
   broker:
     image: docker.io/library/redis:7
-    container_name: paperless_broker
+    container_name: paperless-broker
     restart: unless-stopped
     networks:
       - paperless-net
@@ -16,7 +16,7 @@ services:
 
   db:
     image: mariadb:10.5
-    container_name: paperless_db
+    container_name: paperless-db
     restart: unless-stopped
     volumes:
       - type: volume
@@ -42,7 +42,7 @@ services:
 
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
-    container_name: paperless_web
+    container_name: paperless-web
     restart: unless-stopped
     networks:
       - paperless-net
@@ -54,7 +54,7 @@ services:
     ports:
       - ${ATHENA_PAPERLESS_PORT}:8000
     labels:
-      - traefik-conf.port=ATHENA_PAPERLESS_PORT
+      - traefik-conf.port=$ATHENA_PAPERLESS_PORT
     volumes:
       - type: volume
         source: fbx_docker_data
@@ -82,7 +82,7 @@ services:
 
   gotenberg:
     image: docker.io/gotenberg/gotenberg:7.8
-    container_name: paperless_gotenberg
+    container_name: paperless-gotenberg
     restart: unless-stopped
     networks:
       - paperless-net
@@ -100,7 +100,7 @@ services:
       start_period: 10s
 
   tika:
-    container_name: paperless_tika
+    container_name: paperless-tika
     image: ghcr.io/paperless-ngx/tika:latest
     restart: unless-stopped
     networks:

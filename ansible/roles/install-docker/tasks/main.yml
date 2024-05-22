@@ -46,7 +46,7 @@
     file_owner: root
     update_content:
       dns:
-        - 100.100.100.100
+        # - 100.100.100.100
         - 8.8.8.8
 
 - name: Expose docker socket to tailscale

@@ -21,7 +21,7 @@ services:
       - 53:53/udp
       - ${ZEPHYR_ADGUARD_PORT}:3000/tcp
     labels:
-      - traefik-conf.port=ZEPHYR_ADGUARD_PORT
+      - traefik-conf.port=$ZEPHYR_ADGUARD_PORT
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:3000 || exit 1
       interval: 30s
@@ -49,7 +49,7 @@ services:
         volume:
           subpath: node-proxy
     labels:
-      - traefik-conf.port=ZEPHYR_NODE_PROXY_PORT
+      - traefik-conf.port=$ZEPHYR_NODE_PROXY_PORT
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:${ZEPHYR_NODE_PROXY_PORT}/status || exit 1
       interval: 30s

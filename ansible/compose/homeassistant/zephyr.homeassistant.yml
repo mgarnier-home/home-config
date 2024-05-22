@@ -16,7 +16,7 @@ services:
     ports:
       - ${ZEPHYR_HOME_ASSISTANT_PORT}:8123
     labels:
-      - traefik-conf.port=ZEPHYR_HOME_ASSISTANT_PORT
+      - traefik-conf.port=$ZEPHYR_HOME_ASSISTANT_PORT
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:8123 || exit 1
       interval: 30s

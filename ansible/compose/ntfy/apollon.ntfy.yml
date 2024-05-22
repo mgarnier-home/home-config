@@ -23,7 +23,7 @@ services:
         volume:
           subpath: ntfy/cache
     labels:
-      - traefik-conf.port=APOLLON_NTFY_PORT
+      - traefik-conf.port=$APOLLON_NTFY_PORT
     healthcheck:
       test: wget -q --tries=1 http://localhost/v1/health -O - | grep -Eo '\"healthy\":true' || exit 1
       interval: 30s

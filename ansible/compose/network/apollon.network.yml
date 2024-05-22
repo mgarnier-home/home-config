@@ -21,7 +21,7 @@ services:
       - 443:443/tcp
       - ${APOLLON_TRAEFIK_PORT}:8080/tcp
     labels:
-      - traefik-conf.port=APOLLON_TRAEFIK_PORT
+      - traefik-conf.port=$APOLLON_TRAEFIK_PORT
     environment:
       - ZEPHYR_IP=${ZEPHYR_IP}
       - APOLLON_IP=${APOLLON_IP}
@@ -29,9 +29,10 @@ services:
     env_file:
       - ./ports.env
     depends_on:
-      - traefik_conf
+      - traefik-conf
     command:
       - --configFile=/data/static.yml
+      - --ping=true
     healthcheck:
       test: wget -q --spider --timeout=5 --tries=1 http://localhost:8080/ping || exit 1
       interval: 30s
@@ -39,8 +40,8 @@ services:
       retries: 3
       start_period: 10s
 
-  traefik_conf:
-    container_name: traefik_conf
+  traefik-conf:
+    container_name: traefik-conf
     restart: unless-stopped
     image: mgarnier11/traefik-conf
     volumes:
@@ -55,7 +56,7 @@ services:
     ports:
       - ${APOLLON_TRAEFIK_CONFIG_PORT}:3000/tcp
     labels:
-      - traefik-conf.port=APOLLON_TRAEFIK_CONFIG_PORT
+      - traefik-conf.port=$APOLLON_TRAEFIK_CONFIG_PORT
     networks:
       traefik-net:
         ipv4_address: 172.19.0.3

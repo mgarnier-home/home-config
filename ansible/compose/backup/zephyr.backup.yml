@@ -16,7 +16,8 @@ services:
     ports:
       - ${ZEPHYR_AUTOSAVER_PORT}:3000
     labels:
-      - traefik-conf.port=ZEPHYR_AUTOSAVER_PORT
+      - traefik-conf.port=$ZEPHYR_AUTOSAVER_PORT
+      - traefik-conf.rule=Host(`autosaver.zephyr.${PUBLIC_DOMAIN_NAME}`)
     privileged: true
     environment:
       - CRON_SCHEDULE=15 4 * * *
