@@ -54,7 +54,7 @@ services:
     ports:
       - ${ATHENA_PAPERLESS_PORT}:8000
     labels:
-      - traefik-conf.port=$ATHENA_PAPERLESS_PORT
+      - traefik-conf.port=${ATHENA_PAPERLESS_PORT}
     volumes:
       - type: volume
         source: fbx_docker_data

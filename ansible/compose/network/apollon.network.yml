@@ -21,7 +21,7 @@ services:
       - 443:443/tcp
       - ${APOLLON_TRAEFIK_PORT}:8080/tcp
     labels:
-      - traefik-conf.port=$APOLLON_TRAEFIK_PORT
+      - traefik-conf.port=${APOLLON_TRAEFIK_PORT}
     environment:
       - ZEPHYR_IP=${ZEPHYR_IP}
       - APOLLON_IP=${APOLLON_IP}
@@ -56,7 +56,7 @@ services:
     ports:
       - ${APOLLON_TRAEFIK_CONFIG_PORT}:3000/tcp
     labels:
-      - traefik-conf.port=$APOLLON_TRAEFIK_CONFIG_PORT
+      - traefik-conf.port=${APOLLON_TRAEFIK_CONFIG_PORT}
     networks:
       traefik-net:
         ipv4_address: 172.19.0.3
