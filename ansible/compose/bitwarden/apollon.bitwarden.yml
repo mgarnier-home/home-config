@@ -15,19 +15,19 @@ services:
           subpath: bitwarden
       - ${DOCKER_DATA}/bitwarden:/data
     labels:
-      - traefik-conf.port=${APOLLON_BITWARDEN_PORT}
-      # - my-traefik.http.services.apollon_bitwarden_test.port=APOLLON_BITWARDEN_PORT
-      # - my-traefik.http.routers.bitwarden.rule=Host(`bitwarden.${PUBLIC_DOMAIN_NAME}`)
-      # - my-traefik.http.routers.bitwarden.entrypoints=http,https
-      # - my-traefik.http.routers.bitwarden.service=apollon_bitwarden_test
-      # - my-traefik.http.routers.bitwarden.tls.certResolver=leresolver
+      # - traefik-conf.port=${APOLLON_BITWARDEN_PORT}
+      - my-traefik.http.services.apollon_bitwarden_test.port=APOLLON_BITWARDEN_PORT
+      - my-traefik.http.routers.bitwarden.rule=Host(`bitwarden.int.${PUBLIC_DOMAIN_NAME}`)
+      - my-traefik.http.routers.bitwarden.entrypoints=https
+      - my-traefik.http.routers.bitwarden.service=apollon_bitwarden_test
+      - my-traefik.http.routers.bitwarden.tls.certResolver=leresolver
       # - my-traefik.http.routers.bitwarden.middlewares=redirect-to-https@file,ip-wl@file
-      - my-traefik.http.routers.bitwarden-cert.rule=Host(`bitwarden.${PUBLIC_DOMAIN_NAME}.nf`)
-      - my-traefik.http.routers.bitwarden-cert.service=apollon_bitwarden
-      - my-traefik.http.routers.bitwarden-cert.entrypoints=https
-      # - my-traefik.http.routers.bitwarden-cert.middlewares=redirect-to-https@file
-      - my-traefik.http.routers.bitwarden-cert.tls.certResolver=leresolver
-      - my-traefik.http.routers.bitwarden-cert.tls.options=ca-mgarnier11@file
+      # - my-traefik.http.routers.bitwarden-cert.rule=Host(`bitwarden.int.${PUBLIC_DOMAIN_NAME}.nf`)
+      # - my-traefik.http.routers.bitwarden-cert.service=apollon_bitwarden
+      # - my-traefik.http.routers.bitwarden-cert.entrypoints=https
+      # # - my-traefik.http.routers.bitwarden-cert.middlewares=redirect-to-https@file
+      # - my-traefik.http.routers.bitwarden-cert.tls.certResolver=leresolver
+      # - my-traefik.http.routers.bitwarden-cert.tls.options=ca-mgarnier11@file
 
   # networks:
   #   - traefik-net

@@ -26,6 +26,11 @@ services:
       - ZEPHYR_IP=${ZEPHYR_IP}
       - APOLLON_IP=${APOLLON_IP}
       - ATHENA_IP=${ATHENA_IP}
+      - OVH_ENDPOINT=${OVH_ENDPOINT}
+      - OVH_APPLICATION_KEY=${OVH_APPLICATION_KEY}
+      - OVH_APPLICATION_SECRET=${OVH_APPLICATION_SECRET}
+      - OVH_CONSUMER_KEY=${OVH_CONSUMER_KEY}
+
     env_file:
       - ./ports.env
     depends_on:
