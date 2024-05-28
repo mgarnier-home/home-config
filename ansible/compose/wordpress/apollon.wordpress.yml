@@ -1,0 +1,58 @@
+name: wordpress
+
+services:
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+    volumes:
+      - /docker-data/wordpress/html:/var/www/html
+    ports:
+      - ${APOLLON_WORDPRESS_PORT}:80
+    labels:
+      # - traefik.enable=true
+      # - traefik.http.routers.wordpress.rule=Host(`${WORDPRESS_DOMAIN_NAME}`)
+      # - traefik.http.routers.wordpress.entrypoints=websecure
+      # - traefik.http.routers.wordpress.tls.certResolver=leresolver
+      # - traefik.http.services.wordpress.loadbalancer.server.port=80
+      # - traefik.http.routers.wordpress-admin.rule=Host(`${WORDPRESS_DOMAIN_NAME}`) && (Path(`/wp-admin`)|| Path(`/wp-login.php`))
+      # - traefik.http.routers.wordpress-admin.tls.certResolver=leresolver
+      # - traefik.http.routers.wordpress-admin.entrypoints=websecure
+      # - traefik.http.routers.wordpress-admin.middlewares=wp-ipwhitelist
+      # - traefik.http.middlewares.wp-ipwhitelist.ipwhitelist.sourcerange=${WORDPRESS_ALLOWED_IPS}
+
+      - traefik-conf.port=${APOLLON_WORDPRESS_PORT}
+      # - my-traefik.http.routers.apollon_wordpress.rule=Host(`${WORDPRESS_DOMAIN_NAME}`)
+      # - my-traefik.http.routers.apollon_wordpress.service=apollon_wordpress
+      # - my-traefik.http.routers.apollon_wordpress.entrypoints=https
+      # - my-traefik.http.routers.apollon_wordpress.tls.certResolver=tls-resolver
+      # - my-traefik.http.routers.apollon_wordpress.tls.options=ca-mgarnier11@file
+    healthcheck:
+      test: curl -f http://localhost || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  wordpress-db:
+    image: mysql:5.7
+    container_name: wordpress-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+      MYSQL_USER: ${WORDPRESS_DB_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+    volumes:
+      - /docker-data/wordpress/db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
