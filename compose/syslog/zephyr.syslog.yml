@@ -1,3 +1,5 @@
+name: syslog
+
 services:
   syslog-app:
     container_name: syslog-app
@@ -6,20 +8,19 @@ services:
     volumes:
       - logs:/storage
     ports:
-      - "514:514/udp"
-      - "3000:3000"
-    # annotations:
-    #   traefik-ports: BOREE_AUTOSAVER_PORT
+      - 514:514/udp
+      - ${ZEPHYR_SYSLOG_PORT}:3000
+    labels:
+      - traefik-conf.port=${ZEPHYR_SYSLOG_PORT}
+      - traefik-conf.name=syslog
     environment:
       STORAGE_PATH: /storage
       SERVER_PORT: 3000
       SYSLOG_PORT: 514
       HOSTS_MAP: >
         {
-          "${BOREE_IP}": "${BOREE_HOSTNAME}", 
           "${ATHENA_IP}": "${ATHENA_HOSTNAME}",
-          "${NOTOS_IP}": "${NOTOS_HOSTNAME}",
-          "${EUROS_IP}": "${EUROS_HOSTNAME}",
+          "${APOLLON_IP}": "${APOLLON_HOSTNAME}",
           "${ZEPHYR_IP}": "${ZEPHYR_HOSTNAME}"
         }
       MAX_LOG_FILE_SIZE: 67108864

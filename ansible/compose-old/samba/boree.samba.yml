@@ -1,8 +1,0 @@
-services:
-  samba:
-    extends:
-      file: samba/samba.yml
-      service: samba
-    volumes:
-      - /home/mgarnier:/share/home
-      - /docker-data:/share/docker-data

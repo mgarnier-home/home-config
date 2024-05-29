@@ -6,7 +6,8 @@
   "image": "mcr.microsoft.com/devcontainers/base:bookworm",
   "features": {
     "ghcr.io/devcontainers-contrib/features/ansible:2": {},
-    "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {}
+    "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
   },
 
   // Features to add to the dev container. More info: https://containers.dev/features.
@@ -42,9 +43,7 @@
       "extensions": [
         "esbenp.prettier-vscode",
         "github.copilot",
-        "streetsidesoftware.code-spell-checker",
         "naumovs.color-highlight",
-        "streetsidesoftware.code-spell-checker-french",
         "eamodio.gitlens",
         "oderwat.indent-rainbow",
         "redhat.vscode-xml",
@@ -56,5 +55,6 @@
   },
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "postCreateCommand": "echo \"source /workspaces/scripts/autocomplete.sh\" >> ~/.bashrc"
 }

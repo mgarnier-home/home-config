@@ -1,8 +1,8 @@
-- name: Sync compose folder
-  ansible.builtin.synchronize:
-    src: "{{ playbook_dir }}/../compose/"
-    dest: "{{ compose_dest }}/"
-    delete: true
+# - name: Sync compose folder
+#   ansible.builtin.synchronize:
+#     src: "{{ playbook_dir }}/../compose/"
+#     dest: "{{ compose_dest }}/"
+#     delete: true
 
 - name: Find all stacks under the compose folder
   ansible.builtin.find:

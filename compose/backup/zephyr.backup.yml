@@ -1,17 +1,24 @@
+name: backup
+
 services:
   autosaver:
     container_name: autosaver
     restart: unless-stopped
     image: mgarnier11/autosaver
     volumes:
-      - autosaver_config:/config
+      - /docker-data/home_assistant:/backups/home_assistant-config
+      - /docker-data/influxdb:/backups/influxdb-data
+      - type: volume
+        source: fbx_docker_data
+        target: /config
+        volume:
+          subpath: autosaver
     ports:
       - ${ZEPHYR_AUTOSAVER_PORT}:3000
-    annotations:
-      traefik-ports: ZEPHYR_AUTOSAVER_PORT
-    cap_add:
-      - SYS_ADMIN
-      - DAC_READ_SEARCH
+    labels:
+      - traefik-conf.port=${ZEPHYR_AUTOSAVER_PORT}
+      - traefik-conf.name=autosaver.zephyr
+    privileged: true
     environment:
       - CRON_SCHEDULE=15 4 * * *
       - BACKUP_CONFIG_PATH=/config/config-zephyr.yml

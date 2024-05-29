@@ -3,6 +3,8 @@ env.env
 
 old
 
+.pnpm-store
+
 node_modules
 
 dist

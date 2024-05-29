@@ -2,18 +2,18 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# Read JSON file
-STACK_JSON_FILE="$SCRIPT_DIR/stack.json"
-if [ ! -f "$STACK_JSON_FILE" ]; then
-    echo "Error: $STACK_JSON_FILE not found."
-    exit 1
-fi
+# # Read JSON file
+# STACK_JSON_FILE="$SCRIPT_DIR/stack.json"
+# if [ ! -f "$STACK_JSON_FILE" ]; then
+#     echo "Error: $STACK_JSON_FILE not found."
+#     exit 1
+# fi
 
-ACTIONS=($(jq -r '.actions[]' $STACK_JSON_FILE | tr -d '\r'))
-HOSTS=($(jq -r '.hosts[]' $STACK_JSON_FILE | tr -d '\r'))
-STACKS=($(jq -r '.stacks[]' $STACK_JSON_FILE | tr -d '\r'))
+# ACTIONS=($(jq -r '.actions[]' $STACK_JSON_FILE | tr -d '\r'))
+# HOSTS=($(jq -r '.hosts[]' $STACK_JSON_FILE | tr -d '\r'))
+# STACKS=($(jq -r '.stacks[]' $STACK_JSON_FILE | tr -d '\r'))
 
-_my_script_completion() {
+_completion() {
     local cur prev opts
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -21,13 +21,13 @@ _my_script_completion() {
     
     case ${COMP_CWORD} in
         1)
-            opts=$(echo ${ACTIONS[*]})
+            opts="deploy undeploy redeploy pull"
             ;;
         2)
-            opts=$(echo ${STACKS[*]})
+            opts="all backup file_server minecraft monitoring network nextcloud paperless plex samba db jellyfin home_assistant navidrome"
             ;;
         3)
-            opts=$(echo ${HOSTS[*]})
+            opts="all athena euros boree"
             ;;
         *)
             opts=""
@@ -37,4 +37,4 @@ _my_script_completion() {
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     return 0
 }
-complete -F _my_script_completion mastack.sh
+complete -F _completion home-cli

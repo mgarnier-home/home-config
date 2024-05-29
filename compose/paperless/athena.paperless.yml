@@ -1,7 +1,9 @@
+name: paperless
+
 services:
   broker:
     image: docker.io/library/redis:7
-    container_name: paperless_broker
+    container_name: paperless-broker
     restart: unless-stopped
     networks:
       - paperless-net
@@ -14,14 +16,18 @@ services:
 
   db:
     image: mariadb:10.5
-    container_name: paperless_db
+    container_name: paperless-db
     restart: unless-stopped
     volumes:
-      - paperless_db:/var/lib/mysql
+      - type: volume
+        source: fbx_docker_data
+        target: /var/lib/mysql
+        volume:
+          subpath: paperless/db
     networks:
       - paperless-net
     environment:
-      # - MARIADB_HOST=paperless
+      - MARIADB_HOST=paperless
       - MYSQL_DATABASE=${PAPERLESS_DB_NAME}
       - MYSQL_USER=${PAPERLESS_DB_USER}
       - MYSQL_PASSWORD=${PAPERLESS_DB_PASSWD}
@@ -36,7 +42,7 @@ services:
 
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
-    container_name: paperless_web
+    container_name: paperless-web
     restart: unless-stopped
     networks:
       - paperless-net
@@ -47,10 +53,14 @@ services:
       - tika
     ports:
       - ${ATHENA_PAPERLESS_PORT}:8000
-    annotations:
-      traefik-ports: ATHENA_PAPERLESS_PORT
+    labels:
+      - traefik-conf.port=${ATHENA_PAPERLESS_PORT}
     volumes:
-      - paperless_data:/usr/src/paperless/data
+      - type: volume
+        source: fbx_docker_data
+        target: /usr/src/paperless/data
+        volume:
+          subpath: paperless/data
       - /hdd-1/paperless/media:/usr/src/paperless/media
       - /hdd-1/paperless/export:/usr/src/paperless/export
       - /hdd-1/paperless/consume:/usr/src/paperless/consume
@@ -72,7 +82,7 @@ services:
 
   gotenberg:
     image: docker.io/gotenberg/gotenberg:7.8
-    container_name: paperless_gotenberg
+    container_name: paperless-gotenberg
     restart: unless-stopped
     networks:
       - paperless-net
@@ -90,7 +100,7 @@ services:
       start_period: 10s
 
   tika:
-    container_name: paperless_tika
+    container_name: paperless-tika
     image: ghcr.io/paperless-ngx/tika:latest
     restart: unless-stopped
     networks:
