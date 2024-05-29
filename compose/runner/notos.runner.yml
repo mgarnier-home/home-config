@@ -1,0 +1,8 @@
+services:
+  gitlab-runner:
+    extends:
+      file: runner.yml
+      service: gitlab-runner
+    volumes:
+      - gitlab_runner_notos:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock

@@ -1,0 +1,14 @@
+name: runner
+
+services:
+  gitlab-runner:
+    extends:
+      file: runner/runner.yml
+      service: gitlab-runner
+    volumes:
+      - type: volume
+        source: fbx_docker_data
+        target: /etc/gitlab-runner
+        volume:
+          subpath: runner/zephyr
+      - /var/run/docker.sock:/var/run/docker.sock

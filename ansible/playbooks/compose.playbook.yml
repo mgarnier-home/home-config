@@ -1,0 +1,18 @@
+- name: Compose playbook
+  hosts: tailscale_hosts
+  pre_tasks:
+    - name: Checking limit arg
+      ansible.builtin.fail:
+        msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+    - name: Checking command arg
+      ansible.builtin.fail:
+        msg: "you must use -e command=down or -e command=up"
+      when: command != "down" and command != "up"
+    - name: Checking compose_dest arg
+      ansible.builtin.fail:
+        msg: "you must use -e compose_dest=/path/to/compose"
+      when: compose_dest == ""
+  roles:
+    - role: compose
+      when: command != "" and compose_dest != ""

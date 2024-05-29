@@ -1,0 +1,135 @@
+- name: Get target host infos
+  hosts: localhost
+  roles:
+    - role: ask-vars
+      vars:
+        variables_to_ask:
+          - host_name
+          - ssh_ip
+          - ssh_port
+          - ssh_user
+          - ssh_password
+          - new_ssh_port
+          - tailscale_auth_key
+        save_file: "../variables/target_host.yml"
+  tasks:
+    # - name: Debug loaded variables
+    #   ansible.builtin.debug:
+    #     msg: |
+    #       Host Name: {{ target_host_name }}
+    #       Host IP: {{ target_host_ip }}
+    #       Host Port: {{ target_host_port }}
+    #       User: {{ target_host_user }}
+    #       Password: {{ target_host_password }}
+    #       Auth Key: {{ tailscale_auth_key }}
+    - name: Add target host to dynamically_created_hosts group
+      ansible.builtin.add_host:
+        hostname: "{{ host_name }}"
+        ansible_ssh_host: "{{ ssh_ip }}"
+        ansible_ssh_port: "{{ ssh_port }}"
+        ansible_user: "{{ ssh_user }}"
+        ansible_password: "{{ ssh_password }}"
+        tailscale_auth_key: "{{ tailscale_auth_key }}"
+        new_ssh_port: "{{ new_ssh_port }}"
+        groups: dynamically_created_hosts
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "Added {{ host_name }} to dynamically_created_hosts group"
+
+- name: Setting up target
+  gather_facts: true
+  hosts: dynamically_created_hosts
+  tasks:
+    - name: Update and upgrade packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: true
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - sudo
+
+    - name: Update /etc/hosts file
+      block:
+        - name: Update 127.0.1.1
+          ansible.builtin.lineinfile:
+            path: /etc/hosts
+            regexp: '^127\.0\.1\.1\s+'
+            line: "127.0.1.1 {{ inventory_hostname }}"
+            state: present
+        - name: Update {{ ansible_ssh_host }}
+          ansible.builtin.lineinfile:
+            path: /etc/hosts
+            regexp: '^{{ ansible_ssh_host }}\s+'
+            line: "{{ ansible_ssh_host }} {{ inventory_hostname }}"
+            state: present
+
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+
+    - name: Create user mgarnier on target host
+      ansible.builtin.user:
+        name: mgarnier
+        password: "$6$F0O2KfhjcrBiGw3M$L8aGwQ3CcMaZRwOnBtdVXdXdveucYpwh7srbl/omJlktGPh.PDSZnDLKEBp6WDmBbnf5ikz2VI4O19ZSb4u3g/"
+        groups:
+          - sudo
+        state: present
+        shell: /bin/bash
+        append: true
+        create_home: true
+
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: /home/mgarnier/.ssh
+        state: directory
+        owner: mgarnier
+        group: mgarnier
+        mode: 0700
+
+    - name: Copy authorized_keys to target host
+      ansible.builtin.copy:
+        src: ../files/authorized_keys
+        dest: /home/mgarnier/.ssh/authorized_keys
+        owner: mgarnier
+        group: mgarnier
+        mode: 0600
+
+# - name: Install firewalld
+#   hosts: dynamically_created_hosts
+#   roles:
+#     - role: install-firewalld
+
+- name: Install tailscale
+  hosts: dynamically_created_hosts
+  roles:
+    - role: install-tailscale
+      vars:
+        auth_key: "{{ tailscale_auth_key }}"
+
+- name: Secure SSH
+  hosts: dynamically_created_hosts
+  tasks:
+    - name: Disable password authentication
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: "^#PasswordAuthentication yes"
+        replace: "PasswordAuthentication no"
+    - name: Disable root login
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin yes"
+        replace: "PermitRootLogin no"
+    - name: Change SSH port
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: "^#Port 22"
+        replace: "Port {{ new_ssh_port }}"
+    - name: Restart SSH service
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
+        enabled: true

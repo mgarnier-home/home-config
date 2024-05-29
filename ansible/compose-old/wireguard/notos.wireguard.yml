@@ -1,0 +1,33 @@
+services:
+  wireguard-server:
+    image: ghcr.io/wg-easy/wg-easy
+    restart: unless-stopped
+    container_name: wireguard-server
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+    cap_add:
+      - SYS_MODULE
+      - NET_ADMIN
+    ports:
+      - ${NOTOS_WIREGUARD_TCP_PORT}:51821/tcp
+      - ${NOTOS_WIREGUARD_UDP_PORT}:51820/udp
+    volumes:
+      - wireguard_config:/etc/wireguard
+    environment:
+      - PASSWORD=${WIREGUARD_SERVER_PASSWD}
+      - WG_HOST=${WIREGUARD_SERVER_URL}
+      - WG_PORT=${NOTOS_WIREGUARD_UDP_PORT}
+      - LANG=en
+      - WG_DEFAULT_DNS=${DNS_IP}, 1.1.1.1, 1.0.0.1
+      - WG_DEFAULT_ADDRESS=192.168.1.x
+      - WG_ALLOWED_IPS=0.0.0.0/0
+    annotations:
+      traefik-ports: NOTOS_WIREGUARD_TCP_PORT
+      traefik-name: wireguard
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:51821 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

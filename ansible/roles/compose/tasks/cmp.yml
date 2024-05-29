@@ -1,0 +1,35 @@
+- name: Checking file
+  block:
+    - name: Getting infos about {{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml exists
+      ansible.builtin.stat:
+        path: "{{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml"
+      register: compose_file
+    - name: File exists
+      ansible.builtin.debug:
+        msg: "{{inventory_hostname}}.{{stack_name}}.yml file {{ 'exists' if compose_file.stat.exists else 'does not exist' }}"
+
+- name: Compose DOWN for {{stack_name}} on {{inventory_hostname}}
+  when: (compose_file.stat.exists) and (command == 'down' or command == 'up')
+  changed_when: true
+  ignore_errors: true
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --env-file {{compose_dest}}/env.env
+      --env-file {{compose_dest}}/ports.env
+      -f {{compose_dest}}/volumes.yml
+      -f {{compose_file.stat.path}}
+      down -v
+
+- name: Compose UP for {{stack_name}} on {{inventory_hostname}}
+  when: (compose_file.stat.exists) and (command == 'up')
+  changed_when: true
+  ignore_errors: true
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --env-file {{compose_dest}}/env.env
+      --env-file {{compose_dest}}/ports.env
+      -f {{compose_dest}}/volumes.yml
+      -f {{compose_file.stat.path}}
+      up -d --pull always

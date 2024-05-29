@@ -1,0 +1,33 @@
+- name: Installation
+  hosts: tailscale_hosts
+  vars_prompt:
+    - name: ansible_become_pass
+      prompt: "Enter sudo password"
+      private: true
+  pre_tasks:
+    - name: Update and upgrade packages
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: yes
+  roles:
+    - role: install-docker
+      when: docker is defined
+    - role: install-nvidia
+      when: nvidia is defined
+    - role: install-ufw
+      when: ufw is defined
+  tasks:
+    - name: Install rsync
+      become: true
+      ansible.builtin.package:
+        name:
+          - rsync
+          - pm-utils
+        state: present
+
+    - name: Create /docker-data folder
+      become: true
+      ansible.builtin.file:
+        path: /docker-data
+        state: directory

@@ -1,0 +1,43 @@
+- name: Setup devcontainer on athena
+  hosts: athena
+  roles:
+    - role: ansible-role-nvm
+      nodejs_version: "21.7.3"
+  vars_prompt:
+    - name: ansible_become_pass
+      prompt: "Enter sudo password"
+      private: true
+  tasks:
+    - name: Symlink nodejs
+      become: true
+      ansible.builtin.file:
+        src: /home/mgarnier/.nvm/versions/node/v21.7.3/bin/node
+        dest: /usr/local/bin/node
+        state: link
+
+    - name: Symlink npm
+      become: true
+      ansible.builtin.file:
+        src: /home/mgarnier/.nvm/versions/node/v21.7.3/bin/npm
+        dest: /usr/local/bin/npm
+        state: link
+
+    - name: Install devcontainer cli
+      community.general.npm:
+        name: "@devcontainers/cli"
+        global: yes
+        state: present
+
+    - name: Symlink devcontainer
+      become: true
+      ansible.builtin.file:
+        src: /home/mgarnier/.nvm/versions/node/v21.7.3/bin/devcontainer
+        dest: /usr/local/bin/devcontainer
+        state: link
+
+    - name: Run devcontainer
+      ansible.builtin.shell:
+        chdir: /freebox/dev/devcontainer
+        cmd: |
+          docker rm -f devcontainer
+          devcontainer up --workspace-folder .

@@ -1,0 +1,54 @@
+services:
+  nodesight:
+    extends:
+      file: monitoring.yml
+      service: nodesight
+    environment:
+      HOSTNAME: ${EUROS_HOSTNAME}
+      ENABLE_STATS_API: true
+      STATS_API_URL: ${STATS_API_URL}
+      SERVER_PORT: ${EUROS_NODESIGHT_PORT}
+    annotations:
+      traefik-ports: EUROS_NODESIGHT_PORT
+    healthcheck:
+      test: wget -q --spider --timeout=5 --tries=1 http://localhost:${EUROS_NODESIGHT_PORT} || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  dozzle:
+    extends:
+      file: monitoring.yml
+      service: dozzle
+    ports:
+      - ${EUROS_DOZZLE_PORT}:8080
+    annotations:
+      traefik-ports: EUROS_DOZZLE_PORT
+
+  watchtower:
+    extends:
+      file: monitoring.yml
+      service: watchtower
+
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    restart: unless-stopped
+    command:
+      - serve
+    environment:
+      - TZ=${TIMEZONE}
+    ports:
+      - ${EUROS_NTFY_PORT}:80
+    volumes:
+      - ntfy_cache:/var/cache/ntfy
+      - ntfy_data:/etc/ntfy
+    annotations:
+      traefik-ports: EUROS_NTFY_PORT
+    healthcheck:
+      test: wget -q --tries=1 http://localhost/v1/health -O - | grep -Eo '\"healthy\":true' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

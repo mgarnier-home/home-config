@@ -1,0 +1,21 @@
+services:
+  autosaver:
+    container_name: autosaver
+    restart: unless-stopped
+    image: mgarnier11/autosaver
+    volumes:
+      - autosaver_config:/config
+    ports:
+      - ${ZEPHYR_AUTOSAVER_PORT}:3000
+    annotations:
+      traefik-ports: ZEPHYR_AUTOSAVER_PORT
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+    environment:
+      - CRON_SCHEDULE=15 4 * * *
+      - BACKUP_CONFIG_PATH=/config/config-zephyr.yml
+      - NTFY_SERVER=${NTFY_SERVER}
+      - NTFY_TOPIC=${NTFY_TOPIC}
+      - ARCHIVE_API_TYPE=zip
+      # - LOG_LEVEL=5

@@ -1,0 +1,60 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+  "name": "Debian",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/ansible:2": {},
+    "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {}
+  },
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // "mounts": ["type=bind,source=${localEnv:USERPROFILE}/.ssh,target=/root/.ssh,readonly"],
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.fontLigatures": true,
+        "typescript.updateImportsOnFileMove.enabled": "always",
+        "javascript.updateImportsOnFileMove.enabled": "always",
+        "editor.tabSize": 2,
+        "prettier.printWidth": 120,
+        "cSpell.words": ["autosaver", "nodesight", "ntfy", "tailwindcss"],
+        "cSpell.language": "en,fr",
+        "cSpell.languageSettings": [{ "languageId": "*", "caseSensitive": false }],
+        "[yaml]": {
+          "editor.defaultFormatter": "redhat.vscode-yaml"
+        },
+        "files.eol": "\n",
+        "editor.renderWhitespace": "trailing",
+        "prettier.endOfLine": "lf",
+        "code-eol.newlineCharacter": "¬",
+        "code-eol.returnCharacter": "¤",
+        "code-eol.crlfCharacter": "¤¬"
+      },
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "github.copilot",
+        "streetsidesoftware.code-spell-checker",
+        "naumovs.color-highlight",
+        "streetsidesoftware.code-spell-checker-french",
+        "eamodio.gitlens",
+        "oderwat.indent-rainbow",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml",
+        "medo64.render-crlf",
+        "redhat.ansible"
+      ]
+    }
+  },
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  "remoteUser": "root"
+}

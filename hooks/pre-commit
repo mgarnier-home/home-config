@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Running pre-commit hook"
+
+node scripts/cleanEnv.js
+
+git add example.env

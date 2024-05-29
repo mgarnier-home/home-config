@@ -1,0 +1,69 @@
+- name: Check if docker is installed
+  become: true
+  ansible.builtin.command: docker --version
+  register: docker_version
+  ignore_errors: true
+  changed_when: true
+
+- name: Install Docker
+  when: docker_version.rc != 0
+  block:
+    - name: Get installation script
+      become: true
+      ansible.builtin.get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: "0755"
+
+    - name: Install docker
+      become: true
+      ansible.builtin.command: /tmp/get-docker.sh
+      changed_when: true
+
+    - name: Add user to docker group
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
+- name: Add psFormat to config.json
+  ansible.builtin.include_role:
+    name: update-json
+  vars:
+    file_path: /home/mgarnier/.docker/config.json
+    file_group: mgarnier
+    file_owner: mgarnier
+    update_content:
+      psFormat: '{% raw %}table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t{% endraw %}'
+
+- name: Add dns to daemon.json
+  ansible.builtin.include_role:
+    name: update-json
+  vars:
+    file_path: /etc/docker/daemon.json
+    file_group: root
+    file_owner: root
+    update_content:
+      dns:
+        # - 100.100.100.100
+        - 8.8.8.8
+
+- name: Expose docker socket to tailscale
+  become: true
+  ansible.builtin.lineinfile:
+    path: /lib/systemd/system/docker.service
+    regexp: "^ExecStart="
+    line: "ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://{{ ansible_host }}:4321"
+
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Restart docker
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    enabled: true
