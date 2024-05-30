@@ -3,7 +3,10 @@
 {
   "name": "Debian",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  // "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "features": {
     "ghcr.io/devcontainers-contrib/features/ansible:2": {},
     "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {},
@@ -35,7 +38,10 @@
         "prettier.endOfLine": "lf",
         "code-eol.newlineCharacter": "¬",
         "code-eol.returnCharacter": "¤",
-        "code-eol.crlfCharacter": "¤¬"
+        "code-eol.crlfCharacter": "¤¬",
+        "[go]": {
+          "editor.defaultFormatter": "golang.go"
+        }
       },
       "extensions": [
         "esbenp.prettier-vscode",
@@ -46,12 +52,13 @@
         "redhat.vscode-xml",
         "redhat.vscode-yaml",
         "medo64.render-crlf",
-        "redhat.ansible"
+        "redhat.ansible",
+        "golang.go"
       ]
     }
   },
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   "remoteUser": "root",
-  "postCreateCommand": "go install github.com/spf13/cobra-cli@latest"
+  "postCreateCommand": "${containerWorkspaceFolder}/.devcontainer/post-create.sh"
 }
