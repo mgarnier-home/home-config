@@ -4,5 +4,5 @@ tasks:
   build:
     dir: home-cli
     cmds:
-      - go build -o ./bin/home-cli
+      - go build -o ../bin/home-cli
     silent: true
