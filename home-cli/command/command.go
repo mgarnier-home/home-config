@@ -1,10 +1,15 @@
 package command
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"mgarnier11/home-cli/utils"
 	"os/exec"
 	"slices"
+	"sync"
+
+	"github.com/fatih/color"
 )
 
 type Command struct {
@@ -55,28 +60,31 @@ func ExecCommand(stack string, host string, action string, args []string) {
 		commandsPerHost[command.host] = append(commandsPerHost[command.host], command)
 	}
 
-	if slices.Contains(args, "parallel") {
-		runCommandsInParallel(commandsPerHost)
-	} else {
-		runCommandsInSequence(commandsPerHost)
-	}
-}
-
-func runCommandsInParallel(commandsPerHost map[string][]*Command) {
-
-}
-
-func runCommandsInSequence(commandsPerHost map[string][]*Command) {
 	for _, commands := range commandsPerHost {
 		selectHost(commands[0].host)
 
-		for _, command := range commands {
-			execCommand(command)
+		if slices.Contains(args, "parallel") {
+			var wg sync.WaitGroup
+
+			for _, command := range commands {
+				wg.Add(1)
+
+				go (func(command *Command, wg *sync.WaitGroup) {
+					defer wg.Done()
+
+					execCommand(command)
+				})(command, &wg)
+			}
+
+			wg.Wait()
+		} else {
+			for _, command := range commands {
+				execCommand(command)
+			}
 		}
 
 		selectHost("default")
 	}
-
 }
 
 func selectHost(host string) {
@@ -90,35 +98,49 @@ func selectHost(host string) {
 
 }
 
-func execCommand(command *Command) {
-	// fmt.Printf("Executing command %s on host %s stack %s\n", command.action, command.host, command.stack)
+func print(command *Command, std io.ReadCloser) {
+	scanner := bufio.NewScanner(std)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		text := scanner.Text()
 
+		color.Yellow(fmt.Sprintf("%s %s %s", command.host, command.stack, text))
+	}
+}
+
+func execCommand(command *Command) {
 	var commandArgs = []string{
-		"docker",
-		"compose",
-		"--env-file compose/env.env",
-		"--env-file compose/ports.env",
-		"-f compose/volumes.yml",
-		"-f compose/" + command.stack + "/" + command.host + "." + command.stack + ".yml",
+		"docker", "compose", "--env-file", "compose/env.env", "--env-file", "compose/ports.env", "-f", "compose/volumes.yml", "-f", "compose/" + command.stack + "/" + command.host + "." + command.stack + ".yml",
 	}
 
 	if command.action == "up" {
-		commandArgs = append(commandArgs, "up", "-d")
+		commandArgs = append(commandArgs, "up", "-d", "--pull", "always")
 	} else if command.action == "down" {
 		commandArgs = append(commandArgs, "down", "-v")
-	} else if command.action == "pull" {
-
 	} else {
 		fmt.Println("Command not found")
 	}
 
-	fmt.Println(commandArgs)
+	color.Blue(fmt.Sprint(commandArgs))
 
-	out, err := exec.Command(commandArgs[0], commandArgs[1:]...).CombinedOutput()
+	// print real time output
+	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
+
+	stdout, _ := cmd.StdoutPipe()
+	stderr, _ := cmd.StderrPipe()
+
+	// fmt.Println("Command started")
+
+	go print(command, stdout)
+	go print(command, stderr)
+
+	err := cmd.Run()
+
+	// fmt.Println("Command finished")
 
 	if err != nil {
-		fmt.Println("error executing command ", &command, err)
+		color.Red(fmt.Sprintf("%s %s Error executing command %s", command.host, command.stack, err))
+	} else {
+		color.Green(fmt.Sprintf("%s %s Successfully executed command", command.host, command.stack))
 	}
-
-	fmt.Println(string(out))
 }

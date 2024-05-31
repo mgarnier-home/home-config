@@ -73,5 +73,5 @@ func GetHostsByStack(stack string) []string {
 }
 
 func GetActions() []string {
-	return []string{"up", "down", "pull"}
+	return []string{"up", "down" /*, "pull"*/}
 }

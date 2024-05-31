@@ -1,3 +1,5 @@
+name: runner
+
 services:
   gitlab-runner:
     extends:
