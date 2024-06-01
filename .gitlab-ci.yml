@@ -36,4 +36,4 @@ publish:
     - build amd64
     - build arm64
   script:
-    - docker buildx imagetools create --tag mgarnier11/orchestrator:latest mgarnier11/orchestrator:amd64 mgarnier11/orchestrator:arm64 - docker  -
+    - docker buildx imagetools create --tag mgarnier11/orchestrator:latest mgarnier11/orchestrator:amd64 mgarnier11/orchestrator:arm64
