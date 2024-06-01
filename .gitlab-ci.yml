@@ -19,7 +19,7 @@ build amd64:
   tags:
     - amd64
   script:
-    - docker buildx build -f docker/Dockerfile --platform linux/amd64 -t mgarnier11/orchestrator:amd64 .
+    - docker buildx build -f docker/Dockerfile --platform linux/amd64 -t mgarnier11/orchestrator:amd64 . --push
 
 build arm64:
   stage: build
@@ -27,7 +27,7 @@ build arm64:
   tags:
     - arm64
   script:
-    - docker buildx build -f docker/Dockerfile --platform linux/arm64 -t mgarnier11/orchestrator:arm64 .
+    - docker buildx build -f docker/Dockerfile --platform linux/arm64 -t mgarnier11/orchestrator:arm64 . --push
 
 publish:
   extends: .docker-template
