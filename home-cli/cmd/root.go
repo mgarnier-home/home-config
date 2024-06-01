@@ -44,7 +44,9 @@ func createActionsCommands() []*cobra.Command {
 
 	for _, action := range actionList {
 		actionCmd := &cobra.Command{
-			Use: action,
+			Use:       action,
+			ValidArgs: []string{"parallel"},
+			Args:      cobra.MatchAll(cobra.RangeArgs(0, 1), cobra.OnlyValidArgs),
 			Run: func(cmd *cobra.Command, args []string) {
 				fmt.Println("Running action", cmd.CommandPath(), "with args ", args)
 
@@ -52,7 +54,6 @@ func createActionsCommands() []*cobra.Command {
 
 				command.ExecCommand(stack, host, action, args)
 			},
-			ValidArgs: []string{"parallel"},
 		}
 
 		actionsCmd = append(actionsCmd, actionCmd)

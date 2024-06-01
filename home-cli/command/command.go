@@ -110,7 +110,16 @@ func print(command *Command, std io.ReadCloser) {
 
 func execCommand(command *Command) {
 	var commandArgs = []string{
-		"docker", "compose", "--env-file", "compose/env.env", "--env-file", "compose/ports.env", "-f", "compose/volumes.yml", "-f", "compose/" + command.stack + "/" + command.host + "." + command.stack + ".yml",
+		"docker",
+		"compose",
+		"--env-file",
+		utils.GetFileInEnvDir("env.env"),
+		"--env-file",
+		utils.GetFileInEnvDir("ports.env"),
+		"-f",
+		utils.GetFileInComposeDir("volumes.yml"),
+		"-f",
+		utils.GetFileInComposeDir(command.stack + "/" + command.host + "." + command.stack + ".yml"),
 	}
 
 	if command.action == "up" {
@@ -123,20 +132,15 @@ func execCommand(command *Command) {
 
 	color.Blue(fmt.Sprint(commandArgs))
 
-	// print real time output
 	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
 
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 
-	// fmt.Println("Command started")
-
 	go print(command, stdout)
 	go print(command, stderr)
 
 	err := cmd.Run()
-
-	// fmt.Println("Command finished")
 
 	if err != nil {
 		color.Red(fmt.Sprintf("%s %s Error executing command %s", command.host, command.stack, err))

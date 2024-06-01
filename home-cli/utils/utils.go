@@ -1,26 +1,40 @@
 package utils
 
 import (
-	"errors"
 	"os"
+	"path"
 	"slices"
 	"strings"
 )
 
-func StackHostExists(stack string, host string) bool {
-	_, err := os.Stat("./compose/" + stack + "/" + host + "." + stack + ".yml")
+func getDirInEnv(envVariable string, defaultValue string) string {
+	envDir := os.Getenv(envVariable)
 
-	if err == nil {
-		return true
-	} else if errors.Is(err, os.ErrNotExist) {
-		return false
-	} else {
-		panic(err)
+	if envDir == "" {
+		envDir = defaultValue
 	}
+
+	return envDir
+}
+
+func getComposeDir() string {
+	return getDirInEnv("COMPOSE_DIR", "/workspaces/home-config/compose")
+}
+
+func getEnvDir() string {
+	return getDirInEnv("ENV_DIR", "/workspaces/home-config/compose")
+}
+
+func GetFileInComposeDir(file string) string {
+	return path.Join(getComposeDir(), file)
+}
+
+func GetFileInEnvDir(file string) string {
+	return path.Join(getEnvDir(), file)
 }
 
 func GetStacks() []string {
-	entries, err := os.ReadDir("./compose")
+	entries, err := os.ReadDir(getComposeDir())
 	if err != nil {
 		return []string{}
 	}
@@ -53,7 +67,7 @@ func GetHosts() []string {
 }
 
 func GetHostsByStack(stack string) []string {
-	entries, err := os.ReadDir("./compose/" + stack)
+	entries, err := os.ReadDir(path.Join(getComposeDir(), stack))
 
 	if err != nil {
 		return []string{}
