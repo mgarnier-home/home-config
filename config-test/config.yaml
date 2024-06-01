@@ -1,0 +1,4 @@
+actions:
+  - title: Test down
+    popupOnStart: execution-dialog
+    shell: home-cli down parallel

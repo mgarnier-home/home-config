@@ -1,0 +1,23 @@
+- name: Compose DOWN for {{stack_name}} on {{inventory_hostname}}
+  when: command == 'down'
+  changed_when: true
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --env-file {{compose_dest}}/env.env
+      --env-file {{compose_dest}}/ports.env
+      -f {{compose_dest}}/volumes.yml
+      -f {{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml
+      down -v
+
+- name: Compose UP for {{stack_name}} on {{inventory_hostname}}
+  when: command == 'up'
+  changed_when: true
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --env-file {{compose_dest}}/env.env
+      --env-file {{compose_dest}}/ports.env
+      -f {{compose_dest}}/volumes.yml
+      -f {{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml
+      up -d --pull always

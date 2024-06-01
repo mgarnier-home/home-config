@@ -4,4 +4,6 @@
 # Except these files
 !home-cli/*
 !taskfile.yml
+!.devcontainer/create-contexts.sh
+!ansible
 

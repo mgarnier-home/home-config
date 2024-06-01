@@ -1,0 +1,14 @@
+services:
+  orchestrator:
+    container_name: orchestrator
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      no_cache: true
+    network_mode: host
+    environment:
+      - COMPOSE_DIR=/compose
+      - ENV_DIR=/compose
+    volumes:
+      - ./config-test:/config
+      - ./compose:/compose

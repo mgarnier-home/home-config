@@ -7,6 +7,17 @@ import (
 	"strings"
 )
 
+type ConfigDir struct {
+	envVar     string
+	defaultDir string
+}
+
+var (
+	ComposeDir = ConfigDir{"COMPOSE_DIR", "/workspaces/home-config/compose"}
+	EnvDir     = ConfigDir{"ENV_DIR", "/workspaces/home-config/compose"}
+	AnsibleDir = ConfigDir{"ANSIBLE_DIR", "/workspaces/home-config/ansible"}
+)
+
 func getDirInEnv(envVariable string, defaultValue string) string {
 	envDir := os.Getenv(envVariable)
 
@@ -17,24 +28,16 @@ func getDirInEnv(envVariable string, defaultValue string) string {
 	return envDir
 }
 
-func getComposeDir() string {
-	return getDirInEnv("COMPOSE_DIR", "/workspaces/home-config/compose")
+func GetDir(dir ConfigDir) string {
+	return getDirInEnv(dir.envVar, dir.defaultDir)
 }
 
-func getEnvDir() string {
-	return getDirInEnv("ENV_DIR", "/workspaces/home-config/compose")
-}
-
-func GetFileInComposeDir(file string) string {
-	return path.Join(getComposeDir(), file)
-}
-
-func GetFileInEnvDir(file string) string {
-	return path.Join(getEnvDir(), file)
+func GetFileInDir(dir ConfigDir, file string) string {
+	return path.Join(GetDir(dir), file)
 }
 
 func GetStacks() []string {
-	entries, err := os.ReadDir(getComposeDir())
+	entries, err := os.ReadDir(GetDir(ComposeDir))
 	if err != nil {
 		return []string{}
 	}
@@ -67,7 +70,7 @@ func GetHosts() []string {
 }
 
 func GetHostsByStack(stack string) []string {
-	entries, err := os.ReadDir(path.Join(getComposeDir(), stack))
+	entries, err := os.ReadDir(path.Join(GetDir(ComposeDir), stack))
 
 	if err != nil {
 		return []string{}

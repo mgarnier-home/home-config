@@ -9,10 +9,14 @@
       ansible.builtin.fail:
         msg: "you must use -e command=down or -e command=up"
       when: command != "down" and command != "up"
+    - name: Checking stack arg
+      ansible.builtin.fail:
+        msg: "you must use -e stack=stack"
+      when: stack == ""
     - name: Checking compose_dest arg
       ansible.builtin.fail:
         msg: "you must use -e compose_dest=/path/to/compose"
       when: compose_dest == ""
   roles:
-    - role: compose
+    - role: compose-v2
       when: command != "" and compose_dest != ""

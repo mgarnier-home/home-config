@@ -61,8 +61,6 @@ func ExecCommand(stack string, host string, action string, args []string) {
 	}
 
 	for _, commands := range commandsPerHost {
-		selectHost(commands[0].host)
-
 		if slices.Contains(args, "parallel") {
 			var wg sync.WaitGroup
 
@@ -82,20 +80,7 @@ func ExecCommand(stack string, host string, action string, args []string) {
 				execCommand(command)
 			}
 		}
-
-		selectHost("default")
 	}
-}
-
-func selectHost(host string) {
-	out, err := exec.Command("docker", "context", "use", host).CombinedOutput()
-	if err != nil {
-		fmt.Println("Error selecting host", err)
-		panic(err)
-	}
-
-	fmt.Println(string(out))
-
 }
 
 func print(command *Command, std io.ReadCloser) {
@@ -110,29 +95,21 @@ func print(command *Command, std io.ReadCloser) {
 
 func execCommand(command *Command) {
 	var commandArgs = []string{
-		"docker",
-		"compose",
-		"--env-file",
-		utils.GetFileInEnvDir("env.env"),
-		"--env-file",
-		utils.GetFileInEnvDir("ports.env"),
-		"-f",
-		utils.GetFileInComposeDir("volumes.yml"),
-		"-f",
-		utils.GetFileInComposeDir(command.stack + "/" + command.host + "." + command.stack + ".yml"),
-	}
-
-	if command.action == "up" {
-		commandArgs = append(commandArgs, "up", "-d", "--pull", "always")
-	} else if command.action == "down" {
-		commandArgs = append(commandArgs, "down", "-v")
-	} else {
-		fmt.Println("Command not found")
+		"ansible-playbook",
+		"playbooks/compose.playbook.yml",
+		"--extra-vars",
+		"stack=" + command.stack,
+		"--extra-vars",
+		"command=" + command.action,
+		"-l",
+		command.host,
 	}
 
 	color.Blue(fmt.Sprint(commandArgs))
 
 	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
+
+	cmd.Dir = utils.GetDir(utils.AnsibleDir)
 
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()

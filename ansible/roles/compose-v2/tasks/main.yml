@@ -1,6 +1,6 @@
 - name: Sync compose folder
   ansible.builtin.synchronize:
-    src: "{{ playbook_dir }}/../compose/"
+    src: "{{ playbook_dir }}/../../compose/"
     dest: "{{ compose_dest }}/"
     delete: true
 
@@ -10,17 +10,6 @@
     file_type: directory
     recurse: false
   register: stack_folders
-
-- name: Set stack names
-  ansible.builtin.set_fact:
-    stack_names: "{{ stack_folders.files | map(attribute='path') | map('basename') | list }}"
-
-- name: Run compose on all stacks on all hosts
-  when: stack is undefined
-  ansible.builtin.include_tasks: tasks/cmp.yml
-  vars:
-    stack_name: "{{ item }}"
-  loop: "{{ stack_names }}"
 
 - name: Run compose on {{stack}} on all hosts
   when: stack is defined
