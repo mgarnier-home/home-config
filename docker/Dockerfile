@@ -6,20 +6,27 @@ WORKDIR /build
 
 RUN sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
-COPY . .
+COPY home-cli/ home-cli/
+COPY taskfile.yml .
 
 RUN ls -la
 
 RUN task build
 
-FROM jamesread/olivetin as runtime
-
-ENV ANSIBLE_VERSION 2.16.7
+FROM jamesread/olivetin:latest as runtime
 
 USER root
 
-RUN microdnf install -y --nodocs --noplugins --setopt=keepcache=0 --setopt=install_weak_deps=0 ansible
+RUN microdnf install -y --nodocs --noplugins --setopt=keepcache=0 --setopt=install_weak_deps=0 \
+  ansible rsync
 
 COPY --from=builder /build/bin/home-cli /usr/local/bin/home-cli
+
+COPY ansible/ansible.cfg /etc/ansible/ansible.cfg
+COPY ansible/roles/compose-v2 /etc/ansible/roles/compose-v2
+COPY ansible/playbooks/compose.playbook.yml /etc/ansible/playbooks/compose.playbook.yml
+COPY ansible/inventories/tailscale_hosts.yml /etc/ansible/inventories/tailscale_hosts.yml
+
+ENV COMPOSE_DIR /compose
 
 RUN home-cli build-olivetin

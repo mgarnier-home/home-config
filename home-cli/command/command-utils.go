@@ -37,9 +37,7 @@ func getCommandsToExecute(stack string, host string, action string) []*Command {
 	commands := []*Command{}
 
 	if stack == "all" {
-		stacks := utils.GetStacks()
-
-		for _, stack := range stacks {
+		for _, stack := range utils.StackList {
 			commands = append(commands, getCommandsByStack(stack, host, action)...)
 		}
 	} else {

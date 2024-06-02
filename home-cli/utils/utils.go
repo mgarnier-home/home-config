@@ -18,6 +18,12 @@ var (
 	AnsibleDir = ConfigDir{"ANSIBLE_DIR", "/workspaces/home-config/ansible"}
 )
 
+var (
+	StackList  = getStacks()
+	HostList   = getHosts()
+	ActionList = getActions()
+)
+
 func getDirInEnv(envVariable string, defaultValue string) string {
 	envDir := os.Getenv(envVariable)
 
@@ -36,7 +42,7 @@ func GetFileInDir(dir ConfigDir, file string) string {
 	return path.Join(GetDir(dir), file)
 }
 
-func GetStacks() []string {
+func getStacks() []string {
 	entries, err := os.ReadDir(GetDir(ComposeDir))
 	if err != nil {
 		return []string{}
@@ -55,8 +61,8 @@ func GetStacks() []string {
 	return stacks
 }
 
-func GetHosts() []string {
-	stacks := GetStacks()
+func getHosts() []string {
+	stacks := getStacks()
 
 	hosts := []string{}
 
@@ -89,6 +95,6 @@ func GetHostsByStack(stack string) []string {
 	return hosts
 }
 
-func GetActions() []string {
-	return []string{"up", "down" /*, "pull"*/}
+func getActions() []string {
+	return []string{"up", "down"}
 }

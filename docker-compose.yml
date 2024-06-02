@@ -9,6 +9,8 @@ services:
     environment:
       - COMPOSE_DIR=/compose
       - ENV_DIR=/compose
+      - SSH_AUTH_SOCK=/ssh-agent
     volumes:
+      - $SSH_AUTH_SOCK:/ssh-agent
       - ./config-test:/config
       - ./compose:/compose

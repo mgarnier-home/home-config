@@ -1,6 +1,6 @@
 - name: Sync compose folder
   ansible.builtin.synchronize:
-    src: "{{ playbook_dir }}/../../compose/"
+    src: "{{ lookup('env', 'COMPOSE_DIR') | default(playbook_dir + '/../../compose/', true) }}"
     dest: "{{ compose_dest }}/"
     delete: true
 
