@@ -5,6 +5,8 @@ import (
 	"path"
 	"slices"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 type ConfigDir struct {
@@ -62,12 +64,21 @@ func getStacks() []string {
 }
 
 func getHosts() []string {
-	stacks := getStacks()
-
 	hosts := []string{}
 
-	for _, stack := range stacks {
-		hosts = append(hosts, GetHostsByStack(stack)...)
+	for _, stack := range getStacks() {
+		entries, err := os.ReadDir(path.Join(GetDir(ComposeDir), stack))
+		if err != nil {
+			continue
+		}
+
+		for _, entry := range entries {
+			if !entry.IsDir() && strings.HasSuffix(entry.Name(), "."+stack+".yml") {
+				parts := strings.Split(entry.Name(), ".")
+
+				hosts = append(hosts, parts[0])
+			}
+		}
 	}
 
 	slices.Sort(hosts)
@@ -75,26 +86,48 @@ func getHosts() []string {
 	return slices.Compact(hosts)
 }
 
+func stackFileExists(stack string, host string) bool {
+	_, err := os.Stat(path.Join(GetDir(ComposeDir), stack, host+"."+stack+".yml"))
+	return err == nil
+}
+
 func GetHostsByStack(stack string) []string {
-	entries, err := os.ReadDir(path.Join(GetDir(ComposeDir), stack))
-
-	if err != nil {
-		return []string{}
-	}
-
 	hosts := []string{}
 
-	for _, entry := range entries {
-		if !entry.IsDir() && strings.HasSuffix(entry.Name(), "."+stack+".yml") {
-			parts := strings.Split(entry.Name(), ".")
-
-			hosts = append(hosts, parts[0])
+	for _, host := range HostList {
+		if stackFileExists(stack, host) {
+			hosts = append(hosts, host)
 		}
 	}
 
 	return hosts
 }
 
+func GetStacksByHost(host string) []string {
+	stacks := []string{}
+	for _, stack := range StackList {
+		if stackFileExists(stack, host) {
+			stacks = append(stacks, stack)
+		}
+	}
+
+	return stacks
+}
+
 func getActions() []string {
 	return []string{"up", "down"}
+}
+
+func GetSubCommandsPaths(commands []*cobra.Command) []string {
+	paths := []string{}
+
+	for _, command := range commands {
+		if slices.Contains(ActionList, command.Use) {
+			paths = append(paths, command.CommandPath())
+		}
+
+		paths = append(paths, GetSubCommandsPaths(command.Commands())...)
+	}
+
+	return paths
 }

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"mgarnier11/home-cli/compose"
 	"mgarnier11/home-cli/utils"
 	"os/exec"
 	"slices"
@@ -18,67 +19,58 @@ type Command struct {
 	host   string
 }
 
-func getCommandsByStack(stack string, host string, action string) []*Command {
+type CommandV2 struct {
+	Action string
+	Stacks []string
+	Hosts  []string
+}
+
+func ExecCommand(stacks []string, hosts []string, action string, args []string) {
+	config := compose.GetConfig()
+
 	commands := []*Command{}
 
-	hosts := utils.GetHostsByStack(stack)
+	fmt.Println(stacks)
+	fmt.Println(hosts)
 
-	for _, h := range hosts {
-		if host == "all" || h == host {
-			commands = append(commands, &Command{action, stack, h})
+	for _, stack := range stacks {
+		for _, host := range config.Stacks[stack] {
+			if slices.Contains(hosts, host) {
+				commands = append(commands, &Command{action, stack, host})
+			}
 		}
 	}
 
-	return commands
-}
+	results := make(map[*Command]error)
 
-func getCommandsToExecute(stack string, host string, action string) []*Command {
+	if slices.Contains(args, "parallel") {
+		var wg sync.WaitGroup
 
-	commands := []*Command{}
+		for _, command := range commands {
+			wg.Add(1)
 
-	if stack == "all" {
-		for _, stack := range utils.StackList {
-			commands = append(commands, getCommandsByStack(stack, host, action)...)
+			go (func(command *Command, wg *sync.WaitGroup) {
+				defer wg.Done()
+
+				results[command] = execCommand(command)
+			})(command, &wg)
 		}
+
+		wg.Wait()
 	} else {
-		commands = append(commands, getCommandsByStack(stack, host, action)...)
-	}
-
-	return commands
-}
-
-func ExecCommand(stack string, host string, action string, args []string) {
-	fmt.Printf("Running %s on stack : %s host : %s\n", action, stack, host)
-
-	commands := getCommandsToExecute(stack, host, action)
-
-	commandsPerHost := map[string][]*Command{}
-
-	for _, command := range commands {
-		commandsPerHost[command.host] = append(commandsPerHost[command.host], command)
-	}
-
-	for _, commands := range commandsPerHost {
-		if slices.Contains(args, "parallel") {
-			var wg sync.WaitGroup
-
-			for _, command := range commands {
-				wg.Add(1)
-
-				go (func(command *Command, wg *sync.WaitGroup) {
-					defer wg.Done()
-
-					execCommand(command)
-				})(command, &wg)
-			}
-
-			wg.Wait()
-		} else {
-			for _, command := range commands {
-				execCommand(command)
-			}
+		for _, command := range commands {
+			results[command] = execCommand(command)
 		}
 	}
+
+	for command, err := range results {
+		if err != nil {
+			color.Red(fmt.Sprintf("%s %s Error executing command %s", command.host, command.stack, err))
+		} else {
+			color.Green(fmt.Sprintf("%s %s Successfully executed command", command.host, command.stack))
+		}
+	}
+
 }
 
 func print(command *Command, std io.ReadCloser) {
@@ -91,7 +83,7 @@ func print(command *Command, std io.ReadCloser) {
 	}
 }
 
-func execCommand(command *Command) {
+func execCommand(command *Command) error {
 	var commandArgs = []string{
 		"ansible-playbook",
 		"playbooks/compose.playbook.yml",
@@ -117,9 +109,6 @@ func execCommand(command *Command) {
 
 	err := cmd.Run()
 
-	if err != nil {
-		color.Red(fmt.Sprintf("%s %s Error executing command %s", command.host, command.stack, err))
-	} else {
-		color.Green(fmt.Sprintf("%s %s Successfully executed command", command.host, command.stack))
-	}
+	return err
+
 }
