@@ -9,8 +9,10 @@ services:
     environment:
       - COMPOSE_DIR=/compose
       - ENV_DIR=/compose
+      - ANSIBLE_DIR=/ansible
       - SSH_AUTH_SOCK=/ssh-agent
     volumes:
       - $SSH_AUTH_SOCK:/ssh-agent
-      - ./config-test:/config
+      # - ./config-test:/config
+      - ./ansible:/ansible
       - ./compose:/compose

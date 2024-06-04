@@ -15,9 +15,10 @@ type ConfigDir struct {
 }
 
 var (
-	ComposeDir = ConfigDir{"COMPOSE_DIR", "/workspaces/home-config/compose"}
-	EnvDir     = ConfigDir{"ENV_DIR", "/workspaces/home-config/compose"}
-	AnsibleDir = ConfigDir{"ANSIBLE_DIR", "/workspaces/home-config/ansible"}
+	ComposeDir        = ConfigDir{"COMPOSE_DIR", "/workspaces/home-config/compose"}
+	EnvDir            = ConfigDir{"ENV_DIR", "/workspaces/home-config/compose"}
+	AnsibleDir        = ConfigDir{"ANSIBLE_DIR", "/workspaces/home-config/ansible"}
+	OliveTinConfigDir = ConfigDir{"OLIVETIN_CONFIG_DIR", "/workspaces/home-config/olivetin"}
 )
 
 var (

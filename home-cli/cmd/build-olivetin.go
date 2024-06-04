@@ -4,20 +4,28 @@ import (
 	"fmt"
 	"mgarnier11/home-cli/compose"
 	"mgarnier11/home-cli/utils"
+	"os"
 	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
-type action struct {
-	title string
-	icon  string
-	shell string
+type Action struct {
+	Title        string
+	Icon         string
+	Shell        string
+	PopupOnStart string
+	Timeout      int
 }
 
-func createActionCommands(stack string, host string) []*action {
-	actions := []*action{}
+type oliveTinConfig struct {
+	Actions []*Action
+}
+
+func createActionCommands(stack string, host string) []*Action {
+	actions := []*Action{}
 
 	for _, actionStr := range utils.ActionList {
 
@@ -31,24 +39,114 @@ func createActionCommands(stack string, host string) []*action {
 		}
 		shell += " " + actionStr
 
-		actions = append(actions, &action{
-			title: stack + " " + host + " " + actionStr,
-			icon:  "box",
-			shell: shell,
+		actions = append(actions, &Action{
+			Title:        stack + " " + host + " " + actionStr,
+			Icon:         "box",
+			Shell:        shell,
+			PopupOnStart: "execution-dialog",
+			Timeout:      150,
 		})
 	}
 
 	return actions
 }
 
-func printAction(action *action) {
-	fmt.Println(action.title + " => " + action.shell)
+func getActions(config *compose.Config) (actions []*Action, stacksActions map[string][]*Action, hostsActions map[string][]*Action) {
+	actions = []*Action{}
+
+	for stack, hosts := range config.Stacks {
+		if len(hosts) > 1 {
+			actions = append(actions, createActionCommands(stack, "all")...)
+		}
+
+		for _, host := range hosts {
+			actions = append(actions, createActionCommands(stack, host)...)
+		}
+	}
+
+	for host, stacks := range config.Hosts {
+		actions = append(actions, createActionCommands("all", host)...)
+
+		for _, stack := range stacks {
+			actions = append(actions, createActionCommands(stack, host)...)
+		}
+	}
+
+	actions = append(actions, createActionCommands("all", "all")...)
+
+	slices.SortFunc(actions, func(a, b *Action) int {
+		return strings.Compare(a.Title, b.Title)
+	})
+
+	actions = slices.CompactFunc(actions, func(a *Action, b *Action) bool {
+		return a.Title == b.Title
+	})
+
+	stacksActions = make(map[string][]*Action)
+	hostsActions = make(map[string][]*Action)
+
+	for _, action := range actions {
+		for _, stack := range utils.StackList {
+			if strings.Contains(action.Title, stack) {
+				stacksActions[stack] = append(stacksActions[stack], action)
+			}
+		}
+
+		for _, host := range utils.HostList {
+			if strings.Contains(action.Title, host) {
+				hostsActions[host] = append(hostsActions[host], action)
+			}
+		}
+	}
+
+	return actions, stacksActions, hostsActions
 }
 
-func printActions(actions []*action) {
+func printAction(action *Action) {
+	fmt.Println(action.Title + " => " + action.Shell)
+}
+
+func printActions(actions []*Action) {
 	for _, action := range actions {
 		printAction(action)
 	}
+}
+
+func saveConfig(config *compose.Config) {
+	actions, stacksActions, hostsActions := getActions(config)
+
+	fmt.Println("===========Actions===========")
+	for _, action := range actions {
+		fmt.Println(action.Title + " => " + action.Shell)
+	}
+
+	for stack, actions := range stacksActions {
+		fmt.Println("*****************Stack", stack)
+		printActions(actions)
+	}
+
+	for host, actions := range hostsActions {
+		fmt.Println("*****************Host", host)
+		printActions(actions)
+	}
+
+	os.Mkdir(utils.GetDir(utils.OliveTinConfigDir), 0755)
+	file, err := os.OpenFile(utils.GetFileInDir(utils.OliveTinConfigDir, "config.yaml"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		fmt.Println(err)
+		panic("File error while saving config")
+	}
+	defer file.Close()
+
+	err = yaml.NewEncoder(file).Encode(oliveTinConfig{
+		Actions: actions,
+	})
+	if err != nil {
+		fmt.Println(err)
+		panic("Yaml while saving config")
+	}
+
+	fmt.Println("Config saved successfully")
 }
 
 var buildOlivetinCmd = &cobra.Command{
@@ -57,68 +155,7 @@ var buildOlivetinCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Building olivetin config")
 
-		config := compose.GetConfig()
-
-		actions := []*action{}
-
-		for stack, hosts := range config.Stacks {
-			if len(hosts) > 1 {
-				actions = append(actions, createActionCommands(stack, "all")...)
-			}
-
-			for _, host := range hosts {
-				actions = append(actions, createActionCommands(stack, host)...)
-			}
-		}
-
-		for host, stacks := range config.Hosts {
-			actions = append(actions, createActionCommands("all", host)...)
-
-			for _, stack := range stacks {
-				actions = append(actions, createActionCommands(stack, host)...)
-			}
-		}
-
-		actions = append(actions, createActionCommands("all", "all")...)
-
-		slices.SortFunc(actions, func(a, b *action) int {
-			return strings.Compare(a.title, b.title)
-		})
-
-		actions = slices.CompactFunc(actions, func(a *action, b *action) bool {
-			return a.title == b.title
-		})
-
-		stacksActions := make(map[string][]*action)
-		hostsActions := make(map[string][]*action)
-
-		printActions(actions)
-
-		fmt.Println("===========Stacks actions===========")
-
-		for _, action := range actions {
-			for _, stack := range utils.StackList {
-				if strings.Contains(action.title, stack) {
-					stacksActions[stack] = append(stacksActions[stack], action)
-				}
-			}
-
-			for _, host := range utils.HostList {
-				if strings.Contains(action.title, host) {
-					hostsActions[host] = append(hostsActions[host], action)
-				}
-			}
-		}
-
-		for stack, actions := range stacksActions {
-			fmt.Println("*****************Stack", stack)
-			printActions(actions)
-		}
-
-		for host, actions := range hostsActions {
-			fmt.Println("*****************Host", host)
-			printActions(actions)
-		}
+		saveConfig(compose.GetConfig())
 
 	},
 }

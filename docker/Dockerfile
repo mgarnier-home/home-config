@@ -28,5 +28,8 @@ COPY ansible/playbooks/compose.playbook.yml /etc/ansible/playbooks/compose.playb
 COPY ansible/inventories/tailscale_hosts.yml /etc/ansible/inventories/tailscale_hosts.yml
 
 ENV COMPOSE_DIR /compose
+ENV OLIVETIN_CONFIG_DIR /config
+
+
 
 RUN home-cli build-olivetin
