@@ -20,8 +20,20 @@ type Action struct {
 	Timeout      int
 }
 
+type Content struct {
+	Title    string     `yaml:"title,omitempty"`
+	Type     string     `yaml:"type,omitempty"`
+	Contents []*Content `yaml:"contents,omitempty"`
+}
+
+type Dashboard struct {
+	Title    string
+	Contents []*Content
+}
+
 type oliveTinConfig struct {
-	Actions []*Action
+	Actions    []*Action
+	Dashboards []*Dashboard
 }
 
 func createActionCommands(stack string, host string) []*Action {
@@ -112,6 +124,27 @@ func printActions(actions []*Action) {
 	}
 }
 
+func getContents(action string, actions []*Action) []*Content {
+	contents := []*Content{
+		{
+			Type:  "display",
+			Title: action,
+		},
+	}
+
+	filteredActions := utils.FindAll(actions, func(a *Action) bool {
+		return strings.Contains(a.Title, action)
+	})
+
+	for _, a := range filteredActions {
+		contents = append(contents, &Content{
+			Title: a.Title,
+		})
+	}
+
+	return contents
+}
+
 func saveConfig(config *compose.Config) {
 	actions, stacksActions, hostsActions := getActions(config)
 
@@ -138,8 +171,33 @@ func saveConfig(config *compose.Config) {
 	}
 	defer file.Close()
 
+	dashboardContents := []*Content{}
+
+	for host, actions := range hostsActions {
+		for i, action := range utils.ActionList {
+			if i == 0 {
+				dashboardContents = append(dashboardContents, &Content{
+					Title:    host,
+					Type:     "fieldset",
+					Contents: getContents(action, actions),
+				})
+			} else {
+				dashboardContents = append(dashboardContents, &Content{
+					Type:     "fieldset",
+					Contents: getContents(action, actions),
+				})
+			}
+		}
+	}
+
 	err = yaml.NewEncoder(file).Encode(oliveTinConfig{
 		Actions: actions,
+		Dashboards: []*Dashboard{
+			{
+				Title:    "Dashboard",
+				Contents: dashboardContents,
+			},
+		},
 	})
 	if err != nil {
 		fmt.Println(err)

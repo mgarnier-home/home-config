@@ -20,7 +20,7 @@ USER root
 RUN microdnf install -y --nodocs --noplugins --setopt=keepcache=0 --setopt=install_weak_deps=0 \
   ansible rsync
 
-COPY --from=builder /build/bin/home-cli /usr/local/bin/home-cli
+COPY --from=builder /build/bin/home-cli /usr/bin/home-cli
 
 COPY ansible/ansible.cfg /etc/ansible/ansible.cfg
 COPY ansible/roles/compose-v2 /etc/ansible/roles/compose-v2
@@ -30,6 +30,4 @@ COPY ansible/inventories/tailscale_hosts.yml /etc/ansible/inventories/tailscale_
 ENV COMPOSE_DIR /compose
 ENV OLIVETIN_CONFIG_DIR /config
 
-
-
-RUN home-cli build-olivetin
+ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/home-cli build-olivetin && /usr/bin/OliveTin"] 

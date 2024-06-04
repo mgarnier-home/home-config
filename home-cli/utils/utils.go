@@ -132,3 +132,15 @@ func GetSubCommandsPaths(commands []*cobra.Command) []string {
 
 	return paths
 }
+
+func FindAll[T any](slice []T, predicate func(T) bool) []T {
+	var result []T
+
+	for _, item := range slice {
+		if predicate(item) {
+			result = append(result, item)
+		}
+	}
+
+	return result
+}

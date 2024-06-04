@@ -13,6 +13,5 @@ services:
       - SSH_AUTH_SOCK=/ssh-agent
     volumes:
       - $SSH_AUTH_SOCK:/ssh-agent
-      # - ./config-test:/config
       - ./ansible:/ansible
       - ./compose:/compose
