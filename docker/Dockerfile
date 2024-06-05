@@ -27,6 +27,7 @@ COPY ansible/roles/compose-v2 /etc/ansible/roles/compose-v2
 COPY ansible/playbooks/compose.playbook.yml /etc/ansible/playbooks/compose.playbook.yml
 COPY ansible/inventories/tailscale_hosts.yml /etc/ansible/inventories/tailscale_hosts.yml
 
+ENV ANSIBLE_DIR /etc/ansible
 ENV COMPOSE_DIR /compose
 ENV OLIVETIN_CONFIG_DIR /config
 
