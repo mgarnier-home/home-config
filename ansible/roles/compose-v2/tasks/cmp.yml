@@ -8,15 +8,20 @@
         --opt o="rw,username=${SMB_USER},password=${SMB_PWD},iocharset=utf8,uid=1000,sec=ntlmv2,file_mode=0777,dir_mode=0777" \
         --name fbx_docker_data
 
+- name: Set compose command
+  set_fact:
+    compose_command: >-
+      docker compose
+        --env-file {{compose_dest}}/env.env
+        --env-file {{compose_dest}}/ports.env
+        -f {{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml
+
 - name: Compose DOWN for {{stack_name}} on {{inventory_hostname}}
   when: command == 'down'
   changed_when: true
   ansible.builtin.command:
     cmd: >-
-      docker compose
-      --env-file {{compose_dest}}/env.env
-      --env-file {{compose_dest}}/ports.env
-      -f {{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml
+      {{ compose_command }}
       down -v
 
 - name: Compose UP for {{stack_name}} on {{inventory_hostname}}
@@ -24,8 +29,13 @@
   changed_when: true
   ansible.builtin.command:
     cmd: >-
-      docker compose
-      --env-file {{compose_dest}}/env.env
-      --env-file {{compose_dest}}/ports.env
-      -f {{compose_dest}}/{{stack_name}}/{{inventory_hostname}}.{{stack_name}}.yml
+      {{ compose_command }}
       up -d --pull always
+
+- name: Compose RESTART for {{stack_name}} on {{inventory_hostname}}
+  when: command == 'restart'
+  changed_when: true
+  ansible.builtin.command:
+    cmd: >-
+      {{ compose_command }}
+      up -d --pull always --force-recreate

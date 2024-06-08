@@ -116,7 +116,7 @@ func GetStacksByHost(host string) []string {
 }
 
 func getActions() []string {
-	return []string{"up", "down"}
+	return []string{"up", "down", "restart"}
 }
 
 func GetSubCommandsPaths(commands []*cobra.Command) []string {
