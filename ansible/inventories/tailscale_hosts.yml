@@ -3,18 +3,21 @@ tailscale_hosts:
     zephyr: # rpi5
       ansible_host: 100.64.98.97
       docker: true
+      docker_data_location: /docker-data
 
     apollon: # contabo vps
       ansible_host: 100.64.98.99
       ansible_port: 4269
       docker: true
       ufw: true
+      docker_data_location: /docker-data
 
     athena: # server appart
       ansible_host: 100.64.98.100
       docker: true
       nvidia: true
       # golang: true
+      docker_data_location: /ssd-1/docker-data
 
   vars:
     ansible_user: mgarnier
