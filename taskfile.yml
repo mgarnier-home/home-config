@@ -1,8 +1,0 @@
-version: '3'
-
-tasks:
-  build:
-    dir: home-cli
-    cmds:
-      - go build -o ../bin/home-cli
-    silent: true
